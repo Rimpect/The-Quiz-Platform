@@ -1,0 +1,15 @@
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+.logo {
+  font-size: 40px;
+  font-weight: bold;
+}
+.UserName {
+  font-size: 40px;
+}
