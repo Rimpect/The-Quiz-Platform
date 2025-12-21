@@ -1,0 +1,32 @@
+.CustomQuizButton {
+  border-color: black;
+  border-radius: 7px;
+  border-width: 1px;
+  color: white;
+  background-color: green;
+  height: 400px;
+  width: 400px;
+
+  /* Ключевые свойства для изображений */
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.CustomQuizButton:hover {
+  background: #444;
+}
+
+.CustomQuizButton img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Заполняет кнопку, обрезая края если нужно */
+  transition: transform 0.3s ease;
+}
+
+.CustomQuizButton:hover img {
+  transform: scale(1.05); /* Легкий зум при наведении */
+}

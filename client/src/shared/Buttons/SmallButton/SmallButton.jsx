@@ -1,7 +1,9 @@
-import React from 'react'
-
-export default function SmallButton() {
+import React from "react";
+import "./SmallButton.css";
+export function SmallButton({ children, ...attributes }) {
   return (
-    <div>SmallButton</div>
-  )
+    <button type="button" className="CustomSmallButton" {...attributes}>
+      {children}
+    </button>
+  );
 }

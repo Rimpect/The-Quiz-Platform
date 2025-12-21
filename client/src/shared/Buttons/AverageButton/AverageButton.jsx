@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function AverageButton() {
+export function AverageButton() {
   return (
     <Button></Button>
   )

@@ -10,11 +10,7 @@
   row-gap: 50px;
   justify-content: center;
 }
-#square {
-  width: 500px;
-  height: 500px;
-  background: green;
-}
+
 .nav {
   display: flex;
   align-items: center;
