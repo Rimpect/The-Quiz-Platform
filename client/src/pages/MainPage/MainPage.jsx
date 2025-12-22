@@ -6,10 +6,8 @@ import { Footer } from "./../../widgets/Footer/Footer";
 export function MainPage() {
   return (
     <>
-      <Header></Header>
       <UserAction></UserAction>
       <QuizeBoard></QuizeBoard>
-      <Footer></Footer>
     </>
   );
 }

@@ -1,7 +1,9 @@
-import React from 'react'
-
-export default function QuizPage() {
+import React from "react";
+import { Quiz } from "../../widgets/Quiz/Quiz";
+export function QuizPage() {
   return (
-    <div>QuizPage</div>
-  )
+     <>
+       <Quiz></Quiz>
+     </>
+   );
 }

@@ -1,0 +1,12 @@
+.CustomAverageButton {
+  border-color: black;
+  border-radius: 7px;
+  border-width: 1px;
+  color: white;
+  background-color: green;
+  height: 175px;
+  width: 200px;
+}
+.CustomAverageButton:hover {
+  background: #444;
+}

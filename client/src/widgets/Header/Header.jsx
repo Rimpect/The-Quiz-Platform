@@ -1,10 +1,19 @@
 import React from "react";
 import "./Header.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 export function Header() {
   return (
     <header>
       <div className="logo">Logo</div>
-      <div className="UserName">Имя пользователя/Гость</div>
+      <div className="UserName">
+        <Link to="/PersonalAccount">
+          {" "}
+          <FontAwesomeIcon icon={faUser} />
+        </Link>
+        Имя пользователя/Гость
+      </div>
     </header>
   );
 }

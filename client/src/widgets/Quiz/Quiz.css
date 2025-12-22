@@ -1,0 +1,11 @@
+.question {
+}
+.answer {
+}
+.container {
+  border-style: solid; /* ← самое важное! */
+  border-color: black;
+  border-radius: 10px;
+  border-width: 1px;
+  background-color: aqua;
+}

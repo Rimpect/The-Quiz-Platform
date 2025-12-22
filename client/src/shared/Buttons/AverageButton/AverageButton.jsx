@@ -1,7 +1,9 @@
-import React from 'react'
-
-export function AverageButton() {
+import React from "react";
+import "./AverageButton.css";
+export function AverageButton({ children, ...attributes }) {
   return (
-    <Button></Button>
-  )
+    <button type="button" className="CustomAverageButton" {...attributes}>
+      {children}
+    </button>
+  );
 }
