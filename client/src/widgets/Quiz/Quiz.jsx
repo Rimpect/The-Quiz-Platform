@@ -2,6 +2,7 @@ import React from "react";
 import { AverageButton } from "../../shared/Buttons/AverageButton/AverageButton";
 import { useParams } from "react-router-dom";
 import "./Quiz.css";
+import { Link } from "react-router-dom";
 export function Quiz() {
   const { id } = useParams();
   return (
@@ -23,6 +24,9 @@ export function Quiz() {
 
       <div className="aaaaa">
         <AverageButton>принять ответ</AverageButton>
+        <Link to={`/`}>
+          <AverageButton>прежде временно закончить квиз</AverageButton>
+        </Link>
       </div>
     </div>
   );

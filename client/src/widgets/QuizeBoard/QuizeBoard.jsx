@@ -26,9 +26,9 @@ export function QuizeBoard() {
     <div>
       <div className="container">
         {quizzes.map((quiz) => (
-          <Link key={quiz.id} to={`/quiz/${quiz.id}`}>
+          <Link key={quiz.id} to={`/QuizDescription/${quiz.id}`}>
             <QuizButton>
-              <img src={quiz.img} alt={`quiz ${quiz.id}`} />
+              <img src={quiz.img} alt={`QuizDescription ${quiz.id}`} />
             </QuizButton>
           </Link>
         ))}
@@ -48,5 +48,5 @@ export function QuizeBoard() {
         <SmallButton>Кнопка Назад</SmallButton>
       </div>
     </div>
-  );
+  ); 
 }
