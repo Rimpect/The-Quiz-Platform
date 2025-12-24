@@ -5,16 +5,25 @@ import "./Quiz.css";
 export function Quiz() {
   const { id } = useParams();
   return (
-    <div className="container">
-      <div className="Timer">таймер</div>
-      <div className="question">вопрос</div>
+    <div className="container_quiz">
+      <div className="container_question">
+        <div className="question">вопрос</div>
+        <div className="Timer">таймер</div>
+        <div>Квиз № {id}</div>
+      </div>
       <div className="answer">ответ</div>
-      <AverageButton>принять ответ</AverageButton>
       <div>
         мб даже какая нибудь таблица лидеров для закрытого квиза? что бы типа
         отображались места в данный момент
       </div>
-      <div>Квиз № {id}</div>;
+      <div>
+        мб даже какая нибудь таблица лидеров для закрытого квиза? что бы типа
+        отображались места в данный момент
+      </div>
+
+      <div className="aaaaa">
+        <AverageButton>принять ответ</AverageButton>
+      </div>
     </div>
   );
 }
