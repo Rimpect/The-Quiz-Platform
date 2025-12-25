@@ -1,12 +1,223 @@
 .CustomAverageButton {
-  border-color: black;
-  border-radius: 7px;
-  border-width: 1px;
+  border: none;
+  border-radius: 12px;
   color: white;
-  background-color: green;
+  background: linear-gradient(145deg, #2d8cff, #1a6fd9);
   height: 175px;
   width: 200px;
+  font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 6px 20px rgba(45, 140, 255, 0.25),
+    0 2px 6px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.5;
+  outline: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
+
+/* Эффект блеска при наведении */
+.CustomAverageButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  transition: 0.6s;
+}
+
+.CustomAverageButton:hover::before {
+  left: 100%;
+}
+
+/* Состояние наведения */
 .CustomAverageButton:hover {
-  background: #444;
+  background: linear-gradient(145deg, #3a96ff, #267be6);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 
+    0 12px 30px rgba(45, 140, 255, 0.35),
+    0 4px 12px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Состояние нажатия */
+.CustomAverageButton:active {
+  transform: translateY(1px) scale(0.99);
+  box-shadow: 
+    0 4px 12px rgba(45, 140, 255, 0.25),
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: linear-gradient(145deg, #267be6, #1a6fd9);
+  transition: all 0.1s ease;
+}
+
+/* Фокус для доступности */
+.CustomAverageButton:focus {
+  outline: none;
+  box-shadow: 
+    0 0 0 4px rgba(45, 140, 255, 0.4),
+    0 6px 20px rgba(45, 140, 255, 0.25),
+    0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Неактивное состояние */
+.CustomAverageButton:disabled {
+  background: linear-gradient(145deg, #a0c8ff, #8bb5f0);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.CustomAverageButton:disabled:hover {
+  background: linear-gradient(145deg, #a0c8ff, #8bb5f0);
+  transform: none;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Вариант со светлым фоном (outline) */
+.CustomAverageButton.variant-light {
+  background: white;
+  color: #2d8cff;
+  border: 2px solid #2d8cff;
+  box-shadow: 0 4px 12px rgba(45, 140, 255, 0.15);
+}
+
+.CustomAverageButton.variant-light:hover {
+  background: #f0f7ff;
+  color: #3a96ff;
+  border-color: #3a96ff;
+  box-shadow: 0 8px 20px rgba(45, 140, 255, 0.2);
+}
+
+.CustomAverageButton.variant-light:active {
+  background: #e6f0ff;
+  color: #267be6;
+  border-color: #267be6;
+}
+
+/* Вариант с градиентом */
+.CustomAverageButton.variant-gradient {
+  background: linear-gradient(135deg, #2d8cff 0%, #6eb1ff 50%, #2d8cff 100%);
+  background-size: 200% auto;
+}
+
+.CustomAverageButton.variant-gradient:hover {
+  background-position: right center;
+  animation: gradientShift 1.5s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: 0% center;
+  }
+}
+
+/* Вариант с иконкой */
+.CustomAverageButton.with-icon {
+  gap: 12px;
+  padding: 18px 20px;
+}
+
+.CustomAverageButton .icon {
+  font-size: 28px;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.CustomAverageButton:hover .icon {
+  transform: translateY(-2px) scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .CustomAverageButton {
+    height: 150px;
+    width: 170px;
+    font-size: 15px;
+    padding: 18px;
+    border-radius: 10px;
+  }
+  
+  .CustomAverageButton .icon {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .CustomAverageButton {
+    height: 130px;
+    width: 150px;
+    font-size: 14px;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .CustomAverageButton .icon {
+    font-size: 20px;
+  }
+}
+
+/* Эффект волны при клике */
+.CustomAverageButton {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.CustomAverageButton:active::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    width: 5px;
+    height: 5px;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }

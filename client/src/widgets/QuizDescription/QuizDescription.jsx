@@ -10,12 +10,18 @@ export function QuizDescription() {
     <div>
       <div>описание квиза Квиз № {id}</div>
       <div>описание квиза Квиз № {id}</div>
-      <Link to={`/`}>
-        <AverageButton>кнопка назад</AverageButton>
-      </Link>
-      <Link to={`/quiz/${id}`}>
-        <AverageButton>кнопка начать квиз</AverageButton>
-      </Link>
+<div style={{ 
+  display: 'inline-flex', 
+  gap: '10px',
+  flexWrap: 'wrap' /* если не помещается - перенос на новую строку */
+}}>
+  <Link to={`/`}>
+    <AverageButton>кнопка назад</AverageButton>
+  </Link>
+  <Link to={`/quiz/${id}`}>
+    <AverageButton>кнопка начать квиз</AverageButton>
+  </Link>
+</div>
     </div>
   );
 }
