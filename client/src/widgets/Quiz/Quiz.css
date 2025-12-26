@@ -1,34 +1,36 @@
-.question {
+.answers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
 }
-.answer {
-  border-style: solid;
-  border-color: black;
-  border-radius: 10px;
-  border-width: 1px;
-  background-color: aqua;
-  height: 10vw;
-  width: 100%;
+
+.answer-option {
+  padding: 15px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
-.container_quiz {
-  border-style: solid;
-  border-color: black;
-  border-radius: 10px;
-  border-width: 1px;
-  background-color: aqua;
-  height: 45vw;
-  width: 100%;
-  
+
+.answer-option:hover {
+  background-color: #f0f0f0;
+  border-color: #007bff;
 }
+
+.question h2 {
+  margin-bottom: 10px;
+}
+
+.Timer {
+  color: #ff6b6b;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
 .aaaaa {
   display: flex;
-  justify-content: center;
-}
-.container_question {
-  border-style: solid;
-  border-color: black;
-  border-radius: 10px;
-  border-width: 1px;
-  background-color: aqua;
-  height: 20vw;
-  width: 100%;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
 }
