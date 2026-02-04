@@ -1,5 +1,5 @@
 import React from "react";
-import "./CreateQuiz.css";
+import "./CreateQuiz.scss";
 export function CreateQuiz() {
   return (
     <div>

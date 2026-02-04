@@ -1,5 +1,5 @@
 import React from "react";
-import "./Header.css";
+import "./Header.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ export function Header() {
   return (
     <header>
       <div className="logo">Logo</div>
-      <div className="UserName">
+      <div className="UserName">a
         <Link to="/PersonalAccount">
           {" "}
           <FontAwesomeIcon icon={faUser} />

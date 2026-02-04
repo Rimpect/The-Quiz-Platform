@@ -1,5 +1,5 @@
 import React from "react";
-import "./QuizeBoard.css";
+import "./QuizeBoard.scss";
 import { SmallButton } from "../../shared/Buttons/SmallButton/SmallButton";
 import { QuizButton } from "../../shared/Buttons/QuizButton/QuizButton";
 import { useState } from "react";

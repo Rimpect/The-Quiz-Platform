@@ -1,5 +1,5 @@
 import React from "react";
-import "./UserAction.css";
+import "./UserAction.scss";
 import { SmallButton } from "../../shared/Buttons/SmallButton/SmallButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTools } from "@fortawesome/free-solid-svg-icons";

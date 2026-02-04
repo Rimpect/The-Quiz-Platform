@@ -1,0 +1,25 @@
+// _utils.scss
+@use "media";
+@use "mixins";
+
+.container {
+  max-width: calc(var(--container-width) + var(--container-padding-x) * 2);
+  margin-inline: auto;
+  padding-inline: var(--container-padding-x);
+}
+
+.visually-hidden {
+  @include mixins.visually-hidden;
+}
+
+.hidden-mobile {
+  @include media.mobile {
+    display: none !important;
+  }
+}
+
+.visible-mobile {
+  @include media.mobile-above {
+    display: none !important;
+  }
+}

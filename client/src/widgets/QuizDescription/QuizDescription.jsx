@@ -1,5 +1,5 @@
 import React from "react";
-import "./QuizDescription.css";
+import "./QuizDescription.scss";
 import { AverageButton } from "../../shared/Buttons/AverageButton/AverageButton";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";

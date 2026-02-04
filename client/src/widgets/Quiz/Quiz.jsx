@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AverageButton } from "../../shared/Buttons/AverageButton/AverageButton";
 import { useParams } from "react-router-dom";
-import "./Quiz.css";
+import "./Quiz.scss";
 import { Link } from "react-router-dom";
 
 export function Quiz() {

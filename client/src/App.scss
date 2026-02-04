@@ -1,0 +1,10 @@
+@use '/src/app/GlobalStyles/normalize';
+@use "/src/app/GlobalStyles/fonts";
+@use "/src/app/GlobalStyles/mixins";
+@use "/src/app/GlobalStyles/media";
+@use "/src/app/GlobalStyles/utils";
+@use "/src/app/GlobalStyles/variables";
+@use "/src/app/GlobalStyles/globals";
+
+
+@use "/src/widgets/CreateQuiz/CreateQuiz";
