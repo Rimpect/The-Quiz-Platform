@@ -7,7 +7,7 @@ export function Header() {
   return (
     <header>
       <div className="logo">Logo</div>
-      <div className="UserName">a
+      <div className="UserName">
         <Link to="/PersonalAccount">
           {" "}
           <FontAwesomeIcon icon={faUser} />
