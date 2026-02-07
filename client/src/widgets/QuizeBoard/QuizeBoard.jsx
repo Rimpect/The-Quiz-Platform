@@ -24,7 +24,7 @@ export function QuizeBoard() {
 
   return (
     <div>
-      <div className="container">
+      <div className="containerBoard">
         {quizzes.map((quiz) => (
           <Link key={quiz.id} to={`/QuizDescription/${quiz.id}`}>
             <QuizButton>

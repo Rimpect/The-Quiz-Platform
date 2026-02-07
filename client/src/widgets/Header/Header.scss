@@ -1,15 +1,19 @@
-header {
+.header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-top: 10px;
-  margin-right: 10px;
-  margin-left: 10px;
+  background-color: var(--color-dark);
+  color: var(--color-light);
+  min-height: 240px;
+  border-radius: 0 0 var(--border-radius-large) var(--border-radius-large);
+  border: solid var(--color-dark);
+  margin-bottom: 15px;
 }
-.logo {
+.header__logo {
   font-size: 40px;
   font-weight: bold;
+  color: inherit;
 }
-.UserName {
+.header__UserName {
   font-size: 40px;
+  color: inherit;
 }

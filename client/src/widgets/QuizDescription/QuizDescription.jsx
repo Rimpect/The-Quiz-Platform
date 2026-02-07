@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 export function QuizDescription() {
   const { id } = useParams();
-  console.log("ID FROM PARAMS:", id);
   return (
     <div>
       <div>описание квиза Квиз № {id}</div>
