@@ -1,19 +1,37 @@
+@use "../../app/GlobalStyles/media";
+@use "../../app/GlobalStyles/mixins";
 .header {
-  display: flex;
-  justify-content: space-between;
-  background-color: var(--color-dark);
-  color: var(--color-light);
-  min-height: 240px;
-  border-radius: 0 0 var(--border-radius-large) var(--border-radius-large);
-  border: solid var(--color-dark);
-  margin-bottom: 15px;
+  &__inner {
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--color-dark);
+    color: var(--color-light);
+    min-height: 140px;
+    border-radius: 0 0 var(--border-radius-large) var(--border-radius-large);
+    border: solid var(--color-dark);
+    margin-bottom: 15px;
+  }
+  &__logo {
+    font-size: 40px;
+    font-weight: bold;
+    color: inherit;
+
+    // @include media.hover {
+    //   color: var(--color-accent);
+    //   transition-duration: var(--transition-duration);
+    // }
+  }
+  &__user {
+    color: inherit;
+    &-link {
+      font-size: 40px;
+    }
+    &-icon {
+      font-size: 40px;
+    }
+    &-text {
+      font-size: 40px;
+    }
+  }
 }
-.header__logo {
-  font-size: 40px;
-  font-weight: bold;
-  color: inherit;
-}
-.header__UserName {
-  font-size: 40px;
-  color: inherit;
-}
+

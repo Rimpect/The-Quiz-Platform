@@ -5,17 +5,16 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 export function Header() {
   return (
-    <header className='header'>
- 
-      <div className="header__logo">Logo</div>
-      <div className="header__UserName">
-        <Link to="/PersonalAccount">
-          {" "}
-          <FontAwesomeIcon icon={faUser} />
-        </Link>
-        Имя пользователя/Гость
+    <header className="header">
+      <div className="header__inner">
+        <div className="header__logo">Quizus</div>
+        <div className="header__user">
+          <Link to="/PersonalAccount" className="header__user-link">
+            <FontAwesomeIcon icon={faUser} className="header__user-icon" />
+            <span className="header__user-text">Имя пользователя/Гость</span>
+          </Link>
+        </div>
       </div>
-      
     </header>
   );
 }
