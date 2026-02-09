@@ -2,13 +2,13 @@
 
 }
 .containerBoard {
-  max-width: 1200px;
+  max-width: auto;
   margin: 0 auto;
   padding: 0 24px;
 
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
   column-gap: 50px;
   row-gap: 50px;
   justify-content: center;

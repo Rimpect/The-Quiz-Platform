@@ -1,10 +1,10 @@
 import React from "react";
 import "./QuizeBoard.scss";
 import { SmallButton } from "../../shared/Buttons/SmallButton/SmallButton";
-import { QuizButton } from "../../shared/Buttons/QuizButton/QuizButton";
 import { useState } from "react";
 import { ModalNotifications } from "../../shared/Modal/ModalNotifications/ModalNotifications";
 import { Link } from "react-router-dom";
+import { QuizCard } from "../../shared/QuizCard/QuizCard/QuizCard";
 export function QuizeBoard() {
   const [open, setOpen] = useState(false);
   const quizzes = [
@@ -27,9 +27,7 @@ export function QuizeBoard() {
       <div className="containerBoard">
         {quizzes.map((quiz) => (
           <Link key={quiz.id} to={`/QuizDescription/${quiz.id}`}>
-            <QuizButton>
-              <img src={quiz.img} alt={`QuizDescription ${quiz.id}`} />
-            </QuizButton>
+            <QuizCard img={quiz.img} id={quiz.id} />
           </Link>
         ))}
         {/* <QuizButton onClick={() => setOpen(true)}>
@@ -48,5 +46,5 @@ export function QuizeBoard() {
         <SmallButton>Кнопка Назад</SmallButton>
       </div>
     </section>
-  ); 
+  );
 }
