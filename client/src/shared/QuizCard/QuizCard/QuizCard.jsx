@@ -1,17 +1,32 @@
 import React from "react";
 import "./QuizCard.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSignal } from "@fortawesome/free-solid-svg-icons";
+import { faTrophy, faUsers, faClock } from "@fortawesome/free-solid-svg-icons";
 export function QuizCard(props) {
   const { img, id, description } = props;
 
   return (
     <div className="quiz-card">
-      <button className="quiz-card__button button">
+      <div className="quiz-card__inner">
         <div className="quiz-card__image-wrapper">
           <img src={img} alt={`Квиз ${id}`} className="quiz-card__image" />
+          <span className="quiz-card__image-label">Сложность:</span>
+          {/* планируется сложности писать влевом верхнем углу картинки */}
         </div>
         <div className="quiz-card__content">
+          <div className="quiz-card__category">
+            <div className="quiz-card__category-icon">
+              {" "}
+              <FontAwesomeIcon
+                icon={faTrophy}
+                className="quiz-card__category-icon"
+              />
+            </div>
+            <div className="quiz-card__category-text">
+              текст к какой категории относится квиз
+            </div>
+          </div>
+          <div className="quiz-card__title">Title</div>
           <p className="quiz-card__description">
             {description} Lorem ipsum dolor sit amet consectetur adipisicing
             elit. Asperiores architecto nobis veniam sint accusantium! Quis modi
@@ -20,19 +35,24 @@ export function QuizCard(props) {
           </p>
 
           {/* Блок сложности */}
-          <div className="quiz-card__complexity">
-            <span className="quiz-card__complexity-label">Сложность:</span>
-            <div className="quiz-card__complexity-icons">
-              {/* Иконки сложности - пример */}
-              <span className="quiz-card__complexity-icon quiz-card__complexity-icon--active">Легкая</span>
+          <div className="quiz-card__info">
+            <div className="quiz-card__info-item">
               <FontAwesomeIcon
-                icon={faSignal}
-                className="quiz-card__complexity-icon"
+                icon={faClock}
+                className="quiz-card__info-icon"
               />
+              <span className="quiz-card__info-text">15 мин</span>
+            </div>
+            <div className="quiz-card__info-item">
+              <FontAwesomeIcon
+                icon={faUsers}
+                className="quiz-card__info-icon"
+              />
+              <span className="quiz-card__info-text">128 чел</span>
             </div>
           </div>
         </div>
-      </button>
+      </div>
     </div>
   );
 }

@@ -8,9 +8,7 @@
   width: 100%;
   max-width: 500px;
   overflow: hidden;
-  
-  &__button {
-    background-color: transparent;
+  &__inner {
   }
   &__image {
     width: 100%;
@@ -18,8 +16,7 @@
     object-fit: cover;
     display: block;
     transition: transform 0.3s ease;
-
-
+    background-color: transparent;
     @include media.hover {
       transform: scale(1.03);
     }
@@ -32,16 +29,32 @@
       flex-shrink: 0;
     }
   }
+
   &__content {
     display: block;
     gap: 20px;
     padding: 20px;
   }
+
   &__description {
     margin: 0;
     text-align: left;
     margin-bottom: 10px;
+
+    font-size: 20px;
+    color: #666;
+    line-height: 1.2;
+    /* Для line-clamp обязательно нужны: */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    /* Добавляем перенос слов */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
+
   &__complexity {
     text-align: left;
     display: flex;
@@ -54,4 +67,5 @@
       font-weight: 800;
     }
   }
+  
 }
