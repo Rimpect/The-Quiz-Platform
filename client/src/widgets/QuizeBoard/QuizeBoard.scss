@@ -1,17 +1,14 @@
 .dashboardQuiz {
-
-}
-.containerBoard {
-  max-width: auto;
-  margin: 0 auto;
-  padding: 0 24px;
-
+  max-width: 1600px; /* Или любая другая максимальная ширина */
+  margin: 0 auto; /* Это дает одинаковые отступы слева и справа */
+  padding: 0 24px; /* Внутренние отступы для контента */
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(4, 1fr);
-  column-gap: 50px;
-  row-gap: 50px;
-  justify-content: center;
+  gap: 50px;
+  align-items: center;
+}
+.containerBoard {
 }
 
 .nav {

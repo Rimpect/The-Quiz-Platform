@@ -19,7 +19,7 @@ export function QuizCard(props) {
               {" "}
               <FontAwesomeIcon
                 icon={faTrophy}
-                className="quiz-card__category-icon"
+                className="quiz-card__category-icon-svg"
               />
             </div>
             <div className="quiz-card__category-text">
@@ -38,17 +38,17 @@ export function QuizCard(props) {
           <div className="quiz-card__info">
             <div className="quiz-card__info-item">
               <FontAwesomeIcon
-                icon={faClock}
-                className="quiz-card__info-icon"
+                icon={faUsers}
+                className="quiz-card__info-icon-svg"
               />
-              <span className="quiz-card__info-text">15 мин</span>
+              <span className="quiz-card__info-text">128</span>
             </div>
             <div className="quiz-card__info-item">
               <FontAwesomeIcon
-                icon={faUsers}
-                className="quiz-card__info-icon"
+                icon={faClock}
+                className="quiz-card__info-icon-svg"
               />
-              <span className="quiz-card__info-text">128 чел</span>
+              <span className="quiz-card__info-text">15 мин</span>
             </div>
           </div>
         </div>
