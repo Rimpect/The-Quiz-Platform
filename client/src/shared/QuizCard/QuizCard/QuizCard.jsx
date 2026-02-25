@@ -3,15 +3,16 @@ import "./QuizCard.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrophy, faUsers, faClock } from "@fortawesome/free-solid-svg-icons";
 export function QuizCard(props) {
-  const { img, id, description } = props;
+  const { img, id, description, difficulty } = props;
 
   return (
     <div className="quiz-card">
       <div className="quiz-card__inner">
         <div className="quiz-card__image-wrapper">
           <img src={img} alt={`Квиз ${id}`} className="quiz-card__image" />
-          <span className="quiz-card__image-label">Сложность:</span>
-          {/* планируется сложности писать влевом верхнем углу картинки */}
+          <span className={`quiz-card__badge quiz-card__badge--${difficulty}`}>
+            Сложность
+          </span>
         </div>
         <div className="quiz-card__content">
           <div className="quiz-card__category">
