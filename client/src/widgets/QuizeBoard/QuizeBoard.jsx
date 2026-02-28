@@ -23,8 +23,8 @@ export function QuizeBoard() {
   ];
 
   return (
-    <section className="dashboardQuiz">
-      <div className="containerBoard">
+    <div className="containerBoard">
+      <div className="dashboardQuiz">
         {quizzes.map((quiz) => (
           <Link key={quiz.id} to={`/QuizDescription/${quiz.id}`}>
             <QuizCard img={quiz.img} id={quiz.id} />
@@ -45,6 +45,6 @@ export function QuizeBoard() {
         <div>выбрать страницу</div>
         <SmallButton>Кнопка Назад</SmallButton>
       </div>
-    </section>
+    </div>
   );
 }
