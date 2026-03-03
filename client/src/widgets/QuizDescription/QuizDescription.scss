@@ -1,94 +1,353 @@
-.description {
-  &__inner {
-    margin: auto;
-    max-width: 1600px;
-  }
-  &__nav {
-    display: flex;
-  }
-  &__content {
-    // display: flex;
+// QuizDescription.scss
 
-    // border: 1px solid gray;
-    // border-radius: 7px;
-    // background-color: red;
-    border-radius: 7px 7px 0px 0px;
+// Переменные
+$white: #ffffff;
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+$blue-50: #eff6ff;
+$blue-200: #bfdbfe;
+$blue-600: #2563eb;
+$blue-700: #1d4ed8;
+$blue-800: #1e40af;
+$blue-900: #1e3a8a;
+$green-100: #dcfce7;
+$green-800: #166534;
+$yellow-100: #fef9c3;
+$yellow-400: #facc15;
+$yellow-800: #854d0e;
+$red-100: #fee2e2;
+$red-800: #991b1b;
+
+$spacing-xs: 0.5rem;
+$spacing-sm: 0.75rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 3rem;
+
+$border-radius-sm: 0.375rem;
+$border-radius-md: 0.5rem;
+$border-radius-lg: 0.75rem;
+$border-radius-xl: 1rem;
+
+$icon-size-sm: 1rem;
+$icon-size-md: 1.25rem;
+$icon-size-lg: 1.5rem;
+
+// Миксины
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+}
+
+@mixin transition {
+  transition: all 0.15s ease;
+}
+
+// Основные стили
+.description {
+  min-height: 100vh;
+  background-color: $gray-50;
+
+  &__container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: $spacing-xl $spacing-md;
   }
+
+  // Навигация
+  &__nav {
+    @include flex-center;
+    gap: $spacing-xs;
+    margin-bottom: $spacing-lg;
+    background: none;
+    border: none;
+    color: $gray-600;
+    cursor: pointer;
+    font-size: 0.95rem;
+    @include transition;
+
+    &:hover {
+      color: $gray-900;
+    }
+
+    &-icon {
+      width: $icon-size-sm;
+      height: $icon-size-sm;
+    }
+  }
+
+  // Основной контент
+  &__content {
+    background-color: $white;
+    border-radius: $border-radius-lg;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  // Картинка с оверлеем
   &__picture {
     position: relative;
-    // display: flex;
-    height: 25vw;
+    height: 320px;
+    overflow: hidden;
   }
-  &__img {
-    position: absolute;
-    background-color: forestgreen;
 
+  &__img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border: 1px solid gray;
-    border-radius: 7px 7px 0px 0px;
   }
+
   &__overlay {
     position: absolute;
-    top: 20px;
-    left: 20px;
-    color: white;
-    font-size: 24px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    z-index: 1;
-    top: 1px;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    display: flex;
+    align-items: flex-end;
+    padding: $spacing-lg;
+
+    &-content {
+      color: $white;
+      width: 100%;
+    }
   }
+
+  &__meta {
+    @include flex-center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
+
+    &-icon {
+      width: $icon-size-md;
+      height: $icon-size-md;
+    }
+
+    &-category {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+  }
+
+  &__badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+
+    &--easy {
+      background-color: $green-100;
+      color: $green-800;
+    }
+
+    &--medium {
+      background-color: $yellow-100;
+      color: $yellow-800;
+    }
+
+    &--hard {
+      background-color: $red-100;
+      color: $red-800;
+    }
+  }
+
+  &__title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__rating {
+    @include flex-center;
+    gap: 0.25rem;
+
+    &-icon {
+      width: $icon-size-sm;
+      height: $icon-size-sm;
+      fill: $yellow-400;
+      color: $yellow-400;
+    }
+
+    &-value {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+  }
+
+  // Две колонки
+  &__columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+    padding: $spacing-xl;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  // Левая колонка
   &__info {
-    flex: 1;
+    &-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: $spacing-md;
+      color: $gray-900;
+    }
+
+    &-text {
+      color: $gray-600;
+      margin-bottom: $spacing-lg;
+      line-height: 1.6;
+    }
+  }
+
+  &__card {
+    background-color: $blue-50;
+    border: 1px solid $blue-200;
+    border-radius: $border-radius-md;
+    padding: $spacing-lg;
+
+    &-title {
+      font-weight: 600;
+      margin-bottom: $spacing-sm;
+      color: $blue-900;
+    }
+
+    &-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    &-item {
+      color: $blue-800;
+      font-size: 0.95rem;
+      padding: 0.25rem 0;
+    }
+  }
+
+  // Правая колонка
+  &__stats-wrapper {
+    &-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: $spacing-md;
+      color: $gray-900;
+    }
+  }
+
+  &__stats-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: $spacing-md;
+    color: $gray-900;
+  }
+
+  &__stats-list {
     display: flex;
     flex-direction: column;
+    gap: $spacing-md;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 $spacing-xl 0;
+  }
 
-    &-title {
-    }
-    &-text {
-    }
-  }
-  &__hero {
-    display: flex;
+  &__stats-item {
+    @include flex-center;
+    justify-content: space-between;
+    padding: $spacing-md;
+    background-color: $gray-50;
+    border-radius: $border-radius-md;
+    @include transition;
 
-    border: 1px solid gray;
-    border-radius: 0px 0px 7px 7px;
-    background-color: red;
-  }
-  &__card {
-    border: 1px solid blue;
-    border-radius: 7px;
-    background-color: rgb(173, 218, 245);
-    max-width: 550px;
-    font-size: 14px;
-    padding: 15px;
-    line-height: 1.5;
-    &-title {
-      font-weight: bold;
-      color: rgb(55, 19, 153);
-    }
-    &-item {
-      color: rgb(55, 19, 153);
-    }
-    &-list {
+    &:hover {
+      background-color: darken($gray-50, 2%);
     }
   }
-  &__stats {
-    flex: 1;
-    margin: 10px;
-    &-list {
+
+  &__stats-left {
+    @include flex-center;
+    gap: $spacing-sm;
+  }
+
+  &__stats-icon {
+    @include flex-center;
+    justify-content: center;
+    width: $icon-size-md;
+    height: $icon-size-md;
+    color: $blue-600;
+    flex-shrink: 0;
+
+    svg {
+      width: 100%;
+      height: 100%;
     }
-    &-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      border: 1px solid blue;
-      border-radius: 7px;
-      &-label {
-      }
-      &-value {
-      }
+  }
+
+  &__stats-label {
+    color: $gray-700;
+    font-size: 0.95rem;
+  }
+
+  &__stats-value {
+    font-weight: 600;
+    color: $gray-900;
+  }
+
+  // Кнопка старта
+  &__start-btn {
+    width: 100%;
+    padding: $spacing-md;
+    background-color: $blue-600;
+    color: $white;
+    border: none;
+    border-radius: $border-radius-md;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      background-color: $blue-700;
+    }
+  }
+}
+
+// Адаптивность для мобильных
+@media (max-width: 640px) {
+  .description {
+    &__container {
+      padding: $spacing-md;
+    }
+
+    &__picture {
+      height: 250px;
+    }
+
+    &__title {
+      font-size: 1.5rem;
+    }
+
+    &__columns {
+      padding: $spacing-md;
+      gap: $spacing-lg;
+    }
+
+    &__stats-item {
+      padding: $spacing-sm;
+    }
+
+    &__stats-label {
+      font-size: 0.9rem;
+    }
+
+    &__stats-value {
+      font-size: 0.95rem;
     }
   }
 }
