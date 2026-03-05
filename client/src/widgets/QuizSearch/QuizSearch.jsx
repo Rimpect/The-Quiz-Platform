@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SlidersHorizontal, Search } from "lucide-react";
 import "./QuizSearch.scss";
 
-const QuizSearch = () => {
+export function QuizSearch() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -45,5 +45,3 @@ const QuizSearch = () => {
     </div>
   );
 };
-
-export default QuizSearch;
