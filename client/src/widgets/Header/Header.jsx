@@ -13,7 +13,9 @@ export function Header() {
         <div className="header__user">
           <User className="header__user-icon" />
           <span className="header__user-text">Имя пользователя/Гость</span>
-          <Link to="/PersonalAccount" className="header__user-link">КНОПКА</Link>
+          <Link to="/PersonalAccount" className="header__user-link">
+            <button className="header__user-button">Войти</button>
+          </Link>
         </div>
       </div>
     </header>

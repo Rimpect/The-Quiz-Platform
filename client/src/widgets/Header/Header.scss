@@ -4,7 +4,9 @@
   &__container {
     width: 100%;
     color: var(--color-light);
-    background-color: var(--color-dark);
+    background-color: white;
+    border-bottom: 1px solid #e5e7eb;
+    color: black;
   }
   &__inner {
     display: flex;
@@ -18,31 +20,46 @@
     font-weight: bold;
     color: inherit;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 15px;
     &-icon {
       width: 40px;
       height: 40px;
-      aspect-ratio: 1;
-      background-color: blue;
-      border: solid 1px blue;
-      border-radius: 7px;
+      background-color: #2563eb;
+      border: solid 1px #2563eb;
+      border-radius: 8px;
       display: flex;
-      align-items: center;  
-      justify-content: center; 
+      align-items: center;
+      justify-content: center;
       text-align: center;
+      color: white;
+      font-weight: 700;
     }
     &-title {
     }
   }
   &__user {
     color: inherit;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     &-link {
-      font-size: 40px;
+    }
+    &-button {
+      // потом вынести кнопку это в ui
+      padding: 5px 10px;
+      background-color: rgb(0, 0, 0);
+      border: solid 1px rgb(0, 0, 0);
+      color: white;
+      border-radius: 7px;
     }
     &-icon {
-      font-size: 40px;
+      color: #232323;
     }
     &-text {
-      font-size: 40px;
     }
   }
 }
