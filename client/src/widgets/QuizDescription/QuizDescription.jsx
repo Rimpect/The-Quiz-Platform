@@ -2,7 +2,7 @@ import React from "react";
 import "./QuizDescription.scss";
 import image1 from "../../assets/img/QuizCardTest/pic.jpg";
 import { ArrowLeft, Users, Clock, Trophy, Star, Award } from "lucide-react";
-
+import { Link } from "react-router-dom";
 export function QuizDescription() {
   // Заглушки данных
   const quizData = {
@@ -30,10 +30,11 @@ export function QuizDescription() {
     <div className="description">
       <div className="description__container">
         {/* Навигация */}
-        <button className="description__nav">
+
+        <Link to={`/`} className="description__nav">
           <ArrowLeft className="description__nav-icon" />
           <span>Назад к списку</span>
-        </button>
+        </Link>
 
         {/* Основной контент */}
         <div className="description__content">
@@ -154,7 +155,9 @@ export function QuizDescription() {
                 </li>
               </ul>
 
-              <button className="description__start-btn">Начать квиз</button>
+              <Link to={`/QuizPage/:id`} className="description__start-btn">
+                <span>Начать квиз</span>
+              </Link>
             </div>
           </div>
         </div>

@@ -11,13 +11,17 @@ function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<MainPage />} />
-        <Route path="/quiz/:id" element={<QuizPage />} />
         <Route path="/PersonalAccount" element={<PersonalAccount />} />
-        <Route path="/SignUp" element={<SignUp />} />
         <Route path="/QuizDescription/:id" element={<QuizDescriptionPage />} />
+        {/* <Route path="/CreateQuiz" element={<CreateQuiz />} /> */}
       </Route>
+      <Route path="/SignUp" element={<SignUp />} />
+      {/* <Route path="/RegistrationPage" element={<RegistrationPage />} /> */}
+      <Route path="/QuizPage/:id" element={<QuizPage />} />
+      {/* <Route path="/FinishQuiz/:id" element={<FinishQuiz />} /> */}
     </Routes>
   );
 }
 
 export default App;
+ 
