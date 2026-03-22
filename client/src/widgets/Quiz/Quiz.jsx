@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { AverageButton } from "../../shared/Buttons/AverageButton/AverageButton";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "./Quiz.scss";
 import { Link } from "react-router-dom";
+import FinishQuiz from "../../pages/FinishQuiz/FinishQuiz";
 
 export function Quiz() {
   const { id } = useParams();
@@ -14,6 +15,8 @@ export function Quiz() {
   const [correctCount, setCorrectCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [isFinished, setIsFinished] = useState(false);
+
+  const navigate = useNavigate();
   // Расширенные вопросы с поддержкой разных типов и медиа
   const questions = [
     {
@@ -228,52 +231,17 @@ export function Quiz() {
 
   if (isFinished) {
     const percentScore = Math.round((totalScore / maxPossibleScore) * 100);
+    navigate(`/FinishQuiz/${id}`, {
+      state: {
+        totalScore,
+        maxPossibleScore,
+        percentScore,
+        correctCount,
+        totalQuestions,
+      },
+    });
 
-    return (
-      <div className="quiz-container">
-        <div className="quiz-header">
-          <h2>Иконка кубка</h2>
-          <h2>Не сдавайтесь! 💪</h2>
-          <div>Квиз (Название квиза) завершен</div>
-        </div>
-
-        <div className="results-container">
-          <div className="score-circle">
-            <span className="score-percent">{percentScore}%</span>
-          </div>
-
-          <div className="score-details">
-            <h3>Ваш результат:</h3>
-            <p className="score-text">
-              {totalScore} из {maxPossibleScore} баллов
-            </p>
-            <p className="correct-count">
-              Правильных ответов: {correctCount} из {totalQuestions}
-            </p>
-          </div>
-        </div>
-
-        <div className="actions">
-          <div>правильно</div>
-          <div>ошибок</div>
-          <div>всего вопросов</div>
-        </div>
-
-        <div className="actions">
-          <Link to="/">
-            <span>Вернуться на главную</span>
-          </Link>
-          <Link to="/">
-            <span>Пройти еще раз</span>
-          </Link>
-        </div>
-
-        <div className="actions">
-          Каждая попытка делает вас умнее! Попробуйте пройти квиз снова или
-          выберите другой.
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -413,8 +381,6 @@ export function Quiz() {
         <span onClick={() => handleNext()} variant="secondary">
           Пропустить вопрос
         </span>
-
-      
       </div>
 
       {/* Таблица лидеров */}

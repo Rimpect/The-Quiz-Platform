@@ -2,6 +2,7 @@ import "./App.scss";
 import { Routes, Route } from "react-router-dom";
 import { MainPage } from "./pages/MainPage/MainPage";
 import { QuizPage } from "./pages/QuizPage/QuizPage";
+import { FinishQuiz } from "./pages/FinishQuiz/FinishQuiz";
 import { PersonalAccount } from "./pages/PersonalAccount/PersonalAccount";
 import { SignUp } from "./pages/SignUp/SignUp.jsx";
 import { Layout } from "./widgets/Layout/Layout.jsx";
@@ -18,10 +19,9 @@ function App() {
       <Route path="/SignUp" element={<SignUp />} />
       {/* <Route path="/RegistrationPage" element={<RegistrationPage />} /> */}
       <Route path="/QuizPage/:id" element={<QuizPage />} />
-      {/* <Route path="/FinishQuiz/:id" element={<FinishQuiz />} /> */}
+      <Route path="/FinishQuiz/:id" element={<FinishQuiz />} />
     </Routes>
   );
 }
 
 export default App;
- 
