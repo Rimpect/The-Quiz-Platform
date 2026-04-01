@@ -59,4 +59,4 @@ npm run build
 Возможно этот пункт уберу
 
 ## Источники
-- [Макет](https://www.gatsbyjs.com/](https://www.figma.com/make/zpP444W8H8O9CRoGCNj6PT/Quiz-Platform-Layout?p=f&t=L8h7bvWzVxI0dQPw-0)](https://www.figma.com/make/zpP444W8H8O9CRoGCNj6PT/Quiz-Platform-Layout)
+- [Макет](https://www.figma.com/make/zpP444W8H8O9CRoGCNj6PT/Quiz-Platform-Layout)
