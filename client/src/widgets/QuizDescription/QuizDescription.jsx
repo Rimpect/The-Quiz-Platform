@@ -1,8 +1,9 @@
 import React from "react";
-import "./QuizDescription.scss";
+import styles from "./QuizDescription.module.scss";
 import image1 from "../../assets/img/QuizCardTest/pic.jpg";
 import { ArrowLeft, Users, Clock, Trophy, Star, Award } from "lucide-react";
 import { Link } from "react-router-dom";
+
 export function QuizDescription() {
   // Заглушки данных
   const quizData = {
@@ -19,76 +20,70 @@ export function QuizDescription() {
     image: image1,
   };
 
-  // Цвета для сложности
-  const difficultyColor = {
-    Легкий: "description__badge--easy",
-    Средний: "description__badge--medium",
-    Сложный: "description__badge--hard",
-  };
-
   return (
-    <div className="description">
-      <div className="description__container">
+    <div className={styles.description}>
+      <div className={styles.container}>
         {/* Навигация */}
-
-        <Link to={`/`} className="description__nav">
-          <ArrowLeft className="description__nav-icon" />
+        <Link to={`/`} className={styles.nav}>
+          <ArrowLeft className={styles.navIcon} />
           <span>Назад к списку</span>
         </Link>
 
         {/* Основной контент */}
-        <div className="description__content">
+        <div className={styles.content}>
           {/* Картинка с оверлеем */}
-          <div className="description__picture">
+          <div className={styles.picture}>
             <img
               src={quizData.image}
               alt={quizData.title}
-              className="description__img"
+              className={styles.img}
             />
-            <div className="description__overlay">
-              <div className="description__overlay-content">
-                <div className="description__meta">
-                  <Trophy className="description__meta-icon" />
-                  <span className="description__meta-category">
+            <div className={styles.overlay}>
+              <div className={styles.overlayContent}>
+                <div className={styles.meta}>
+                  <Trophy className={styles.metaIcon} />
+                  <span className={styles.metaCategory}>
                     {quizData.category}
                   </span>
                   <span
-                    className={`description__badge ${difficultyColor[quizData.difficulty]}`}
+                    className={`${styles.badge} ${
+                      (quizData.difficulty === "Легкий" && styles.easy) ||
+                      (quizData.difficulty === "Средний" && styles.medium) ||
+                      (quizData.difficulty === "Сложный" && styles.hard)
+                    }`}
                   >
                     {quizData.difficulty}
                   </span>
                 </div>
-                <h1 className="description__title">{quizData.title}</h1>
-                <div className="description__rating">
-                  <Star className="description__rating-icon" />
-                  <span className="description__rating-value">
-                    {quizData.rating}
-                  </span>
+                <h1 className={styles.title}>{quizData.title}</h1>
+                <div className={styles.rating}>
+                  <Star className={styles.ratingIcon} />
+                  <span className={styles.ratingValue}>{quizData.rating}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Две колонки */}
-          <div className="description__columns">
+          <div className={styles.columns}>
             {/* Левая колонка - описание */}
-            <div className="description__info">
-              <h2 className="description__info-title">О квизе</h2>
-              <p className="description__info-text">{quizData.description}</p>
+            <div>
+              <h2 className={styles.infoTitle}>О квизе</h2>
+              <p className={styles.infoText}>{quizData.description}</p>
 
-              <div className="description__card">
-                <h3 className="description__card-title">Что вас ждет?</h3>
-                <ul className="description__card-list">
-                  <li className="description__card-item">
+              <div className={styles.card}>
+                <h3 className={styles.cardTitle}>Что вас ждет?</h3>
+                <ul className={styles.cardList}>
+                  <li className={styles.cardItem}>
                     • {quizData.questionCount} интересных вопросов
                   </li>
-                  <li className="description__card-item">
+                  <li className={styles.cardItem}>
                     • Ограничение по времени на каждый вопрос
                   </li>
-                  <li className="description__card-item">
+                  <li className={styles.cardItem}>
                     • Мгновенная проверка ответов
                   </li>
-                  <li className="description__card-item">
+                  <li className={styles.cardItem}>
                     • Подробная статистика в конце
                   </li>
                 </ul>
@@ -96,66 +91,60 @@ export function QuizDescription() {
             </div>
 
             {/* Правая колонка - статистика и кнопка */}
-            <div className="description__stats-wrapper">
-              <h2 className="description__stats-title">Статистика</h2>
+            <div>
+              <h2 className={styles.statsTitle}>Статистика</h2>
 
-              <ul className="description__stats-list">
-                <li className="description__stats-item">
-                  <div className="description__stats-left">
-                    <span className="description__stats-icon">
+              <ul className={styles.statsList}>
+                <li className={styles.statsItem}>
+                  <div className={styles.statsLeft}>
+                    <span className={styles.statsIcon}>
                       <Users />
                     </span>
-                    <span className="description__stats-label">
-                      Участников:
-                    </span>
+                    <span className={styles.statsLabel}>Участников:</span>
                   </div>
-                  <span className="description__stats-value">
+                  <span className={styles.statsValue}>
                     {quizData.participants.toLocaleString()}
                   </span>
                 </li>
 
-                <li className="description__stats-item">
-                  <div className="description__stats-left">
-                    <span className="description__stats-icon">
+                <li className={styles.statsItem}>
+                  <div className={styles.statsLeft}>
+                    <span className={styles.statsIcon}>
                       <Clock />
                     </span>
-                    <span className="description__stats-label">
-                      Длительность:
-                    </span>
+                    <span className={styles.statsLabel}>Длительность:</span>
                   </div>
-                  <span className="description__stats-value">
+                  <span className={styles.statsValue}>
                     {quizData.duration} минут
                   </span>
                 </li>
 
-                <li className="description__stats-item">
-                  <div className="description__stats-left">
-                    <span className="description__stats-icon">
+                <li className={styles.statsItem}>
+                  <div className={styles.statsLeft}>
+                    <span className={styles.statsIcon}>
                       <Award />
                     </span>
-                    <span className="description__stats-label">
-                      Лучший результат:
-                    </span>
+                    <span className={styles.statsLabel}>Лучший результат:</span>
                   </div>
-                  <span className="description__stats-value">
+                  <span className={styles.statsValue}>
                     {quizData.topScore}%
                   </span>
                 </li>
 
-                <li className="description__stats-item">
-                  <div className="description__stats-left">
-                    <span className="description__stats-icon">
+                <li className={styles.statsItem}>
+                  <div className={styles.statsLeft}>
+                    <span className={styles.statsIcon}>
                       <Trophy />
                     </span>
-                    <span className="description__stats-label">Вопросов:</span>
+                    <span className={styles.statsLabel}>Вопросов:</span>
                   </div>
-                  <span className="description__stats-value">
+                  <span className={styles.statsValue}>
                     {quizData.questionCount}
                   </span>
                 </li>
               </ul>
 
-              <Link to={`/QuizPage/:id`} className="description__start-btn">
+              <Link to={`/QuizPage/:id`} className={styles.startBtn}>
                 <span>Начать квиз</span>
               </Link>
             </div>

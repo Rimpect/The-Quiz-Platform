@@ -1,20 +1,21 @@
 import React from "react";
-import "./Header.scss";
+import styles from "./Header.module.scss";
 import { User } from "lucide-react";
 import { Link } from "react-router-dom";
+
 export function Header() {
   return (
-    <header className="header__container">
-      <div className="header__inner">
-        <div className="header__logo">
-          <div className="header__logo-icon">Q</div>
-          <div className="header__logo-title">QuizMaster</div>
+    <header className={styles.headerContainer}>
+      <div className={styles.headerInner}>
+        <div className={styles.logo}>
+          <div className={styles.logoIcon}>Q</div>
+          <div className={styles.logoTitle}>QuizMaster</div>
         </div>
-        <div className="header__user">
-          <User className="header__user-icon" />
-          <span className="header__user-text">Имя пользователя/Гость</span>
-          <Link to="/PersonalAccount" className="header__user-link">
-            <button className="header__user-button">Войти</button>
+        <div className={styles.user}>
+          <User className={styles.userIcon} />
+          <span className={styles.userText}>Имя пользователя/Гость</span>
+          <Link to="/PersonalAccount" className={styles.userLink}>
+            <button className={styles.userButton}>Войти</button>
           </Link>
         </div>
       </div>

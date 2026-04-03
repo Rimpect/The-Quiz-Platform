@@ -1,12 +1,14 @@
 import React from "react";
-import "./QuizeBoard.scss";
+import styles from "./QuizeBoard.module.scss";
 import { SmallButton } from "../../shared/Buttons/SmallButton/SmallButton";
 import { useState } from "react";
 import { ModalNotifications } from "../../shared/Modal/ModalNotifications/ModalNotifications";
 import { Link } from "react-router-dom";
 import { QuizCard } from "../../shared/QuizCard/QuizCard/QuizCard";
+
 export function QuizeBoard() {
   const [open, setOpen] = useState(false);
+  
   const quizzes = [
     {
       id: 1,
@@ -135,22 +137,23 @@ export function QuizeBoard() {
       duration: 15,
     },
   ];
+
   return (
-    <div className="containerBoard">
-      <div className="dashboardQuiz">
+    <div className={styles.containerBoard}>
+      <div className={styles.dashboardQuiz}>
         {quizzes.map((quiz) => (
           <Link key={quiz.id} to={`/QuizDescription/${quiz.id}`}>
             <QuizCard {...quiz} />
           </Link>
         ))}
-      
+
         {open && (
           <ModalNotifications open={open} onClose={() => setOpen(false)}>
             буковки
           </ModalNotifications>
         )}
       </div>
-      <div className="nav">
+      <div className={styles.nav}>
         <SmallButton>Кнопка вперед</SmallButton>
         <div>выбрать страницу</div>
         <SmallButton>Кнопка Назад</SmallButton>

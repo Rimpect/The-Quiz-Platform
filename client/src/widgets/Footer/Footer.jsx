@@ -1,46 +1,47 @@
 import React from "react";
-import "./Footer.scss";
+import styles from "./Footer.module.scss";
 import { Mail, Phone, MapPin } from "lucide-react";
+
 export function Footer() {
   return (
-    <footer className="footer__container">
-      <div class="footer__inner">
-        <div className="footer__description">
-          <p className="footer__description-header">О QuizMaster</p>
-          <p className="footer__description-title">
+    <footer className={styles.footerContainer}>
+      <div className={styles.footerInner}>
+        <div className={styles.description}>
+          <p className={styles.descriptionHeader}>О QuizMaster</p>
+          <p className={styles.descriptionTitle}>
             Платформа для проведения <br />
             интеллектуальных квизов. Проверьте свои <br />
             знания и соревнуйтесь с друзьями!
           </p>
         </div>
-        <div className="footer__menu">
-          <ul className="footer__list">
-            <li className="footer__list-item">Поддержка</li>
-            <li className="footer__list-item">Помощь</li>
-            <li className="footer__list-item">FAQ</li>
-            <li className="footer__list-item">Правила</li>
+
+        <div className={styles.menu}>
+          <ul className={styles.list}>
+            <li className={styles.listItem}>Поддержка</li>
+            <li className={styles.listItem}>Помощь</li>
+            <li className={styles.listItem}>FAQ</li>
+            <li className={styles.listItem}>Правила</li>
           </ul>
 
-          <ul className="footer__list">
-            <li className="footer__list-item">Контакты</li>
-            <li className="footer__list-item">
-              <Mail className="footer__list-icon" />
+          <ul className={styles.list}>
+            <li className={styles.listItem}>Контакты</li>
+            <li className={styles.listItem}>
+              <Mail className={styles.listIcon} />
               info@quizmaster.ru
             </li>
-            <li className="footer__list-item">
-              {" "}
-              <Phone className="footer__list-icon" />
+            <li className={styles.listItem}>
+              <Phone className={styles.listIcon} />
               +7 (495) 123-45-67
             </li>
-            <li className="footer__list-item">
-              {" "}
-              <MapPin className="footer__list-icon" />
+            <li className={styles.listItem}>
+              <MapPin className={styles.listIcon} />
               Россия
             </li>
           </ul>
         </div>
       </div>
-      <div className="footer__copyright">
+
+      <div className={styles.copyright}>
         <p>&copy; 2026 QuizMaster. Все права защищены.</p>
       </div>
     </footer>

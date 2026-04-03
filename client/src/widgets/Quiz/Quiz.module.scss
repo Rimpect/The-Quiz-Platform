@@ -1,4 +1,4 @@
-.quiz-container {
+.quizContainer {
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
@@ -7,7 +7,7 @@
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.quiz-header {
+.quizHeader {
   background: white;
   border-radius: 15px 15px 0 0;
   padding: 20px;
@@ -17,23 +17,29 @@
   flex-wrap: wrap;
   gap: 15px;
 }
-.progress__info {
+
+.progressInfo {
   display: flex;
   justify-items: center;
   justify-content: space-between;
   margin-top: 5px;
-  &-text {
-  }
-  &-score {
-  }
 }
-.quiz-info {
+
+.progressInfoText {
+  // стили при необходимости
+}
+
+.progressInfoScore {
+  // стили при необходимости
+}
+
+.quizInfo {
   display: flex;
   gap: 20px;
   align-items: center;
 }
 
-.quiz-id {
+.quizId {
   background: #f0f0f0;
   padding: 5px 15px;
   border-radius: 20px;
@@ -41,7 +47,7 @@
   color: #666;
 }
 
-.quiz-category {
+.quizCategory {
   color: black;
   font-weight: 600;
   font-size: 16px;
@@ -56,88 +62,88 @@
   border-radius: 30px;
 }
 
-.timer-label {
+.timerLabel {
   font-size: 14px;
   color: #666;
 }
 
-.timer-value {
+.timerValue {
   font-size: 20px;
   font-weight: bold;
   color: #333;
   font-family: monospace;
 }
 
-.timer-value.warning {
+.warning {
   color: #ff4444;
   animation: pulse 1s infinite;
 }
 
-.progress-container {
+.progressContainer {
   background: white;
   padding: 0 20px 20px;
   position: relative;
 }
 
-.progress__bar {
+.progressBar {
   height: 8px;
   background: black;
   border-radius: 4px;
   transition: width 0.3s ease;
 }
 
-.question-container {
+.questionContainer {
   background: white;
   padding: 30px;
   border-radius: 0 0 15px 15px;
   margin-bottom: 20px;
 }
 
-.media-container {
+.mediaContainer {
   margin-bottom: 25px;
   text-align: center;
 }
 
-.media-image {
+.mediaImage {
   max-width: 100%;
   max-height: 400px;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-.media-video {
+.mediaVideo {
   max-width: 100%;
   max-height: 400px;
   border-radius: 10px;
 }
 
-.media-audio {
+.mediaAudio {
   background: #f8f9fa;
   padding: 20px;
   border-radius: 10px;
 }
 
-.question-title {
+.questionTitle {
   font-size: 24px;
   color: #333;
   margin-bottom: 10px;
 }
 
-.question-type {
+.questionType {
   color: #666;
   font-size: 14px;
   margin-bottom: 25px;
   font-style: italic;
 }
 
-.answers-container {
+.answersContainer {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-bottom: 30px;
 }
 
-.answer-option {
+.answerOption {
   padding: 15px 20px;
   border: 2px solid #e0e0e0;
   border-radius: 10px;
@@ -146,58 +152,58 @@
   display: flex;
   align-items: center;
   gap: 15px;
+
+  &:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+  }
 }
 
-.answer-option:hover {
-  border-color: #667eea;
-  background: #f8f9ff;
-}
-
-.answer-option.selected {
+.selected {
   border-color: #667eea;
   background: #f0f3ff;
 }
 
-.answer-option.correct {
+.correct {
   border-color: #00c851;
   background: #e8f5e9;
 }
 
-.answer-option.incorrect {
+.incorrect {
   border-color: #ff4444;
   background: #ffebee;
 }
 
-.answer-option.disabled {
+.disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.answer-checkbox {
+.answerCheckbox {
   width: 20px;
   height: 20px;
   cursor: pointer;
 }
 
-.answer-text {
+.answerText {
   flex: 1;
   font-size: 16px;
 }
 
-.result-icon {
+.resultIcon {
   font-size: 20px;
   font-weight: bold;
 }
 
-.result-icon.correct {
+.resultIconCorrect {
   color: #00c851;
 }
 
-.result-icon.incorrect {
+.resultIconIncorrect {
   color: #ff4444;
 }
 
-.result-message {
+.resultMessage {
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -205,19 +211,19 @@
   text-align: center;
 }
 
-.result-message.correct {
+.resultMessageCorrect {
   background: #e8f5e9;
   border: 1px solid #00c851;
   color: #00c851;
 }
 
-.result-message.partial {
+.resultMessagePartial {
   background: #fff3e0;
   border: 1px solid #ffa000;
   color: #ffa000;
 }
 
-.result-message.incorrect {
+.resultMessageIncorrect {
   background: #ffebee;
   border: 1px solid #ff4444;
   color: #ff4444;
@@ -229,31 +235,31 @@
   margin: 20px 0;
   flex-wrap: wrap;
   justify-content: center;
+
+  & > * {
+    flex: 1;
+    min-width: 200px;
+  }
 }
 
-.actions > * {
-  flex: 1;
-  min-width: 200px;
-}
-
-.leaderboard-preview {
+.leaderboardPreview {
   background: white;
   border-radius: 15px;
   padding: 25px;
   margin-top: 20px;
+
+  h3 {
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  p {
+    color: #666;
+    margin-bottom: 20px;
+  }
 }
 
-.leaderboard-preview h3 {
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.leaderboard-preview p {
-  color: #666;
-  margin-bottom: 20px;
-}
-
-.leaderboard-placeholder {
+.leaderboardPlaceholder {
   background: #f8f9fa;
   border-radius: 10px;
   padding: 40px;
@@ -262,7 +268,7 @@
   border: 2px dashed #ddd;
 }
 
-.results-container {
+.resultsContainer {
   background: white;
   border-radius: 15px;
   padding: 40px;
@@ -270,7 +276,7 @@
   text-align: center;
 }
 
-.score-circle {
+.scoreCircle {
   width: 150px;
   height: 150px;
   border-radius: 50%;
@@ -282,29 +288,29 @@
   box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
 }
 
-.score-percent {
+.scorePercent {
   font-size: 36px;
   font-weight: bold;
   color: white;
 }
 
-.score-details {
+.scoreDetails {
   margin-bottom: 30px;
+
+  h3 {
+    color: #333;
+    margin-bottom: 15px;
+  }
 }
 
-.score-details h3 {
-  color: #333;
-  margin-bottom: 15px;
-}
-
-.score-text {
+.scoreText {
   font-size: 28px;
   font-weight: bold;
   color: #764ba2;
   margin-bottom: 10px;
 }
 
-.correct-count {
+.correctCount {
   font-size: 18px;
   color: #666;
 }
@@ -320,41 +326,41 @@
 }
 
 @media (max-width: 768px) {
-  .quiz-container {
+  .quizContainer {
     padding: 10px;
   }
 
-  .quiz-header {
+  .quizHeader {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .quiz-info {
+  .quizInfo {
     justify-content: space-between;
   }
 
-  .question-title {
+  .questionTitle {
     font-size: 20px;
   }
 
   .actions {
     flex-direction: column;
+
+    & > * {
+      width: 100%;
+    }
   }
 
-  .actions > * {
-    width: 100%;
-  }
-
-  .score-circle {
+  .scoreCircle {
     width: 120px;
     height: 120px;
   }
 
-  .score-percent {
+  .scorePercent {
     font-size: 28px;
   }
 
-  .score-text {
+  .scoreText {
     font-size: 24px;
   }
 }

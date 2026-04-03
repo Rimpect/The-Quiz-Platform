@@ -1,7 +1,8 @@
+// Quiz.jsx
 import React, { useState, useEffect } from "react";
 import { AverageButton } from "../../shared/Buttons/AverageButton/AverageButton";
 import { useParams, useNavigate } from "react-router-dom";
-import "./Quiz.scss";
+import styles from "./Quiz.module.scss";
 import { Link } from "react-router-dom";
 import FinishQuiz from "../../pages/FinishQuiz/FinishQuiz";
 
@@ -17,6 +18,7 @@ export function Quiz() {
   const [isFinished, setIsFinished] = useState(false);
 
   const navigate = useNavigate();
+  
   // Расширенные вопросы с поддержкой разных типов и медиа
   const questions = [
     {
@@ -214,19 +216,19 @@ export function Quiz() {
   const getOptionClassName = (index) => {
     if (!isAnswered) {
       const isSelected = selectedAnswers.includes(index);
-      return `answer-option ${isSelected ? "selected" : ""}`;
+      return `${styles.answerOption} ${isSelected ? styles.selected : ""}`;
     }
 
     const isCorrect = currentQ.correctAnswers.includes(index);
     const isSelected = selectedAnswers.includes(index);
 
     if (isCorrect) {
-      return "answer-option correct";
+      return `${styles.answerOption} ${styles.correct}`;
     }
     if (isSelected && !isCorrect) {
-      return "answer-option incorrect";
+      return `${styles.answerOption} ${styles.incorrect}`;
     }
-    return "answer-option disabled";
+    return `${styles.answerOption} ${styles.disabled}`;
   };
 
   if (isFinished) {
@@ -245,70 +247,67 @@ export function Quiz() {
   }
 
   return (
-    <div className="quiz-container">
+    <div className={styles.quizContainer}>
       {/* Шапка с прогрессом */}
-      <div className="quiz-header">
-        <div className="quiz-info">
-          <div className="quiz-id">Выход</div>
-          <div className="quiz-category">{currentQ.category || "Общий"}</div>
+      <div className={styles.quizHeader}>
+        <div className={styles.quizInfo}>
+          <div className={styles.quizId}>Выход</div>
+          <div className={styles.quizCategory}>{currentQ.category || "Общий"}</div>
         </div>
 
-        <div className="timer">
-          <span className={`timer-value ${timeLeft <= 10 ? "warning" : ""}`}>
+        <div className={styles.timer}>
+          <span className={`${styles.timerValue} ${timeLeft <= 10 ? styles.warning : ""}`}>
             {timeLeft} сек
           </span>
         </div>
       </div>
 
       {/* Прогресс-бар */}
-      <div className="progress-container">
-        <div className="progress__bar" style={{ width: `${progress}%` }}></div>
-        <div className="progress__info">
-          {" "}
-          <div className="progress__info-text">
+      <div className={styles.progressContainer}>
+        <div className={styles.progressBar} style={{ width: `${progress}%` }}></div>
+        <div className={styles.progressInfo}>
+          <div className={styles.progressInfoText}>
             Вопрос {currentQuestion + 1} из {totalQuestions}
           </div>
-          <div className="progress__info-score">
+          <div className={styles.progressInfoScore}>
             Баллы: {totalScore} / {maxPossibleScore}
           </div>
         </div>
       </div>
 
-      {/* Счет */}
-
       {/* Основной контент */}
-      <div className="question-container">
+      <div className={styles.questionContainer}>
         {/* Медиа контент */}
         {currentQ.mediaUrl && (
-          <div className="media-container">
+          <div className={styles.mediaContainer}>
             {currentQ.mediaType === "image" && (
               <img
                 src={currentQ.mediaUrl}
                 alt="Question media"
-                className="media-image"
+                className={styles.mediaImage}
               />
             )}
             {currentQ.mediaType === "video" && (
-              <video src={currentQ.mediaUrl} controls className="media-video" />
+              <video src={currentQ.mediaUrl} controls className={styles.mediaVideo} />
             )}
             {currentQ.mediaType === "audio" && (
-              <div className="media-audio">
+              <div className={styles.mediaAudio}>
                 <audio src={currentQ.mediaUrl} controls />
               </div>
             )}
           </div>
         )}
 
-        <h2 className="question-title">{currentQ.question}</h2>
+        <h2 className={styles.questionTitle}>{currentQ.question}</h2>
 
-        <div className="question-type">
+        <div className={styles.questionType}>
           {currentQ.questionType === "single"
             ? "Выберите один правильный ответ"
             : `Выберите все правильные ответы (${currentQ.points} баллов, частично правильный ответ дает меньше баллов)`}
         </div>
 
         {/* Варианты ответов */}
-        <div className="answers-container">
+        <div className={styles.answersContainer}>
           {currentQ.options.map((option, index) => (
             <div
               key={index}
@@ -320,17 +319,17 @@ export function Quiz() {
                   type="checkbox"
                   checked={selectedAnswers.includes(index)}
                   onChange={() => {}}
-                  className="answer-checkbox"
+                  className={styles.answerCheckbox}
                 />
               )}
-              <span className="answer-text">{option}</span>
+              <span className={styles.answerText}>{option}</span>
               {isAnswered && currentQ.correctAnswers.includes(index) && (
-                <span className="result-icon correct">✓</span>
+                <span className={`${styles.resultIcon} ${styles.resultIconCorrect}`}>✓</span>
               )}
               {isAnswered &&
                 selectedAnswers.includes(index) &&
                 !currentQ.correctAnswers.includes(index) && (
-                  <span className="result-icon incorrect">✗</span>
+                  <span className={`${styles.resultIcon} ${styles.resultIconIncorrect}`}>✗</span>
                 )}
             </div>
           ))}
@@ -339,12 +338,12 @@ export function Quiz() {
         {/* Результат ответа */}
         {isAnswered && (
           <div
-            className={`result-message ${
+            className={`${styles.resultMessage} ${
               calculatePartialScore() === currentQ.points
-                ? "correct"
+                ? styles.resultMessageCorrect
                 : calculatePartialScore() > 0
-                  ? "partial"
-                  : "incorrect"
+                  ? styles.resultMessagePartial
+                  : styles.resultMessageIncorrect
             }`}
           >
             {calculatePartialScore() === currentQ.points ? (
@@ -362,7 +361,7 @@ export function Quiz() {
       </div>
 
       {/* Кнопки управления */}
-      <div className="actions">
+      <div className={styles.actions}>
         {!isAnswered ? (
           <span
             onClick={handleSubmitAnswer}
@@ -384,10 +383,10 @@ export function Quiz() {
       </div>
 
       {/* Таблица лидеров */}
-      <div className="leaderboard-preview">
+      <div className={styles.leaderboardPreview}>
         <h3>Таблица лидеров</h3>
         <p>Места участников в данный момент</p>
-        <div className="leaderboard-placeholder">
+        <div className={styles.leaderboardPlaceholder}>
           {/* Здесь будет таблица лидеров */}
         </div>
       </div>

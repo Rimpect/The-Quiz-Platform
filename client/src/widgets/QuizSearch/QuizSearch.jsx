@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SlidersHorizontal, Search } from "lucide-react";
-import "./QuizSearch.scss";
+import styles from "./QuizSearch.module.scss";
 import ModalFilter from "../../shared/Modal/ModalFilter/ModalFilter";
 
 export function QuizSearch() {
@@ -31,24 +31,25 @@ export function QuizSearch() {
     // Здесь будет логика применения фильтров
     setIsFilterOpen(false);
   };
+
   return (
     <>
-      <div className="quiz-search">
-        <div className="quiz-search__container">
-          <div className="quiz-search__wrapper">
+      <div className={styles.quizSearch}>
+        <div className={styles.container}>
+          <div className={styles.wrapper}>
             <button
-              className="quiz-search__filter-btn"
+              className={styles.filterBtn}
               onClick={handleFilterClick}
               aria-label="Открыть фильтры"
             >
-              <SlidersHorizontal className="quiz-search__filter-icon" />
+              <SlidersHorizontal className={styles.filterIcon} />
             </button>
 
-            <div className="quiz-search__input-wrapper">
-              <Search className="quiz-search__search-icon" />
+            <div className={styles.inputWrapper}>
+              <Search className={styles.searchIcon} />
               <input
                 type="text"
-                className="quiz-search__input"
+                className={styles.input}
                 placeholder="Поиск квизов..."
                 value={searchQuery}
                 onChange={handleSearch}
