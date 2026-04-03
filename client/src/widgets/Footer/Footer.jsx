@@ -40,7 +40,7 @@ export function Footer() {
           </ul>
         </div>
       </div>
-
+   
       <div className={styles.copyright}>
         <p>&copy; 2026 QuizMaster. Все права защищены.</p>
       </div>

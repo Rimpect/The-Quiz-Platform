@@ -7,7 +7,7 @@ import { faTools } from "@fortawesome/free-solid-svg-icons";
 export function UserAction() {
   return (
     <section className={styles.section}>
-      <div className={styles.filterText}>фильтры/найти квиз</div>
+      <div className={styles.filterText}>фильтры/найти квиз()</div>
       <div className={styles.buttons}>
         <SmallButton>Создать квиз(кнопка)</SmallButton>
 
