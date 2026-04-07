@@ -1,71 +1,60 @@
 import React from "react";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
-export function FinishQuiz() {
-  const location = useLocation();
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const {
-    totalScore = 0,
-    maxPossibleScore = 100,
-    percentScore = 0,
-    correctCount = 0,
-    totalQuestions = 0,
-  } = location.state || {};
+import styles from "./FinishQuiz.module.scss";
+import { Trophy, Award, Target, Clock, Home, RotateCcw } from "lucide-react";
 
-  const goToHome = () => {
-    navigate("/");
-  };
-  const retakeQuiz = () => {
-    navigate(`/QuizPage/:id`);
-    // ${id}
-  };
-
+export default function FinishQuiz() {
   return (
-    <div class="finish">
-      <div class="finish__header">
-        <h2 class="finish__title finish__title--icon">Иконка кубка</h2>
-        <h2 class="finish__title finish__title--encouragement">
-          Не сдавайтесь! 💪
-        </h2>
-        <div class="finish__subtitle">Квиз #{id} завершен</div>
-      </div>
-
-      <div class="finish__results">
-        <div class="finish__score-circle">
-          <span class="finish__score-percent">{percentScore}%</span>
+    <div className={styles.container}>
+      <section className={styles.result}>
+        <div className={styles.score}>
+          <div className={styles.trophyWrapper}>
+            <Trophy />
+          </div>
+          <div className={styles.message}>
+            Хорошая работа!👏 (разные фразы в зависимости от оценки)
+          </div>
+          <div className={styles.quizTitle}>
+            Квиз "Научные открытия" завершен
+          </div>
+          <div className={styles.gradeLabel}>Оценка</div>
+          <div className={styles.gradeValue}>A</div>
+          <div className={styles.percentage}>85%</div>
         </div>
 
-        <div class="finish__score-details">
-          <h3 class="finish__details-title">Ваш результат:</h3>g
-          <p class="finish__score-text">
-            {totalScore} из {maxPossibleScore} баллов
-          </p>
-          <p class="finish__correct-count">
-            Правильных ответов: {correctCount} из {totalQuestions}
-          </p>
+        <div className={styles.stats}>
+          <div className={`${styles.statCard} ${styles.correct}`}>
+            <Target />
+            <div className={styles.statValue}>10</div>
+            <div className={styles.statLabel}>Правильно</div>
+          </div>
+          <div className={`${styles.statCard} ${styles.wrong}`}>
+            <Award />
+            <div className={styles.statValue}>0</div>
+            <div className={styles.statLabel}>Ошибок</div>
+          </div>
+          <div className={`${styles.statCard} ${styles.total}`}>
+            <Clock />
+            <div className={styles.statValue}>10</div>
+            <div className={styles.statLabel}>Всего вопросов</div>
+          </div>
         </div>
-      </div>
 
-      <div class="finish__actions">
-        <button
-          class="finish__button finish__button--primary"
-          onClick={goToHome}
-        >
-          Вернуться на главную
-        </button>
-        <button
-          class="finish__button finish__button--secondary"
-          onClick={retakeQuiz}
-        >
-          Пройти еще раз
-        </button>
-      </div>
+        <div className={styles.buttons}>
+          <div className={styles.buttonHome}>
+            <Home />
+            На главную
+          </div>
+          <div className={styles.buttonRetry}>
+            <RotateCcw />
+            Пройти еще раз
+          </div>
+        </div>
+      </section>
 
-      <div class="finish__message">
+      <section className={styles.motivation}>
         Каждая попытка делает вас умнее! Попробуйте пройти квиз снова или
         выберите другой.
-      </div>
+      </section>
     </div>
   );
 }
-export default FinishQuiz;
