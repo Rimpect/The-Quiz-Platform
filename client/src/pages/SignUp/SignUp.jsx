@@ -84,7 +84,7 @@ export function SignUp() {
               className={styles.registerLink}
               onClick={() => navigate("/RegistrationPage")}
             >
-              Зарегистрируйтесь 
+              Зарегистрируйтесь
             </button>
           </div>
         </div>

@@ -21,7 +21,7 @@
   .logo {
     width: 64px;
     height: 64px;
-    background-color: #2563eb;
+    background-color: #9333ea;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -47,7 +47,6 @@
 .authAction {
   width: 100%;
   margin-bottom: 24px;
-
   label {
     display: block;
     margin-bottom: 8px;
@@ -129,65 +128,4 @@
   }
 }
 
-.authFooter {
-  width: 100%;
-  text-align: center;
-  margin-top: 24px;
 
-  .guestLink {
-    background: none;
-    border: none;
-    color: #2563eb;
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: underline;
-    margin-bottom: 16px;
-
-    &:hover {
-      color: #1d4ed8;
-    }
-  }
-
-  .divider {
-    color: #9ca3af;
-    font-size: 14px;
-    margin: 16px 0;
-    position: relative;
-
-    &::before,
-    &::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      width: calc(50% - 30px);
-      height: 1px;
-      background-color: #e5e7eb;
-    }
-
-    &::before {
-      left: 0;
-    }
-
-    &::after {
-      right: 0;
-    }
-  }
-
-  .registerText {
-    font-size: 14px;
-    color: #6b7280;
-  }
-
-  .registerLink {
-    background: none;
-    border: none;
-    color: #2563eb;
-    cursor: pointer;
-    font-weight: 600;
-
-    &:hover {
-      color: #1d4ed8;
-      text-decoration: underline;
-    }
-  }
-}

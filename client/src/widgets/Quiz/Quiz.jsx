@@ -18,7 +18,7 @@ export function Quiz() {
   const [isFinished, setIsFinished] = useState(false);
 
   const navigate = useNavigate();
-  
+
   // Расширенные вопросы с поддержкой разных типов и медиа
   const questions = [
     {
@@ -248,23 +248,28 @@ export function Quiz() {
 
   return (
     <div className={styles.quizContainer}>
-      {/* Шапка с прогрессом */}
       <div className={styles.quizHeader}>
         <div className={styles.quizInfo}>
           <div className={styles.quizId}>Выход</div>
-          <div className={styles.quizCategory}>{currentQ.category || "Общий"}</div>
+          <div className={styles.quizCategory}>
+            {currentQ.category || "Общий"}
+          </div>
         </div>
 
         <div className={styles.timer}>
-          <span className={`${styles.timerValue} ${timeLeft <= 10 ? styles.warning : ""}`}>
+          <span
+            className={`${styles.timerValue} ${timeLeft <= 10 ? styles.warning : ""}`}
+          >
             {timeLeft} сек
           </span>
         </div>
       </div>
 
-      {/* Прогресс-бар */}
       <div className={styles.progressContainer}>
-        <div className={styles.progressBar} style={{ width: `${progress}%` }}></div>
+        <div
+          className={styles.progressBar}
+          style={{ width: `${progress}%` }}
+        ></div>
         <div className={styles.progressInfo}>
           <div className={styles.progressInfoText}>
             Вопрос {currentQuestion + 1} из {totalQuestions}
@@ -275,9 +280,7 @@ export function Quiz() {
         </div>
       </div>
 
-      {/* Основной контент */}
       <div className={styles.questionContainer}>
-        {/* Медиа контент */}
         {currentQ.mediaUrl && (
           <div className={styles.mediaContainer}>
             {currentQ.mediaType === "image" && (
@@ -288,7 +291,11 @@ export function Quiz() {
               />
             )}
             {currentQ.mediaType === "video" && (
-              <video src={currentQ.mediaUrl} controls className={styles.mediaVideo} />
+              <video
+                src={currentQ.mediaUrl}
+                controls
+                className={styles.mediaVideo}
+              />
             )}
             {currentQ.mediaType === "audio" && (
               <div className={styles.mediaAudio}>
@@ -306,7 +313,6 @@ export function Quiz() {
             : `Выберите все правильные ответы (${currentQ.points} баллов, частично правильный ответ дает меньше баллов)`}
         </div>
 
-        {/* Варианты ответов */}
         <div className={styles.answersContainer}>
           {currentQ.options.map((option, index) => (
             <div
@@ -324,18 +330,25 @@ export function Quiz() {
               )}
               <span className={styles.answerText}>{option}</span>
               {isAnswered && currentQ.correctAnswers.includes(index) && (
-                <span className={`${styles.resultIcon} ${styles.resultIconCorrect}`}>✓</span>
+                <span
+                  className={`${styles.resultIcon} ${styles.resultIconCorrect}`}
+                >
+                  ✓
+                </span>
               )}
               {isAnswered &&
                 selectedAnswers.includes(index) &&
                 !currentQ.correctAnswers.includes(index) && (
-                  <span className={`${styles.resultIcon} ${styles.resultIconIncorrect}`}>✗</span>
+                  <span
+                    className={`${styles.resultIcon} ${styles.resultIconIncorrect}`}
+                  >
+                    ✗
+                  </span>
                 )}
             </div>
           ))}
         </div>
 
-        {/* Результат ответа */}
         {isAnswered && (
           <div
             className={`${styles.resultMessage} ${
@@ -360,7 +373,6 @@ export function Quiz() {
         )}
       </div>
 
-      {/* Кнопки управления */}
       <div className={styles.actions}>
         {!isAnswered ? (
           <span
@@ -382,7 +394,6 @@ export function Quiz() {
         </span>
       </div>
 
-      {/* Таблица лидеров */}
       <div className={styles.leaderboardPreview}>
         <h3>Таблица лидеров</h3>
         <p>Места участников в данный момент</p>
