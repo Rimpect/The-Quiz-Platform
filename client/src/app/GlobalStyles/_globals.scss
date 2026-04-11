@@ -6,7 +6,8 @@ body {
   font-weight: 400;
   line-height: 1.28;
   color: var(--color-dark);
-  background-color: var(--color-light);
+  background: linear-gradient(to bottom right, #eff6ff, #faf5ff);
+  min-height: 100vh;
 }
 
 a,
