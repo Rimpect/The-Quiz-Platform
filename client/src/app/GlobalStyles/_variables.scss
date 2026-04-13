@@ -1,0 +1,39 @@
+@use "/src/app/GlobalStyles/media";
+
+:root {
+  --color-dark: #111827;
+
+  --color-light: #ffffff;
+
+  --color-gray-bg: #f9fafb;
+  --color-gray-text: #6b7280;
+  --color-gray-text-dark: #374151;
+
+  --color-red: #e53935;
+  --color-green: #00c851;
+  --color-red: #e53935;
+
+  --color-blue: #2563eb;
+  --color-blue-light: #eff6ff;
+  --color-blue-text: #1e40af;
+  --color-blue-border: #bfdbfe;
+
+  --border: 1px solid var(--color-dark);
+  --border-radius: 14px;
+  --border-radius-small: 7px;
+  --border-radius-large: 45px;
+
+  --shadow: 0 5px 0 0 var(--color-dark);
+
+  --font-family-base: "Space Grotesk", sans-serif;
+
+  --container-width: 1240px;
+  --container-padding-x: 20px;
+
+  --section-padding-y: 70px;
+
+  --input-height: 59px;
+  --button-height: 68px;
+
+  --transition-duration: 0.2s;
+}

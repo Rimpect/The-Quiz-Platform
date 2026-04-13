@@ -1,18 +1,23 @@
 import React from "react";
-import "./Header.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import styles from "./Header.module.scss";
+import { User } from "lucide-react";
 import { Link } from "react-router-dom";
+
 export function Header() {
   return (
-    <header>
-      <div className="logo">Logo</div>
-      <div className="UserName">
-        <Link to="/PersonalAccount">
-          {" "}
-          <FontAwesomeIcon icon={faUser} />
-        </Link>
-        Имя пользователя/Гость
+    <header className={styles.headerContainer}>
+      <div className={styles.headerInner}>
+        <div className={styles.logo}>
+          <div className={styles.logoIcon}>Q</div>
+          <div className={styles.logoTitle}>QuizMaster</div>
+        </div>
+        <div className={styles.user}>
+          <User className={styles.userIcon} />
+          <span className={styles.userText}>Имя пользователя/Гость</span>
+          <Link to="/PersonalAccount" className={styles.userLink}>
+            <button className={styles.userButton}>Войти</button>
+          </Link>
+        </div>
       </div>
     </header>
   );

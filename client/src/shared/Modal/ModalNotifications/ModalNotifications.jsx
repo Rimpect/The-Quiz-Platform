@@ -1,6 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
-import "./ModalNotifications.css"
+import "./ModalNotifications.scss"
 export function ModalNotifications({ open, onClose, children }) {
 
   if (!open) return null;
