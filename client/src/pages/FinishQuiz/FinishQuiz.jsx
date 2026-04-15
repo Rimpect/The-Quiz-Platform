@@ -4,7 +4,7 @@ import { Trophy, Award, Target, Clock, Home, RotateCcw } from 'lucide-react'
 
 import styles from './FinishQuiz.module.scss'
 
-export default function FinishQuiz() {
+export function FinishQuiz() {
   return (
     <div className={styles.container}>
       <section className={styles.result}>
