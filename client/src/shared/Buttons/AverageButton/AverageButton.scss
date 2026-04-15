@@ -5,7 +5,12 @@
   background: linear-gradient(145deg, #2d8cff, #1a6fd9);
   height: 175px;
   width: 200px;
-  font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Segoe UI',
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -13,7 +18,7 @@
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   overflow: hidden;
-  box-shadow: 
+  box-shadow:
     0 6px 20px rgba(45, 140, 255, 0.25),
     0 2px 6px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -53,7 +58,7 @@
 .CustomAverageButton:hover {
   background: linear-gradient(145deg, #3a96ff, #267be6);
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 
+  box-shadow:
     0 12px 30px rgba(45, 140, 255, 0.35),
     0 4px 12px rgba(0, 0, 0, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
@@ -64,7 +69,7 @@
 /* Состояние нажатия */
 .CustomAverageButton:active {
   transform: translateY(1px) scale(0.99);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(45, 140, 255, 0.25),
     0 1px 3px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -75,7 +80,7 @@
 /* Фокус для доступности */
 .CustomAverageButton:focus {
   outline: none;
-  box-shadow: 
+  box-shadow:
     0 0 0 4px rgba(45, 140, 255, 0.4),
     0 6px 20px rgba(45, 140, 255, 0.25),
     0 2px 6px rgba(0, 0, 0, 0.08);
@@ -86,7 +91,7 @@
   background: linear-gradient(145deg, #a0c8ff, #8bb5f0);
   cursor: not-allowed;
   transform: none;
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 0.7);
@@ -95,7 +100,7 @@
 .CustomAverageButton:disabled:hover {
   background: linear-gradient(145deg, #a0c8ff, #8bb5f0);
   transform: none;
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
@@ -170,7 +175,7 @@
     padding: 18px;
     border-radius: 10px;
   }
-  
+
   .CustomAverageButton .icon {
     font-size: 24px;
   }
@@ -184,7 +189,7 @@
     padding: 15px;
     border-radius: 8px;
   }
-  
+
   .CustomAverageButton .icon {
     font-size: 20px;
   }

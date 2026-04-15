@@ -1,15 +1,14 @@
-import React from "react";
-import { AverageButton } from "../../shared/Buttons/AverageButton/AverageButton";
-import { Link } from "react-router-dom";
-import { ProfileStats } from "../../widgets/ProfileStats/ProfileStats";
-import { QuizHistory } from "../../widgets/QuizHistory/QuizHistory";
-import styles from "./PersonalAccount.module.scss";
 import {
   mockUser,
   recentQuizzes,
   myQuizzes,
   achievements,
-} from "../../MockData";
+} from '../../MockData'
+import { ProfileStats } from '../../widgets/ProfileStats/ProfileStats'
+import { QuizHistory } from '../../widgets/QuizHistory/QuizHistory'
+
+import styles from './PersonalAccount.module.scss'
+
 export function PersonalAccount({
   onBackToHome,
   onCreateQuiz,
@@ -29,7 +28,7 @@ export function PersonalAccount({
     averageScore: user?.averageScore || mockUser.averageScore,
     bestScore: user?.bestScore || mockUser.bestScore,
     totalTime: user?.totalTime || mockUser.totalTime,
-  };
+  }
 
   return (
     <div className={styles.profilePage}>
@@ -47,5 +46,5 @@ export function PersonalAccount({
         />
       </div>
     </div>
-  );
+  )
 }

@@ -48,7 +48,7 @@
   width: 100%;
   height: 100%;
   -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 
 .overlay {
@@ -279,4 +279,4 @@
   .statsValue {
     font-size: 0.95rem;
   }
-}/*# sourceMappingURL=QuizDescription.module.css.map */
+} /*# sourceMappingURL=QuizDescription.module.css.map */

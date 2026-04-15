@@ -1,6 +1,8 @@
-import React from "react";
-import styles from "./FinishQuiz.module.scss";
-import { Trophy, Award, Target, Clock, Home, RotateCcw } from "lucide-react";
+import React from 'react'
+
+import { Trophy, Award, Target, Clock, Home, RotateCcw } from 'lucide-react'
+
+import styles from './FinishQuiz.module.scss'
 
 export default function FinishQuiz() {
   return (
@@ -56,5 +58,5 @@ export default function FinishQuiz() {
         выберите другой.
       </section>
     </div>
-  );
+  )
 }

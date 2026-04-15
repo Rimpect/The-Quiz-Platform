@@ -1,18 +1,20 @@
-import React, { useState } from "react";
-import styles from "./SignUp.module.scss";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react'
+
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
+import styles from './SignUp.module.scss'
 
 export function SignUp() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Login:", { email, password });
-  };
+    e.preventDefault()
+    console.log('Login:', { email, password })
+  }
 
   return (
     <div className={styles.page}>
@@ -45,7 +47,7 @@ export function SignUp() {
           <div className={styles.relative}>
             <Lock className={styles.icon} />
             <input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               name="password"
               id="password"
@@ -72,17 +74,17 @@ export function SignUp() {
           <button
             type="button"
             className={styles.guestLink}
-            onClick={() => navigate("/MainPage")}
+            onClick={() => navigate('/MainPage')}
           >
             Продолжить как гость
           </button>
           <div className={styles.divider}>или</div>
           <div className={styles.registerText}>
-            Нет аккаунта?{" "}
+            Нет аккаунта?{' '}
             <button
               type="button"
               className={styles.registerLink}
-              onClick={() => navigate("/RegistrationPage")}
+              onClick={() => navigate('/RegistrationPage')}
             >
               Зарегистрируйтесь
             </button>
@@ -90,5 +92,5 @@ export function SignUp() {
         </div>
       </form>
     </div>
-  );
+  )
 }

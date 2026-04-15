@@ -1,4 +1,4 @@
-@use "/src/app/GlobalStyles/media";
+@use '/src/app/GlobalStyles/media';
 
 :root {
   --color-dark: #111827;
@@ -25,7 +25,7 @@
 
   --shadow: 0 5px 0 0 var(--color-dark);
 
-  --font-family-base: "Space Grotesk", sans-serif;
+  --font-family-base: 'Space Grotesk', sans-serif;
 
   --container-width: 1240px;
   --container-padding-x: 20px;

@@ -19,7 +19,9 @@
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
   animation: modal-appear 0.2s ease-out;
 }
 
@@ -136,8 +138,8 @@
   color: #374151;
   cursor: pointer;
   -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
 .checkbox-label:hover {
   color: #111827;
@@ -270,4 +272,4 @@
 }
 .modal-content::-webkit-scrollbar-thumb:hover {
   background: #a1a1a1;
-}/*# sourceMappingURL=ModalFilter.css.map */
+} /*# sourceMappingURL=ModalFilter.css.map */

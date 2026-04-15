@@ -1,9 +1,10 @@
-import React from "react";
-import { createPortal } from "react-dom";
-import "./ModalNotifications.scss"
-export function ModalNotifications({ open, onClose, children }) {
+import React from 'react'
 
-  if (!open) return null;
+import { createPortal } from 'react-dom'
+import './ModalNotifications.scss'
+
+export function ModalNotifications({ open, onClose, children }) {
+  if (!open) return null
 
   return createPortal(
     <div className="backdrop" onClick={onClose}>
@@ -11,6 +12,6 @@ export function ModalNotifications({ open, onClose, children }) {
         {children}
       </div>
     </div>,
-    document.body
-  );
+    document.body,
+  )
 }

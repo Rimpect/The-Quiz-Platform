@@ -24,10 +24,10 @@
   width: 100%;
   height: 100%;
   -o-object-fit: cover;
-     object-fit: cover; /* Заполняет кнопку, обрезая края если нужно */
+  object-fit: cover; /* Заполняет кнопку, обрезая края если нужно */
   transition: transform 0.3s ease;
 }
 
 .CustomQuizButton:hover img {
   transform: scale(1.05); /* Легкий зум при наведении */
-}/*# sourceMappingURL=QuizButton.css.map */
+} /*# sourceMappingURL=QuizButton.css.map */

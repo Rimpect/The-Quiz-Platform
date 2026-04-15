@@ -1,6 +1,7 @@
-import React from "react";
-import "./QuizCard.scss";
-import { Users, Clock, Trophy } from "lucide-react";
+import React from 'react'
+
+import './QuizCard.scss'
+import { Users, Clock, Trophy } from 'lucide-react'
 
 export function QuizCard(props) {
   const {
@@ -12,13 +13,13 @@ export function QuizCard(props) {
     category,
     participants,
     duration,
-  } = props;
+  } = props
   const difficultyMap = {
-    Легкий: "easy",
-    Средний: "medium",
-    Сложный: "hard",
-  };
-  const badgeClass = difficultyMap[difficulty] || "easy";
+    Легкий: 'easy',
+    Средний: 'medium',
+    Сложный: 'hard',
+  }
+  const badgeClass = difficultyMap[difficulty] || 'easy'
   return (
     <div className="quiz-card">
       <div className="quiz-card__image-wrapper">
@@ -59,5 +60,5 @@ export function QuizCard(props) {
         </div>
       </div>
     </div>
-  );
+  )
 }

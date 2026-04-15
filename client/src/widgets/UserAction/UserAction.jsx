@@ -1,8 +1,11 @@
-import React from "react";
-import styles from "./UserAction.module.scss";
-import { SmallButton } from "../../shared/Buttons/SmallButton/SmallButton";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTools } from "@fortawesome/free-solid-svg-icons";
+import React from 'react'
+
+import { faTools } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+import { SmallButton } from '../../shared/Buttons/SmallButton/SmallButton'
+
+import styles from './UserAction.module.scss'
 
 export function UserAction() {
   return (
@@ -21,5 +24,5 @@ export function UserAction() {
         <SmallButton>Кнопка на общую таблицу лидеров</SmallButton>
       </div>
     </section>
-  );
+  )
 }

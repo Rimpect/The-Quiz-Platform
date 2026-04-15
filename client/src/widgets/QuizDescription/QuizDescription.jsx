@@ -1,24 +1,27 @@
-import React from "react";
-import styles from "./QuizDescription.module.scss";
-import image1 from "../../assets/img/QuizCardTest/pic.jpg";
-import { ArrowLeft, Users, Clock, Trophy, Star, Award } from "lucide-react";
-import { Link } from "react-router-dom";
+import React from 'react'
+
+import { ArrowLeft, Users, Clock, Trophy, Star, Award } from 'lucide-react'
+import { Link } from 'react-router-dom'
+
+import image1 from '../../assets/img/QuizCardTest/pic.jpg'
+
+import styles from './QuizDescription.module.scss'
 
 export function QuizDescription() {
   // Заглушки данных
   const quizData = {
     id: 1,
-    title: "Великие научные открытия",
-    description: "Квиз о великих научных открытиях и изобретениях человечества",
-    category: "Наука",
-    difficulty: "Средний",
+    title: 'Великие научные открытия',
+    description: 'Квиз о великих научных открытиях и изобретениях человечества',
+    category: 'Наука',
+    difficulty: 'Средний',
     rating: 4.7,
     participants: 1234,
     duration: 45,
     topScore: 98,
     questionCount: 20,
     image: image1,
-  };
+  }
 
   return (
     <div className={styles.description}>
@@ -47,9 +50,9 @@ export function QuizDescription() {
                   </span>
                   <span
                     className={`${styles.badge} ${
-                      (quizData.difficulty === "Легкий" && styles.easy) ||
-                      (quizData.difficulty === "Средний" && styles.medium) ||
-                      (quizData.difficulty === "Сложный" && styles.hard)
+                      (quizData.difficulty === 'Легкий' && styles.easy) ||
+                      (quizData.difficulty === 'Средний' && styles.medium) ||
+                      (quizData.difficulty === 'Сложный' && styles.hard)
                     }`}
                   >
                     {quizData.difficulty}
@@ -152,5 +155,5 @@ export function QuizDescription() {
         </div>
       </div>
     </div>
-  );
+  )
 }

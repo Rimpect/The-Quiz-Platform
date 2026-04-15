@@ -1,6 +1,6 @@
 // _utils.scss
-@use "media";
-@use "mixins";
+@use 'media';
+@use 'mixins';
 
 .container {
   max-width: calc(var(--container-width) + var(--container-padding-x) * 2);

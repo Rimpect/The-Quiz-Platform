@@ -1,7 +1,9 @@
-import React from "react";
-import { UserAction } from "./../../widgets/UserAction/UserAction";
-import { QuizeBoard } from "./../../widgets/QuizeBoard/QuizeBoard";
-import { QuizSearch } from "../../widgets/QuizSearch/QuizSearch";
+import React from 'react'
+
+import { QuizSearch } from '../../widgets/QuizSearch/QuizSearch'
+
+import { QuizeBoard } from './../../widgets/QuizeBoard/QuizeBoard'
+
 export function MainPage() {
   return (
     <>
@@ -9,5 +11,5 @@ export function MainPage() {
       <QuizSearch></QuizSearch>
       <QuizeBoard></QuizeBoard>
     </>
-  );
+  )
 }

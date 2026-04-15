@@ -5,9 +5,10 @@ import {
   Award,
   Home,
   Settings as SettingsIcon,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import styles from "./ProfileStats.module.scss";
+} from 'lucide-react'
+import { Link } from 'react-router-dom'
+
+import styles from './ProfileStats.module.scss'
 
 export function ProfileStats({ user }) {
   if (!user) {
@@ -19,10 +20,10 @@ export function ProfileStats({ user }) {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
-  const levelProgress = ((user.xp || 0) / (user.nextLevelXp || 1)) * 100;
+  const levelProgress = ((user.xp || 0) / (user.nextLevelXp || 1)) * 100
 
   return (
     <div className={styles.profileCard}>
@@ -32,25 +33,25 @@ export function ProfileStats({ user }) {
             {user.avatar ? (
               <img
                 src={user.avatar}
-                alt={user.name || "User"}
+                alt={user.name || 'User'}
                 className={styles.avatarImage}
               />
             ) : (
               <div className={styles.avatarFallback}>
-                {(user.name || "П").charAt(0)}
+                {(user.name || 'П').charAt(0)}
               </div>
             )}
           </div>
 
           <div className={styles.userInfo}>
             <div className={styles.nameSection}>
-              <h1 className={styles.userName}>{user.name || "Пользователь"}</h1>
+              <h1 className={styles.userName}>{user.name || 'Пользователь'}</h1>
               <span className={styles.levelBadge}>
                 Уровень {user.level || 1}
               </span>
             </div>
             <p className={styles.userEmail}>
-              {user.email || "email@example.com"}
+              {user.email || 'email@example.com'}
             </p>
 
             <div className={styles.xpSection}>
@@ -111,5 +112,5 @@ export function ProfileStats({ user }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

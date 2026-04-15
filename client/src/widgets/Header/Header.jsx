@@ -1,7 +1,9 @@
-import React from "react";
-import styles from "./Header.module.scss";
-import { User } from "lucide-react";
-import { Link } from "react-router-dom";
+import React from 'react'
+
+import { User } from 'lucide-react'
+import { Link } from 'react-router-dom'
+
+import styles from './Header.module.scss'
 
 export function Header() {
   return (
@@ -20,5 +22,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  );
+  )
 }

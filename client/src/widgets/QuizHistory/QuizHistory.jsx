@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState } from 'react'
+
 import {
   FileText,
   Plus,
@@ -6,8 +7,9 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react";
-import styles from "./QuizHistory.module.scss";
+} from 'lucide-react'
+
+import styles from './QuizHistory.module.scss'
 
 export function QuizHistory({
   onCreateQuiz,
@@ -15,71 +17,71 @@ export function QuizHistory({
   myQuizzes = [],
   achievements = [],
 }) {
-  const [historyPage, setHistoryPage] = useState(1);
-  const [myQuizzesPage, setMyQuizzesPage] = useState(1);
-  const [activeTab, setActiveTab] = useState("history");
-  const ITEMS_PER_PAGE = 5;
+  const [historyPage, setHistoryPage] = useState(1)
+  const [myQuizzesPage, setMyQuizzesPage] = useState(1)
+  const [activeTab, setActiveTab] = useState('history')
+  const ITEMS_PER_PAGE = 5
 
-  const historyTotalPages = Math.ceil(recentQuizzes.length / ITEMS_PER_PAGE);
-  const historyStartIndex = (historyPage - 1) * ITEMS_PER_PAGE;
+  const historyTotalPages = Math.ceil(recentQuizzes.length / ITEMS_PER_PAGE)
+  const historyStartIndex = (historyPage - 1) * ITEMS_PER_PAGE
   const paginatedHistory = recentQuizzes.slice(
     historyStartIndex,
     historyStartIndex + ITEMS_PER_PAGE,
-  );
+  )
 
-  const myQuizzesTotalPages = Math.ceil(myQuizzes.length / ITEMS_PER_PAGE);
-  const myQuizzesStartIndex = (myQuizzesPage - 1) * ITEMS_PER_PAGE;
+  const myQuizzesTotalPages = Math.ceil(myQuizzes.length / ITEMS_PER_PAGE)
+  const myQuizzesStartIndex = (myQuizzesPage - 1) * ITEMS_PER_PAGE
   const paginatedMyQuizzes = myQuizzes.slice(
     myQuizzesStartIndex,
     myQuizzesStartIndex + ITEMS_PER_PAGE,
-  );
+  )
 
   const getStatusBadge = (status) => {
     const variants = {
-      approved: { label: "Одобрен", className: styles.badgeApproved },
-      pending: { label: "На модерации", className: styles.badgePending },
-      rejected: { label: "Отклонен", className: styles.badgeRejected },
-    };
-    const variant = variants[status];
+      approved: { label: 'Одобрен', className: styles.badgeApproved },
+      pending: { label: 'На модерации', className: styles.badgePending },
+      rejected: { label: 'Отклонен', className: styles.badgeRejected },
+    }
+    const variant = variants[status]
     return (
       <span className={`${styles.badge} ${variant.className}`}>
         {variant.label}
       </span>
-    );
-  };
+    )
+  }
 
   const getScoreColor = (score) => {
-    if (score >= 90) return styles.scoreHigh;
-    if (score >= 70) return styles.scoreMedium;
-    if (score >= 50) return styles.scoreLow;
-    return styles.scoreVeryLow;
-  };
+    if (score >= 90) return styles.scoreHigh
+    if (score >= 70) return styles.scoreMedium
+    if (score >= 50) return styles.scoreLow
+    return styles.scoreVeryLow
+  }
 
   return (
     <div className={styles.historyCard}>
       <div className={styles.tabs}>
         <div className={styles.tabsList}>
           <button
-            className={`${styles.tabTrigger} ${activeTab === "history" ? styles.active : ""}`}
-            onClick={() => setActiveTab("history")}
+            className={`${styles.tabTrigger} ${activeTab === 'history' ? styles.active : ''}`}
+            onClick={() => setActiveTab('history')}
           >
             История
           </button>
           <button
-            className={`${styles.tabTrigger} ${activeTab === "my-quizzes" ? styles.active : ""}`}
-            onClick={() => setActiveTab("my-quizzes")}
+            className={`${styles.tabTrigger} ${activeTab === 'my-quizzes' ? styles.active : ''}`}
+            onClick={() => setActiveTab('my-quizzes')}
           >
             Мои квизы
           </button>
           <button
-            className={`${styles.tabTrigger} ${activeTab === "achievements" ? styles.active : ""}`}
-            onClick={() => setActiveTab("achievements")}
+            className={`${styles.tabTrigger} ${activeTab === 'achievements' ? styles.active : ''}`}
+            onClick={() => setActiveTab('achievements')}
           >
             Достижения
           </button>
         </div>
 
-        {activeTab === "history" && (
+        {activeTab === 'history' && (
           <div className={styles.tabContent}>
             <div className={styles.tabHeader}>
               <h2 className={styles.tabTitle}>
@@ -120,7 +122,7 @@ export function QuizHistory({
                   {Math.min(
                     historyStartIndex + ITEMS_PER_PAGE,
                     recentQuizzes.length,
-                  )}{" "}
+                  )}{' '}
                   из {recentQuizzes.length}
                 </p>
                 <div className={styles.paginationButtons}>
@@ -151,7 +153,7 @@ export function QuizHistory({
           </div>
         )}
 
-        {activeTab === "my-quizzes" && (
+        {activeTab === 'my-quizzes' && (
           <div className={styles.tabContent}>
             <div className={styles.tabHeader}>
               <h2 className={styles.tabTitle}>
@@ -187,7 +189,7 @@ export function QuizHistory({
                           <p className={styles.quizCategory}>{quiz.category}</p>
                           <div className={styles.quizMeta}>
                             <span>Участников: {quiz.participants}</span>
-                            {quiz.status === "approved" && (
+                            {quiz.status === 'approved' && (
                               <>
                                 <span>•</span>
                                 <span>Рейтинг: {quiz.rating}</span>
@@ -208,7 +210,7 @@ export function QuizHistory({
                           </button>
                         </div>
                       </div>
-                      {quiz.status === "rejected" && (
+                      {quiz.status === 'rejected' && (
                         <div className={styles.rejectionMessage}>
                           Причина отклонения: Недостаточно уникальных вопросов
                         </div>
@@ -224,7 +226,7 @@ export function QuizHistory({
                       {Math.min(
                         myQuizzesStartIndex + ITEMS_PER_PAGE,
                         myQuizzes.length,
-                      )}{" "}
+                      )}{' '}
                       из {myQuizzes.length}
                     </p>
                     <div className={styles.paginationButtons}>
@@ -257,7 +259,7 @@ export function QuizHistory({
           </div>
         )}
 
-        {activeTab === "achievements" && (
+        {activeTab === 'achievements' && (
           <div className={styles.tabContent}>
             <div className={styles.tabHeader}>
               <h2 className={styles.tabTitle}>
@@ -292,5 +294,5 @@ export function QuizHistory({
         )}
       </div>
     </div>
-  );
+  )
 }

@@ -1,53 +1,55 @@
-import React, { useState } from "react";
-import styles from "./RegistrationPage.module.scss";
-import { Mail, User, Lock, Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react'
+
+import { Mail, User, Lock, Eye, EyeOff } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
+import styles from './RegistrationPage.module.scss'
 
 export default function RegistrationPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const navigate = useNavigate();
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     //@TODO сделать потом toast уведомления
     if (!name.trim()) {
-      alert("Введите ваше имя");
-      return;
+      alert('Введите ваше имя')
+      return
     }
 
     if (!email.trim()) {
-      alert("Введите email");
-      return;
+      alert('Введите email')
+      return
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      alert("Введите корректный email");
-      return;
+      alert('Введите корректный email')
+      return
     }
 
     if (!password) {
-      alert("Введите пароль");
-      return;
+      alert('Введите пароль')
+      return
     }
 
     if (password.length < 6) {
-      alert("Пароль должен содержать минимум 6 символов");
-      return;
+      alert('Пароль должен содержать минимум 6 символов')
+      return
     }
 
     if (password !== confirmPassword) {
-      alert("Пароли не совпадают");
-      return;
+      alert('Пароли не совпадают')
+      return
     }
-    console.log("Register:", { name, email, password });
-    navigate("/MainPage");
-  };
+    console.log('Register:', { name, email, password })
+    navigate('/MainPage')
+  }
 
   return (
     <div className={styles.page}>
@@ -93,7 +95,7 @@ export default function RegistrationPage() {
           <div className={styles.relative}>
             <Lock className={styles.icon} />
             <input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               name="password"
               id="password"
@@ -115,7 +117,7 @@ export default function RegistrationPage() {
           <div className={styles.relative}>
             <Lock className={styles.icon} />
             <input
-              type={showConfirmPassword ? "text" : "password"}
+              type={showConfirmPassword ? 'text' : 'password'}
               placeholder="••••••••"
               name="confirmPassword"
               id="confirmPassword"
@@ -139,5 +141,5 @@ export default function RegistrationPage() {
         </div>
       </form>
     </div>
-  );
+  )
 }

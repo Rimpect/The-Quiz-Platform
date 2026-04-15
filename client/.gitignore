@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# CSS файлы (сгенерированные из SCSS/LESS)
+*.css
+*.css.map

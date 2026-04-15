@@ -145,8 +145,9 @@
   margin: 16px 0;
   position: relative;
 }
-.authFooter .divider::before, .authFooter .divider::after {
-  content: "";
+.authFooter .divider::before,
+.authFooter .divider::after {
+  content: '';
   position: absolute;
   top: 50%;
   width: calc(50% - 30px);
@@ -173,4 +174,4 @@
 .authFooter .registerLink:hover {
   color: #1d4ed8;
   text-decoration: underline;
-}/*# sourceMappingURL=SignUp.module.css.map */
+} /*# sourceMappingURL=SignUp.module.css.map */

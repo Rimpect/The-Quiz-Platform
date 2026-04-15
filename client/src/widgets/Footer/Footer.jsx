@@ -1,6 +1,8 @@
-import React from "react";
-import styles from "./Footer.module.scss";
-import { Mail, Phone, MapPin } from "lucide-react";
+import React from 'react'
+
+import { Mail, Phone, MapPin } from 'lucide-react'
+
+import styles from './Footer.module.scss'
 
 export function Footer() {
   return (
@@ -40,10 +42,10 @@ export function Footer() {
           </ul>
         </div>
       </div>
-   
+
       <div className={styles.copyright}>
         <p>&copy; 2026 QuizMaster. Все права защищены.</p>
       </div>
     </footer>
-  );
+  )
 }
