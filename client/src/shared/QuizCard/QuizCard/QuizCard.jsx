@@ -1,6 +1,7 @@
 import React from 'react'
 
-import './QuizCard.scss'
+import styles from './QuizCard.module.scss'
+
 import { Users, Clock, Trophy } from 'lucide-react'
 
 export function QuizCard(props) {
@@ -14,48 +15,53 @@ export function QuizCard(props) {
     participants,
     duration,
   } = props
+
   const difficultyMap = {
     Легкий: 'easy',
     Средний: 'medium',
     Сложный: 'hard',
   }
+
   const badgeClass = difficultyMap[difficulty] || 'easy'
+
   return (
-    <div className="quiz-card">
-      <div className="quiz-card__image-wrapper">
+    <div className={styles.card}>
+      <div className={styles.card__imageWrapper}>
         <img
           src={img}
           alt={`${title} - квиз ${id}`}
-          className="quiz-card__image"
+          className={styles.card__image}
         />
-        <span className={`quiz-card__badge quiz-card__badge--${badgeClass}`}>
+        <span
+          className={`${styles.card__badge} ${styles[`card__badge--${badgeClass}`]}`}
+        >
           {difficulty}
         </span>
       </div>
 
-      <div className="quiz-card__content">
-        <div className="quiz-card__category">
-          <span className="quiz-card__category-icon">
-            <Trophy className="quiz-card__category-icon-svg" />
+      <div className={styles.card__content}>
+        <div className={styles.card__category}>
+          <span className={styles.card__categoryIcon}>
+            <Trophy className={styles.card__categoryIconSvg} />
           </span>
-          <span className="quiz-card__category-text">{category}</span>
+          <span className={styles.card__categoryText}>{category}</span>
         </div>
 
-        <h3 className="quiz-card__title">{title}</h3>
-        <p className="quiz-card__description">{description}</p>
+        <h3 className={styles.card__title}>{title}</h3>
+        <p className={styles.card__description}>{description}</p>
 
-        <div className="quiz-card__info">
-          <div className="quiz-card__info-item">
-            <span className="quiz-card__info-icon">
+        <div className={styles.card__info}>
+          <div className={styles.card__infoItem}>
+            <span className={styles.card__infoItemIcon}>
               <Users />
             </span>
-            <span className="quiz-card__info-text">{participants}</span>
+            <span className={styles.card__infoItemText}>{participants}</span>
           </div>
-          <div className="quiz-card__info-item">
-            <span className="quiz-card__info-icon">
+          <div className={styles.card__infoItem}>
+            <span className={styles.card__infoItemIcon}>
               <Clock />
             </span>
-            <span className="quiz-card__info-text">{duration} мин</span>
+            <span className={styles.card__infoItemText}>{duration} мин</span>
           </div>
         </div>
       </div>

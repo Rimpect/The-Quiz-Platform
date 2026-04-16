@@ -8,14 +8,11 @@ export default defineConfig({
     sourcemap: false,
     cssCodeSplit: true,
   },
-  css: {
-    devSourcemap: true,
-  },
   plugins: [
     react(),
     cleanCSS({
-      clean: true, // Удалять CSS файлы после сборки
-      sourceMap: false, // Не генерировать source maps
+      clean: true,
+      sourceMap: false,
     }),
   ],
 })

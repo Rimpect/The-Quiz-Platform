@@ -27,7 +27,7 @@ export function QuizDescription() {
     <div className={styles.description}>
       <div className={styles.container}>
         {/* Навигация */}
-        <Link to={`/`} className={styles.nav}>
+        <Link to={`/MainPage`} className={styles.nav}>
           <ArrowLeft className={styles.navIcon} />
           <span>Назад к списку</span>
         </Link>

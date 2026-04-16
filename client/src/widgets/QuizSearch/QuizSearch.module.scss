@@ -1,13 +1,13 @@
 .quizSearch {
   width: 100%;
-  padding: 2rem 1rem;
+  padding: var(--spacing-xl) var(--spacing-md);
 
   @media (min-width: 640px) {
-    padding: 2rem 1.5rem;
+    padding: var(--spacing-xl) var(--spacing-lg);
   }
 
   @media (min-width: 1024px) {
-    padding: 2rem 2rem;
+    padding: var(--spacing-xl) var(--spacing-xl);
   }
 }
 
@@ -19,7 +19,7 @@
 
 .wrapper {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--spacing-sm);
   align-items: center;
   width: 100%;
 }
@@ -31,20 +31,20 @@
   justify-content: center;
   width: 40px;
   height: 40px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border-light);
   border-radius: 6px;
-  background: white;
+  background: var(--color-light);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-duration) ease;
 
   &:hover {
-    background-color: #f3f4f6;
-    border-color: #d1d5db;
+    background-color: var(--gray-100);
+    border-color: var(--color-border-hover);
   }
 
   &:focus {
     outline: none;
-    outline: 2px solid #3b82f6;
+    outline: 2px solid var(--color-blue-gradient-start);
     outline-offset: 2px;
   }
 }
@@ -52,7 +52,7 @@
 .filterIcon {
   width: 20px;
   height: 20px;
-  color: #4b5563;
+  color: var(--gray-600);
 }
 
 .inputWrapper {
@@ -68,7 +68,7 @@
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
-  color: #9ca3af;
+  color: var(--color-icon-gray);
   pointer-events: none;
 }
 
@@ -76,23 +76,23 @@
   width: 100%;
   height: 40px;
   padding: 0 12px 0 40px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border-light);
   border-radius: 6px;
   font-size: 16px;
-  color: #111827;
-  transition: all 0.2s ease;
+  color: var(--color-dark);
+  transition: all var(--transition-duration) ease;
 
   &::placeholder {
-    color: #9ca3af;
+    color: var(--color-icon-gray);
   }
 
   &:hover {
-    border-color: #d1d5db;
+    border-color: var(--color-border-hover);
   }
 
   &:focus {
     outline: none;
-    border-color: #3b82f6;
+    border-color: var(--color-blue-gradient-start);
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
   }
 }
