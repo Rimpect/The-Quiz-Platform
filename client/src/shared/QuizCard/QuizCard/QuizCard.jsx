@@ -1,8 +1,6 @@
-import React from 'react'
+import { Users, Clock, Trophy } from 'lucide-react'
 
 import styles from './QuizCard.module.scss'
-
-import { Users, Clock, Trophy } from 'lucide-react'
 
 export function QuizCard(props) {
   const {
