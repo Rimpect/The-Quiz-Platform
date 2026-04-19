@@ -22,7 +22,10 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
+        working-directory: ./client
         working-directory: ./client
 
       - name: Build project
