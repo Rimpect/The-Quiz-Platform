@@ -4,10 +4,9 @@
 
 .headerContainer {
   width: 100%;
-  color: var(--color-light);
-  background-color: white;
-  border-bottom: 1px solid #e5e7eb;
-  color: black;
+  background-color: var(--color-light);
+  border-bottom: 1px solid var(--color-header-border);
+  color: var(--color-header-text);
 }
 
 .headerInner {
@@ -32,18 +31,19 @@
 .logoIcon {
   width: 40px;
   height: 40px;
-  background-color: #2563eb;
-  border: solid 1px #2563eb;
-  border-radius: 8px;
+  background-color: var(--color-blue);
+  border: solid 1px var(--color-blue);
+  border-radius: var(--border-radius-small);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: white;
+  color: var(--color-light);
   font-weight: 700;
 }
 
 .logoTitle {
+
 }
 
 .user {
@@ -55,15 +55,16 @@
 }
 
 .userLink {
+
 }
 
 .userButton {
   // потом вынести кнопку это в ui
   padding: 5px 10px;
-  background-color: rgb(0, 0, 0);
-  border: solid 1px rgb(0, 0, 0);
-  color: white;
-  border-radius: 7px;
+  background-color: var(--color-dark);
+  border: solid 1px var(--color-dark);
+  color: var(--color-light);
+  border-radius: var(--border-radius-small);
   cursor: pointer;
   transition: all 0.15s ease;
 
@@ -73,8 +74,9 @@
 }
 
 .userIcon {
-  color: #232323;
+  color: var(--color-user-icon);
 }
 
 .userText {
+  
 }

@@ -1,16 +1,129 @@
-# React + Vite
+# Quiz Platform — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Фронтенд-часть платформы для проведения квизов. Разработана в рамках дипломной работы КГУ.
 
-Currently, two official plugins are available:
+**Статус разработки:** 🚧 В активной разработке  
+**Статус билда:** 📦 Pre-MVP  
+**Покрытие тестами:** ❌ 0%
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Содержание
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [Технологии](#технологии)
+- [Начало работы](#начало-работы)
+- [Скрипты](#скрипты)
+- [Линтинг и форматирование](#линтинг-и-форматирование)
+<!-- - [Структура проекта](#структура-проекта) -->
 
-## Expanding the ESLint configuration
+- [Требования](#Требования)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Технологии
+
+| Технология                                                 | Назначение                    |
+| ---------------------------------------------------------- | ----------------------------- |
+| [React](https://react.dev/)                                | UI библиотека                 |
+| [Vite](https://vitejs.dev/)                                | Сборщик проекта               |
+| [SCSS Modules](https://github.com/css-modules/css-modules) | Модульная стилизация          |
+| [ESLint](https://eslint.org/)                              | Линтинг JavaScript/React кода |
+| [Stylelint](https://stylelint.io/)                         | Линтинг CSS/SCSS кода         |
+| [Prettier](https://prettier.io/)                           | Форматирование кода           |
+| [Lucide React](https://lucide.dev/)                        | Библиотека иконок             |
+
+---
+
+## Начало работы
+
+```bash
+# Клонировать репозиторий
+git clone <https://github.com/Rimpect/The-Quiz-Platform.git>
+
+# Перейти в папку фронтенда
+cd client
+
+# Установить зависимости
+npm install
+
+# Запуск development сервера
+npm run dev
+```
+
+## Скрипты
+
+| Команда                | Описание                             |
+| ---------------------- | ------------------------------------ |
+| `npm run dev`          | Запуск development сервера           |
+| `npm run build`        | Production сборка проекта            |
+| `npm run preview`      | Предпросмотр production сборки       |
+| `npm run lint`         | Запуск всех линтеров (JS + CSS)      |
+| `npm run lint:fix`     | Автоисправление всех ошибок линтинга |
+| `npm run lint:js`      | Проверка JS/TS кода ESLint           |
+| `npm run lint:js:fix`  | Автоисправление JS ошибок            |
+| `npm run lint:css`     | Проверка CSS/SCSS Stylelint          |
+| `npm run lint:css:fix` | Автоисправление CSS ошибок           |
+| `npm run format`       | Форматирование кода Prettier         |
+| `npm run clean:css`    | Очистка скомпилированных CSS файлов  |
+
+## Линтинг и форматирование
+
+В проекте настроены три инструмента для поддержания качества кода:
+
+| Инструмент    | Назначение                     | Конфиг            |
+| ------------- | ------------------------------ | ----------------- |
+| **ESLint**    | Проверка JavaScript/React кода | `.eslintrc.js`    |
+| **Stylelint** | Проверка CSS/SCSS кода         | `.stylelintrc.js` |
+| **Prettier**  | Форматирование кода            | `.prettierrc`     |
+
+### Что проверяется?
+
+#### ESLint
+
+- Синтаксические ошибки
+- Порядок импортов (import/order)
+- Неиспользуемые переменные
+- Правила React (хуки, ключи в списках)
+- Отсутствие `console.log` в production
+
+#### Stylelint
+
+- Порядок CSS свойств
+- Дублирование селекторов
+- Несуществующие классы
+- Единообразие написания цветов (HEX/rgba)
+
+#### Prettier
+
+- Отступы (2 пробела)
+- Одинарные кавычки
+- Точки с запятой в конце
+- Максимальная длина строки (100 символов)
+
+### Как пользоваться?
+
+#### Команды для запуска
+
+```bash
+# Запустить все проверки (без автоисправления)
+npm run lint
+
+# Автоматически исправить все ошибки
+npm run lint:fix
+
+# Только JS проверка
+npm run lint:js          # проверить
+npm run lint:js:fix      # проверить и исправить
+
+# Только CSS проверка
+npm run lint:css         # проверить
+npm run lint:css:fix     # проверить и исправить
+
+# Только форматирование
+npm run format
+```
+
+## Требования
+
+- [NodeJS](https://nodejs.org/) v18 или выше
+- [npm](https://www.npmjs.com/) v9 или выше

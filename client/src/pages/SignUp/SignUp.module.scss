@@ -5,13 +5,14 @@
   min-height: 100vh;
   padding: 20px;
 }
+
 .container {
   max-width: 448px;
   width: 100%;
-  background-color: #fff;
+  background-color: var(--color-light);
   padding: 32px;
   border-radius: 24px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px -5px var(--color-shadow);
 }
 
 .authGreeting {
@@ -21,7 +22,7 @@
   .logo {
     width: 64px;
     height: 64px;
-    background-color: #2563eb;
+    background-color: var(--color-blue);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -29,7 +30,7 @@
     margin: 0 auto 16px;
     font-size: 32px;
     font-weight: bold;
-    color: white;
+    color: var(--color-light);
   }
 
   .welcomeText {
@@ -39,7 +40,7 @@
   }
 
   .subtitle {
-    color: #6b7280;
+    color: var(--color-gray-text);
     font-size: 14px;
   }
 }
@@ -51,7 +52,6 @@
   label {
     display: block;
     margin-bottom: 8px;
-    font-weight: 500;
     font-size: 14px;
     font-weight: bold;
   }
@@ -69,22 +69,22 @@
   transform: translateY(-50%);
   width: 18px;
   height: 18px;
-  color: #9ca3af;
+  color: var(--color-icon-gray);
   pointer-events: none;
 }
 
 .input {
   width: 100%;
   padding: 10px 12px 10px 40px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
   font-size: 14px;
-  transition: border-color 0.2s;
+  transition: border-color var(--transition-duration);
 
   &:focus {
     outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    border-color: var(--color-blue);
+    box-shadow: 0 0 0 3px var(--color-blue-focus-shadow);
   }
 }
 
@@ -96,32 +96,32 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #9ca3af;
+  color: var(--color-icon-gray);
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
 
   &:hover {
-    color: #6b7280;
+    color: var(--color-gray-text);
   }
 }
 
 .submitButton {
   width: 100%;
   padding: 12px;
-  background-color: #2563eb;
-  color: white;
+  background-color: var(--color-blue);
+  color: var(--color-light);
   border: none;
   border-radius: 8px;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color var(--transition-duration);
   margin-top: 8px;
 
   &:hover {
-    background-color: #1d4ed8;
+    background-color: var(--color-blue-hover);
   }
 
   &:active {
@@ -137,19 +137,19 @@
   .guestLink {
     background: none;
     border: none;
-    color: #2563eb;
+    color: var(--color-blue);
     cursor: pointer;
     font-size: 14px;
     text-decoration: underline;
     margin-bottom: 16px;
 
     &:hover {
-      color: #1d4ed8;
+      color: var(--color-blue-hover);
     }
   }
 
   .divider {
-    color: #9ca3af;
+    color: var(--color-icon-gray);
     font-size: 14px;
     margin: 16px 0;
     position: relative;
@@ -161,7 +161,7 @@
       top: 50%;
       width: calc(50% - 30px);
       height: 1px;
-      background-color: #e5e7eb;
+      background-color: var(--color-border-light);
     }
 
     &::before {
@@ -175,18 +175,18 @@
 
   .registerText {
     font-size: 14px;
-    color: #6b7280;
+    color: var(--color-gray-text);
   }
 
   .registerLink {
     background: none;
     border: none;
-    color: #2563eb;
+    color: var(--color-blue);
     cursor: pointer;
     font-weight: 600;
 
     &:hover {
-      color: #1d4ed8;
+      color: var(--color-blue-hover);
       text-decoration: underline;
     }
   }

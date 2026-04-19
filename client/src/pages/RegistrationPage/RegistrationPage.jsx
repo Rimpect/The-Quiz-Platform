@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 import styles from './RegistrationPage.module.scss'
 
-export default function RegistrationPage() {
+export function RegistrationPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

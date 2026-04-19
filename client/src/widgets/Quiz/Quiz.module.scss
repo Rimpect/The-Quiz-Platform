@@ -8,8 +8,8 @@
 }
 
 .quizHeader {
-  background: white;
-  border-radius: 15px 15px 0 0;
+  background: var(--color-light);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
   padding: 20px;
   display: flex;
   justify-content: space-between;
@@ -26,11 +26,9 @@
 }
 
 .progressInfoText {
-  // стили при необходимости
 }
 
 .progressInfoScore {
-  // стили при необходимости
 }
 
 .quizInfo {
@@ -40,15 +38,15 @@
 }
 
 .quizId {
-  background: #f0f0f0;
+  background: var(--color-quiz-id-bg);
   padding: 5px 15px;
   border-radius: 20px;
   font-size: 14px;
-  color: #666;
+  color: var(--color-quiz-id-text);
 }
 
 .quizCategory {
-  color: black;
+  color: var(--color-quiz-category);
   font-weight: 600;
   font-size: 16px;
 }
@@ -57,45 +55,45 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #f0f0f0;
+  background: var(--color-quiz-timer-bg);
   padding: 8px 20px;
   border-radius: 30px;
 }
 
 .timerLabel {
   font-size: 14px;
-  color: #666;
+  color: var(--color-quiz-timer-text);
 }
 
 .timerValue {
   font-size: 20px;
   font-weight: bold;
-  color: #333;
+  color: var(--color-quiz-timer-value);
   font-family: monospace;
 }
 
 .warning {
-  color: #ff4444;
+  color: var(--color-red);
   animation: pulse 1s infinite;
 }
 
 .progressContainer {
-  background: white;
+  background: var(--color-light);
   padding: 0 20px 20px;
   position: relative;
 }
 
 .progressBar {
   height: 8px;
-  background: black;
+  background: var(--color-quiz-progress-bg);
   border-radius: 4px;
-  transition: width 0.3s ease;
+  transition: width var(--transition-duration) ease;
 }
 
 .questionContainer {
-  background: white;
+  background: var(--color-light);
   padding: 30px;
-  border-radius: 0 0 15px 15px;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
   margin-bottom: 20px;
 }
 
@@ -108,7 +106,7 @@
   max-width: 100%;
   max-height: 400px;
   border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .mediaVideo {
@@ -118,19 +116,19 @@
 }
 
 .mediaAudio {
-  background: #f8f9fa;
+  background: var(--color-quiz-bg);
   padding: 20px;
   border-radius: 10px;
 }
 
 .questionTitle {
   font-size: 24px;
-  color: #333;
+  color: var(--color-quiz-title);
   margin-bottom: 10px;
 }
 
 .questionType {
-  color: #666;
+  color: var(--color-gray-text);
   font-size: 14px;
   margin-bottom: 25px;
   font-style: italic;
@@ -145,33 +143,33 @@
 
 .answerOption {
   padding: 15px 20px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--color-quiz-border);
   border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-duration) ease;
   display: flex;
   align-items: center;
   gap: 15px;
 
   &:hover {
-    border-color: #667eea;
-    background: #f8f9ff;
+    border-color: var(--color-quiz-border-hover);
+    background: var(--color-quiz-selected-bg);
   }
 }
 
 .selected {
-  border-color: #667eea;
-  background: #f0f3ff;
+  border-color: var(--color-quiz-border-hover);
+  background: var(--color-quiz-selected-bg);
 }
 
 .correct {
-  border-color: #00c851;
-  background: #e8f5e9;
+  border-color: var(--color-green);
+  background: var(--color-quiz-correct-bg);
 }
 
 .incorrect {
-  border-color: #ff4444;
-  background: #ffebee;
+  border-color: var(--color-red);
+  background: var(--color-quiz-incorrect-bg);
 }
 
 .disabled {
@@ -196,11 +194,11 @@
 }
 
 .resultIconCorrect {
-  color: #00c851;
+  color: var(--color-green);
 }
 
 .resultIconIncorrect {
-  color: #ff4444;
+  color: var(--color-red);
 }
 
 .resultMessage {
@@ -212,21 +210,21 @@
 }
 
 .resultMessageCorrect {
-  background: #e8f5e9;
-  border: 1px solid #00c851;
-  color: #00c851;
+  background: var(--color-quiz-correct-bg);
+  border: 1px solid var(--color-green);
+  color: var(--color-green);
 }
 
 .resultMessagePartial {
-  background: #fff3e0;
-  border: 1px solid #ffa000;
-  color: #ffa000;
+  background: var(--color-quiz-partial-bg);
+  border: 1px solid var(--color-quiz-partial-border);
+  color: var(--color-quiz-partial-text);
 }
 
 .resultMessageIncorrect {
-  background: #ffebee;
-  border: 1px solid #ff4444;
-  color: #ff4444;
+  background: var(--color-quiz-incorrect-bg);
+  border: 1px solid var(--color-red);
+  color: var(--color-red);
 }
 
 .actions {
@@ -243,34 +241,34 @@
 }
 
 .leaderboardPreview {
-  background: white;
-  border-radius: 15px;
+  background: var(--color-light);
+  border-radius: var(--border-radius);
   padding: 25px;
   margin-top: 20px;
 
   h3 {
-    color: #333;
+    color: var(--color-quiz-title);
     margin-bottom: 10px;
   }
 
   p {
-    color: #666;
+    color: var(--color-gray-text);
     margin-bottom: 20px;
   }
 }
 
 .leaderboardPlaceholder {
-  background: #f8f9fa;
+  background: var(--color-quiz-bg);
   border-radius: 10px;
   padding: 40px;
   text-align: center;
-  color: #999;
-  border: 2px dashed #ddd;
+  color: var(--color-quiz-placeholder-text);
+  border: 2px dashed var(--color-quiz-placeholder-border);
 }
 
 .resultsContainer {
-  background: white;
-  border-radius: 15px;
+  background: var(--color-light);
+  border-radius: var(--border-radius);
   padding: 40px;
   margin: 20px 0;
   text-align: center;
@@ -280,25 +278,25 @@
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-score);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 30px;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-score);
 }
 
 .scorePercent {
   font-size: 36px;
   font-weight: bold;
-  color: white;
+  color: var(--color-light);
 }
 
 .scoreDetails {
   margin-bottom: 30px;
 
   h3 {
-    color: #333;
+    color: var(--color-quiz-title);
     margin-bottom: 15px;
   }
 }
@@ -306,13 +304,13 @@
 .scoreText {
   font-size: 28px;
   font-weight: bold;
-  color: #764ba2;
+  color: #764ba2; // часть градиента, можно оставить или добавить переменную
   margin-bottom: 10px;
 }
 
 .correctCount {
   font-size: 18px;
-  color: #666;
+  color: var(--color-gray-text);
 }
 
 @keyframes pulse {
