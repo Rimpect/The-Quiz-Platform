@@ -4,21 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a0d65ffb-e083-4589-8502-aa880422a112" name="Changes" comment="Создание моделей бд без настройки">
-      <change afterPath="$PROJECT_DIR$/app/models/model_answer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../client/src/shared/Buttons/AverageButton/AverageButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../client/src/shared/Buttons/AverageButton/AverageButton.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/admin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/apps.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/models.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/serializers.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/tests.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/urls.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/api/views.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/asgi.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/settings.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/urls.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/wsgi.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/manage.py" beforeDir="false" />
+    <list default="true" id="a0d65ffb-e083-4589-8502-aa880422a112" name="Changes" comment="Удаление лишнего">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +49,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "ToolWindowGit.ShowToolbar": "false",
     "git-widget-placeholder": "dev-Dan",
-    "last_opened_file_path": "C:/Diplom/The-Quiz-Platform — копия"
+    "last_opened_file_path": "C:/Users/Ден/Desktop/SQL"
   }
 }]]></component>
   <component name="RecentsManager">
@@ -105,7 +93,15 @@
       <option name="project" value="LOCAL" />
       <updated>1775914577996</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Удаление лишнего">
+      <option name="closed" value="true" />
+      <created>1775914900981</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1775914900981</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -122,6 +118,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="В консоли отображаетсяя чек квизов из бд" />
     <MESSAGE value="Создание моделей бд без настройки" />
-    <option name="LAST_COMMIT_MESSAGE" value="Создание моделей бд без настройки" />
+    <MESSAGE value="Удаление лишнего" />
+    <option name="LAST_COMMIT_MESSAGE" value="Удаление лишнего" />
   </component>
 </project>

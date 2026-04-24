@@ -17,31 +17,21 @@ class AnswerType(str, enum.Enum) :
 class Question(Base) :
     __tablename__ = "questions"
 
-    # Основные поля
+    # Обязательные поля
     id = Column(Integer, primary_key=True, index=True)
-    quiz_id = Column(Integer, ForeignKey("quizzes.id", ondelete="CASCADE"), nullable=False)
-    order_number = Column(Integer, nullable=False)  # Порядковый номер вопроса в квизе
-
-    # Содержание вопроса
-    question_text = Column(Text, nullable=False)  # Текст вопроса
-    content = Column(Text, nullable=True)  # Дополнительное содержание
-    media_url = Column(String(500), nullable=True)  # Медиа (изображение, видео и т.д.)
-
-    # Настройки ответа
-    answer_type = Column(SQLEnum(AnswerType), default=AnswerType.SINGLE)
-    points = Column(Integer, default=1)  # Баллы за правильный ответ
-
-    # Варианты ответов (хранятся в отдельной таблице для гибкости)
-    # Правильный ответ может быть текстовым или ссылкой на варианты
-
-    # Временные метки
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    answer_type = Column(SQLEnum(AnswerType), nullable=False)  # Тип внесения ответа
+    points = Column(Integer, default=1, nullable=False)  # Количество баллов
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата создания
+    question_text = Column(Text, nullable=False)  # Содержание вопроса
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)  # Дата изменения
+    media_url = Column(String(500), nullable=True)  # Медиа (путь к файлу)
+    quiz_id = Column(Integer, ForeignKey("quizzes.id", ondelete="CASCADE"), nullable=False, index=True)  # ID квиза
+    time_limit_seconds = Column(Integer, nullable=True)  # Время ожидания ответа (в секундах)
 
     # Связи
     quiz = relationship("Quiz", back_populates="questions")
-    answer_options = relationship("Answer", back_populates="question", cascade="all, delete-orphan")
-
+    answers = relationship("Answer", back_populates="question", cascade="all, delete-orphan")
+    user_answers = relationship("UserAnswer", back_populates="question", cascade="all, delete-orphan")
 
     def __repr__(self) :
         return f"<Question {self.id}: {self.question_text[:50]}>"

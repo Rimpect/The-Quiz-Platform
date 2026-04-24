@@ -3,20 +3,21 @@ from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, Foreign
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from ..database.database import Base
-import enum
+from .model_question import Question
 
-class Answer(Base):
-    __tablename__ = "answer_options"
+class Answer(Base) :
+    __tablename__ = "answers"
 
+    # Обязательные поля
     id = Column(Integer, primary_key=True, index=True)
-    question_id = Column(Integer, ForeignKey("questions.id", ondelete="CASCADE"), nullable=False)
-
-    option_text = Column(Text, nullable=False)  # Текст варианта ответа
-    is_correct = Column(Boolean, default=False)  # Является ли этот вариант правильным
-    order_number = Column(Integer, default=0)  # Порядок отображения
+    question_id = Column(Integer, ForeignKey("questions.id", ondelete="CASCADE"), nullable=False,
+                         index=True)  # ID вопроса
+    answer_text = Column(Text, nullable=False)  # Текст ответа
+    is_correct = Column(Boolean, default=False, nullable=False)  # Правильный ли ответ
 
     # Связи
-    question = relationship("Question", back_populates="answer_options")
+    question = relationship(Question, back_populates="answers")
+    user_selected_answers = relationship("UserAnswer", back_populates="selected_answer")
 
     def __repr__(self) :
-        return f"<AnswerOption {self.id}: {self.option_text[:30]}>"
+        return f"<Answer {self.id}: {self.answer_text[:30]}>"
