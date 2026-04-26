@@ -15,8 +15,6 @@ export function PersonalAccount({
   onOpenSettings,
   user,
 }) {
-  // Используем переданные данные или мок-данные
-  // Убеждаемся, что user всегда объект с необходимыми полями
   const userData = {
     name: user?.name || mockUser.name,
     email: user?.email || mockUser.email,
