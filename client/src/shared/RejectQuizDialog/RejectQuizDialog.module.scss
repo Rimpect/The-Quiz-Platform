@@ -1,0 +1,41 @@
+@import '../../pages/AdminPanel/AdminPanel.module.scss';
+
+.rejectTextarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+}
+
+.cancelButton {
+  padding: 0.375rem 1rem;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 0.375rem;
+  cursor: pointer;
+
+  &:hover {
+    background: #f9fafb;
+  }
+}
+
+.confirmRejectButton {
+  padding: 0.375rem 1rem;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+
+  &:hover {
+    background: #b91c1c;
+  }
+}

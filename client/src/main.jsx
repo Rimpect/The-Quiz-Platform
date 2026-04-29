@@ -10,5 +10,6 @@ createRoot(document.getElementById('root')).render(
     <HashRouter>
       <App />
     </HashRouter>
+    {/* Для github pages использую именно этот, что бы работало без ошибок, когда будет сервер свой то переделать на BrowserRouter */}
   </StrictMode>,
 )

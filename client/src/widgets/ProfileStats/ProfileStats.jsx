@@ -79,7 +79,7 @@ export function ProfileStats({ user }) {
                 Главная
               </button>
             </Link>
-            <Link to="/MainPage">
+            <Link to="/ProfileSettings">
               <button className={styles.btnOutline}>
                 <SettingsIcon size={16} />
                 Настройки

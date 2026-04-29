@@ -1,0 +1,59 @@
+.contentCard {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tabsList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  background: #f3f4f6;
+  padding: 0.25rem;
+  border-radius: 0.75rem;
+}
+
+.tabTrigger {
+  padding: 0.5rem;
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  &.active {
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+  }
+}
+
+.tabContent {
+  margin-top: 1rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 0;
+  color: #9ca3af;
+
+  .emptyIcon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+    display: inline-block;
+  }
+}
+
+.paginationInfo {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}

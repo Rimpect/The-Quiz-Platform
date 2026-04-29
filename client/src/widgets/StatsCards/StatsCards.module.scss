@@ -1,0 +1,75 @@
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.statCard {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.pending {
+  background: #fefce8;
+  border-color: #fef08a;
+
+  .statValue {
+    color: #a16207;
+  }
+}
+
+.approved {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+
+  .statValue {
+    color: #166534;
+  }
+}
+
+.rejected {
+  background: #fef2f2;
+  border-color: #fecaca;
+
+  .statValue {
+    color: #991b1b;
+  }
+}
+
+.statContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.statValue {
+  font-size: 1.875rem;
+  font-weight: bold;
+}
+
+.statIcon {
+  width: 3rem;
+  height: 3rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
