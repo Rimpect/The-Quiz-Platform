@@ -3,7 +3,9 @@ from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, Foreign
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from ..database.database import Base
-import enum
+from model_user import User
+from model_quiz import Quiz
+from model_user_answer import UserAnswer
 
 
 
@@ -25,9 +27,9 @@ class QuizResult(Base) :
     # duration_seconds - вычисляется как разница между completed_at и started_at
 
     # Связи
-    user = relationship("User", back_populates="quiz_results")
-    quiz = relationship("Quiz", back_populates="results")
-    user_answers = relationship("UserAnswer", back_populates="quiz_result", cascade="all, delete-orphan")
+    user = relationship(User, back_populates="quiz_results")
+    quiz = relationship(Quiz, back_populates="results")
+    user_answers = relationship(UserAnswer, back_populates="quiz_result", cascade="all, delete-orphan")
 
     # Вычисляемые свойства
     @property

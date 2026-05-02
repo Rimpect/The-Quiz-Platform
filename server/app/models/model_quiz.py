@@ -4,7 +4,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from ..database.database import Base
 import enum
-
+from model_question import Question
+from model_statistic import QuizResult
 
 class Difficulty(str, enum.Enum):
     EASY = "easy"
@@ -38,8 +39,8 @@ class Quiz(Base) :
     # times_taken - вычисляется из статистики прохождений
 
     # Связи
-    questions = relationship("Question", back_populates="quiz", cascade="all, delete-orphan")
-    results = relationship("QuizResult", back_populates="quiz", cascade="all, delete-orphan")
+    questions = relationship(Question, back_populates="quiz", cascade="all, delete-orphan")
+    results = relationship(QuizResult, back_populates="quiz", cascade="all, delete-orphan")
 
     # Вычисляемые свойства (property)
     @property

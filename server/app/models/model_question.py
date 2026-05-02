@@ -4,6 +4,9 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from ..database.database import Base
 import enum
+from .model_quiz import Quiz
+
+
 
 class AnswerType(str, enum.Enum) :
     SINGLE = "single"  # Одиночный выбор

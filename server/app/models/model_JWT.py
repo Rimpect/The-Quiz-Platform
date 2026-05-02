@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, Foreign
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from ..database.database import Base
-import enum
+from .model_user import User
 
 
 """
@@ -26,7 +26,7 @@ class JWTToken(Base) :
     #user_agent = Column(String(500), nullable=True)  # Информация об устройстве
     
     # Связи
-    user = relationship("User", back_populates="jwt_tokens")
+    user = relationship(User, back_populates="jwt_tokens")
 
     def __repr__(self) :
         return f"<JWTToken user_id={self.user_id}>"

@@ -1,11 +1,12 @@
 # ==========  Таблица 5: Ответы ==========
-from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, ForeignKey, Float, Enum as SQLEnum
+from sqlalchemy import Column, Integer, Text, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 from ..database.database import Base
 from .model_question import Question
+from .model_user_answer import UserAnswer
 
-class Answer(Base) :
+
+class Answer(Base):
     __tablename__ = "answers"
 
     # Обязательные поля
@@ -17,7 +18,9 @@ class Answer(Base) :
 
     # Связи
     question = relationship(Question, back_populates="answers")
-    user_selected_answers = relationship("UserAnswer", back_populates="selected_answer")
+    user_selected_answers = relationship(UserAnswer, back_populates="selected_answer")
 
     def __repr__(self) :
         return f"<Answer {self.id}: {self.answer_text[:30]}>"
+
+
