@@ -1,24 +1,26 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func, and_
-from ..models import models, schemas
+from sqlalchemy import func
+from ..models.model_statistic import QuizResult
+from ..models.model_question import Question as Quest
+from ...app import schemas
 from datetime import datetime
 from typing import Optional, List
 
 
 def get_quiz_result(db: Session, result_id: int) -> Optional[models.QuizResult] :
-    return db.query(models.QuizResult).filter(models.QuizResult.id == result_id).first()
+    return db.query(QuizResult).filter(QuizResult.id == result_id).first()
 
 
 def get_user_quiz_results(db: Session, user_id: int, skip: int = 0, limit: int = 100) -> List[models.QuizResult] :
-    return db.query(models.QuizResult).filter(
-        models.QuizResult.user_id == user_id
-    ).order_by(models.QuizResult.started_at.desc()).offset(skip).limit(limit).all()
+    return db.query(QuizResult).filter(
+        QuizResult.user_id == user_id
+    ).order_by(QuizResult.started_at.desc()).offset(skip).limit(limit).all()
 
 
-def get_quiz_results_by_quiz(db: Session, quiz_id: int, skip: int = 0, limit: int = 100) -> List[models.QuizResult] :
-    return db.query(models.QuizResult).filter(
-        models.QuizResult.quiz_id == quiz_id
-    ).order_by(models.QuizResult.started_at.desc()).offset(skip).limit(limit).all()
+def get_quiz_results_by_quiz(db: Session, quiz_id: int, skip: int = 0, limit: int = 100) -> List[ QuizResult] :
+    return db.query(QuizResult).filter(
+        QuizResult.quiz_id == quiz_id
+    ).order_by(QuizResult.started_at.desc()).offset(skip).limit(limit).all()
 
 
 def create_quiz_result(db: Session, user_id: int, quiz_id: int) -> models.QuizResult :
