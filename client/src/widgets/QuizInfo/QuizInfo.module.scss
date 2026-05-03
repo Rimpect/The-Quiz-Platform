@@ -4,7 +4,7 @@
   padding: 1.25rem;
   margin-bottom: 1rem;
   transition: all 0.3s ease;
-  
+
   &:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
@@ -15,7 +15,7 @@
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
   }
@@ -86,20 +86,23 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  
+
   @media (max-width: 768px) {
     flex-direction: row;
   }
 }
 
 .actionButton {
+  display: flex;
+  align-items: center;
+  gap: 15px;
   padding: 0.375rem 0.75rem;
   border: none;
   border-radius: 0.375rem;
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-1px);
   }
@@ -108,7 +111,7 @@
 .approveButton {
   background: #16a34a;
   color: white;
-  
+
   &:hover {
     background: #15803d;
   }
@@ -117,16 +120,16 @@
 .rejectButton {
   background: #dc2626;
   color: white;
-  
+
   &:hover {
     background: #b91c1c;
   }
 }
 
 .viewButton {
-  background: #6b7280;
-  color: white;
-  
+  background: white;
+  color: black;
+  border: 0.5px, #e3e3e3, solid;
   &:hover {
     background: #4b5563;
   }

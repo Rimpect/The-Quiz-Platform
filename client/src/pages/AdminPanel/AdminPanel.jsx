@@ -17,9 +17,7 @@ export function AdminPanel({ onBack, quizzes = [], onApprove, onReject }) {
   const [filterStatus, setFilterStatus] = useState('pending')
   const [currentPage, setCurrentPage] = useState(1)
 
-  const safeQuizzes = Array.isArray(quizzes) ? quizzes : []
-
-  const filteredQuizzes = safeQuizzes.filter((quiz) => {
+  const filteredQuizzes = quizzes.filter((quiz) => {
     const matchesSearch =
       quiz.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       quiz.author.toLowerCase().includes(searchQuery.toLowerCase())
@@ -27,13 +25,19 @@ export function AdminPanel({ onBack, quizzes = [], onApprove, onReject }) {
     return matchesSearch && matchesStatus
   })
 
-  const pendingCount = safeQuizzes.filter((q) => q.status === 'pending').length
-  const approvedCount = safeQuizzes.filter(
-    (q) => q.status === 'approved',
-  ).length
-  const rejectedCount = safeQuizzes.filter(
-    (q) => q.status === 'rejected',
-  ).length
+  const handleFilterChange = (newStatus) => {
+    setFilterStatus(newStatus)
+    setCurrentPage(1)
+  }
+
+  const handleSearchChange = (query) => {
+    setSearchQuery(query)
+    setCurrentPage(1)
+  }
+
+  const pendingCount = quizzes.filter((q) => q.status === 'pending').length
+  const approvedCount = quizzes.filter((q) => q.status === 'approved').length
+  const rejectedCount = quizzes.filter((q) => q.status === 'rejected').length
 
   const handleApprove = (quiz) => {
     onApprove(quiz.id)
@@ -69,12 +73,15 @@ export function AdminPanel({ onBack, quizzes = [], onApprove, onReject }) {
           rejectedCount={rejectedCount}
         />
 
-        <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+        />
 
         <QuizTabs
           quizzes={filteredQuizzes}
           filterStatus={filterStatus}
-          onFilterChange={setFilterStatus}
+          onFilterChange={handleFilterChange}
           currentPage={currentPage}
           onPageChange={setCurrentPage}
           onApprove={handleApprove}

@@ -5,7 +5,6 @@ import styles from './QuizCard.module.scss'
 export function QuizCard(props) {
   const {
     img,
-    id,
     description,
     difficulty,
     title,
@@ -25,11 +24,7 @@ export function QuizCard(props) {
   return (
     <div className={styles.card}>
       <div className={styles.card__imageWrapper}>
-        <img
-          src={img}
-          alt={`${title} - квиз ${id}`}
-          className={styles.card__image}
-        />
+        <img src={img} alt={`${title}`} className={styles.card__image} />
         <span
           className={`${styles.card__badge} ${styles[`card__badge--${badgeClass}`]}`}
         >

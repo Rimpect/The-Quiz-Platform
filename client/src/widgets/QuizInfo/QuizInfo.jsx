@@ -1,3 +1,5 @@
+import { Eye } from 'lucide-react'
+
 import styles from './QuizInfo.module.scss'
 
 export function QuizInfo({ quiz, onApprove, onReject, onView }) {
@@ -64,7 +66,7 @@ export function QuizInfo({ quiz, onApprove, onReject, onView }) {
             className={`${styles.actionButton} ${styles.viewButton}`}
             onClick={() => onView(quiz)}
           >
-            👁️ Просмотр
+            <Eye size={20}></Eye> <span>Просмотр</span>
           </button>
         </div>
       </div>

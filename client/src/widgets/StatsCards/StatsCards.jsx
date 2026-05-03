@@ -1,4 +1,5 @@
 import { Calendar, Check, X } from 'lucide-react'
+
 import styles from './StatsCards.module.scss'
 
 export function StatsCards({ pendingCount, approvedCount, rejectedCount }) {
