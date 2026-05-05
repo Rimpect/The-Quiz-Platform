@@ -1,5 +1,4 @@
 import styles from './Pagination.module.scss'
-
 export function Pagination({ currentPage, totalPages, onPageChange }) {
   if (totalPages <= 1) return null
 
@@ -28,7 +27,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          ← Назад
+          &lt; &nbsp; Назад
         </button>
 
         <div className={styles.pageNumbers}>
@@ -48,7 +47,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          Вперед →
+          Вперед &nbsp; &gt;
         </button>
       </div>
     </div>

@@ -9,7 +9,10 @@ import { StatsCards } from '../../widgets/StatsCards/StatsCards'
 
 import styles from './AdminPanel.module.scss'
 
-export function AdminPanel({ onBack, quizzes = [], onApprove, onReject }) {
+export function AdminPanel({
+  onBack,
+  quizzes = [], //onApprove, onReject
+}) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedQuiz, setSelectedQuiz] = useState(null)
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false)
@@ -39,11 +42,13 @@ export function AdminPanel({ onBack, quizzes = [], onApprove, onReject }) {
   const approvedCount = quizzes.filter((q) => q.status === 'approved').length
   const rejectedCount = quizzes.filter((q) => q.status === 'rejected').length
 
-  const handleApprove = (quiz) => {
-    onApprove(quiz.id)
-    alert(`Квиз "${quiz.title}" одобрен`)
-  }
-
+  // const handleApprove = (quiz) => {
+  //   onApprove(quiz.id)
+  //   alert(`Квиз "${quiz.title}" одобрен`)
+  // }
+  const handleApprove = () => {
+    alert(`Квиз одобрен`)
+  } //@TODO заглушка пока что вместо алертов будут кастомные модалки
   const handleRejectClick = (quiz) => {
     setSelectedQuiz(quiz)
     setIsRejectDialogOpen(true)
@@ -54,14 +59,19 @@ export function AdminPanel({ onBack, quizzes = [], onApprove, onReject }) {
     setIsViewDialogOpen(true)
   }
 
-  const handleRejectConfirm = (reason) => {
+  const handleRejectConfirm = () => {
     if (!selectedQuiz) return
-    onReject(selectedQuiz.id, reason)
-    alert(`Квиз "${selectedQuiz.title}" отклонен`)
+    alert(`Квиз отклонен`)
     setIsRejectDialogOpen(false)
-    setSelectedQuiz(null)
+    setSelectedQuiz(null) //@TODO заглушка пока что вместо алертов будут кастомные модалки
   }
-
+  // const handleRejectConfirm = (reason) => {
+  //   if (!selectedQuiz) return
+  //   onReject(selectedQuiz.id, reason)
+  //   alert(`Квиз "${selectedQuiz.title}" отклонен`)
+  //   setIsRejectDialogOpen(false)
+  //   setSelectedQuiz(null)
+  // }
   return (
     <div className={styles.adminPanel}>
       <div className={styles.container}>

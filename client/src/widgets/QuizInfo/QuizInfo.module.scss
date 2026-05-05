@@ -111,7 +111,8 @@
 .approveButton {
   background: #16a34a;
   color: white;
-
+  align-items: center;
+  padding: 10px;
   &:hover {
     background: #15803d;
   }
@@ -120,7 +121,8 @@
 .rejectButton {
   background: #dc2626;
   color: white;
-
+  align-items: center;
+  padding: 10px;
   &:hover {
     background: #b91c1c;
   }
@@ -131,6 +133,6 @@
   color: black;
   border: 0.5px, #e3e3e3, solid;
   &:hover {
-    background: #4b5563;
+    background: #edeef0;
   }
 }

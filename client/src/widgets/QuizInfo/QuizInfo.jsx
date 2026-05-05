@@ -1,4 +1,4 @@
-import { Eye } from 'lucide-react'
+import { Eye, Dot, Users, Check, X } from 'lucide-react'
 
 import styles from './QuizInfo.module.scss'
 
@@ -27,21 +27,21 @@ export function QuizInfo({ quiz, onApprove, onReject, onView }) {
           </div>
           <p className={styles.quizDescription}>{quiz.description}</p>
           <div className={styles.quizMeta}>
-            <span className={styles.metaItem}>👤 Автор: {quiz.author}</span>
-            <span>•</span>
             <span className={styles.metaItem}>
-              📁 Категория: {quiz.category}
+              <Users /> Автор: {quiz.author}
             </span>
-            <span>•</span>
+            <Dot />
+            <span className={styles.metaItem}>Категория: {quiz.category}</span>
+            <Dot />
             <span className={styles.metaItem}>
-              ❓ Вопросов: {quiz.questionCount}
+              Вопросов: {quiz.questionCount}
             </span>
-            <span>•</span>
+            <Dot />
             <span className={styles.metaItem}>
-              📊 Сложность: {quiz.difficulty}
+              Сложность: {quiz.difficulty}
             </span>
-            <span>•</span>
-            <span className={styles.metaItem}>📅 {quiz.createdAt}</span>
+            <Dot />
+            <span className={styles.metaItem}> {quiz.createdAt}</span>
           </div>
         </div>
 
@@ -52,13 +52,19 @@ export function QuizInfo({ quiz, onApprove, onReject, onView }) {
                 className={`${styles.actionButton} ${styles.approveButton}`}
                 onClick={() => onApprove(quiz)}
               >
-                ✓ Одобрить
+                <span>
+                  <Check size={16} />
+                  &nbsp; Одобрить
+                </span>
               </button>
               <button
                 className={`${styles.actionButton} ${styles.rejectButton}`}
                 onClick={() => onReject(quiz)}
               >
-                ✗ Отклонить
+                <span>
+                  <X size={16} />
+                  &nbsp; Отклонить
+                </span>
               </button>
             </>
           )}
