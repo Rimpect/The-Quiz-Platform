@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 
 from ..database.database import get_db
-from ..crud import user as User
+from ..crud import user as crud_user
 from ...app import schemas
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -65,7 +65,7 @@ def get_current_user(
             detail="Invalid authentication credentials"
         )
 
-    user = User.get_user(db, int(user_id))
+    user = crud_user.get_user(db, int(user_id))
     if user is None :
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
