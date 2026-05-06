@@ -1,35 +1,39 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
+
+from ..models.model_answer import Answer
 from ..models.model_statistic import QuizResult
-from ..models.model_question import Question as Quest
+from ..models.model_question import Question
+from ..models.model_user import User
+from ..models.model_user_answer import UserAnswer
 from ...app import schemas
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Type
 
 
-def get_quiz_result(db: Session, result_id: int) -> Optional[models.QuizResult] :
+def get_quiz_result(db: Session, result_id: int) -> Optional[QuizResult] :
     return db.query(QuizResult).filter(QuizResult.id == result_id).first()
 
 
-def get_user_quiz_results(db: Session, user_id: int, skip: int = 0, limit: int = 100) -> List[models.QuizResult] :
+def get_user_quiz_results(db: Session, user_id: int, skip: int = 0, limit: int = 100) -> list[Type[QuizResult]] :
     return db.query(QuizResult).filter(
         QuizResult.user_id == user_id
     ).order_by(QuizResult.started_at.desc()).offset(skip).limit(limit).all()
 
 
-def get_quiz_results_by_quiz(db: Session, quiz_id: int, skip: int = 0, limit: int = 100) -> List[ QuizResult] :
+def get_quiz_results_by_quiz(db: Session, quiz_id: int, skip: int = 0, limit: int = 100) -> list[Type[QuizResult]] :
     return db.query(QuizResult).filter(
         QuizResult.quiz_id == quiz_id
     ).order_by(QuizResult.started_at.desc()).offset(skip).limit(limit).all()
 
 
-def create_quiz_result(db: Session, user_id: int, quiz_id: int) -> models.QuizResult :
+def create_quiz_result(db: Session, user_id: int, quiz_id: int) -> QuizResult :
     """Создание нового результата при старте квиза"""
     # Получаем максимально возможные баллы
-    questions = db.query(models.Question).filter(models.Question.quiz_id == quiz_id).all()
+    questions = db.query(Question).filter(Question.quiz_id == quiz_id).all()
     max_score = sum(q.points for q in questions)
 
-    db_result = models.QuizResult(
+    db_result = QuizResult(
         user_id=user_id,
         quiz_id=quiz_id,
         score=0,
@@ -43,8 +47,7 @@ def create_quiz_result(db: Session, user_id: int, quiz_id: int) -> models.QuizRe
     return db_result
 
 
-def update_quiz_result(db: Session, result_id: int, result_update: schemas.QuizResultUpdate) -> Optional[
-    models.QuizResult] :
+def update_quiz_result(db: Session, result_id: int, result_update: schemas.QuizResultUpdate) -> Optional[QuizResult] :
     db_result = get_quiz_result(db, result_id)
     if db_result :
         update_data = result_update.model_dump(exclude_unset=True)
@@ -55,13 +58,13 @@ def update_quiz_result(db: Session, result_id: int, result_update: schemas.QuizR
     return db_result
 
 
-def complete_quiz_result(db: Session, result_id: int) -> Optional[models.QuizResult] :
+def complete_quiz_result(db: Session, result_id: int) -> Optional[QuizResult] :
     """Завершение квиза и подсчет итогов"""
     db_result = get_quiz_result(db, result_id)
     if db_result :
         # Считаем сумму баллов из ответов пользователя
-        total_score = db.query(func.sum(models.UserAnswer.points_earned)).filter(
-            models.UserAnswer.quiz_result_id == result_id
+        total_score = db.query(func.sum(UserAnswer.points_earned)).filter(
+            UserAnswer.quiz_result_id == result_id
         ).scalar() or 0
 
         db_result.score = total_score
@@ -84,21 +87,21 @@ def delete_quiz_result(db: Session, result_id: int) -> bool :
 def get_quiz_leaderboard(db: Session, quiz_id: int, limit: int = 10) -> List[dict] :
     """Получение таблицы лидеров для квиза"""
     results = db.query(
-        models.QuizResult,
-        models.User.nickname,
-        models.User.photo_profile
+        QuizResult,
+        User.nickname,
+        User.photo_profile
     ).join(
-        models.User, models.QuizResult.user_id == models.User.id
+        User, QuizResult.user_id == User.id
     ).filter(
-        models.QuizResult.quiz_id == quiz_id,
-        models.QuizResult.is_completed == True
+        QuizResult.quiz_id == quiz_id,
+        QuizResult.is_completed == True
     ).order_by(
-        models.QuizResult.score.desc(),
-        models.QuizResult.completed_at.asc()
+        QuizResult.score.desc(),
+        QuizResult.completed_at.asc()
     ).limit(limit).all()
 
     leaderboard = []
-    for result, nickname, photo in results :
+    for result, nickname, photo in results:
         leaderboard.append({
             "user_id" : result.user_id,
             "nickname" : nickname,
@@ -117,10 +120,10 @@ def save_user_answer(
         answer_text: Optional[str] = None,
         answer_id: Optional[int] = None,
         time_spent_seconds: Optional[int] = None
-) -> models.UserAnswer :
+) -> UserAnswer:
     """Сохранение ответа пользователя на вопрос"""
     # Получаем вопрос и проверяем правильность
-    question = db.query(models.Question).filter(models.Question.id == question_id).first()
+    question = db.query(Question).filter(Question.id == question_id).first()
     is_correct = False
     points_earned = 0
 
@@ -128,22 +131,22 @@ def save_user_answer(
         # Для текстовых ответов нужно отдельное сравнение
         # Здесь упрощенно - проверяем по answer_id если передан
         if answer_id :
-            answer = db.query(models.Answer).filter(
-                models.Answer.id == answer_id,
-                models.Answer.is_correct == True
+            answer = db.query(Answer).filter(
+                Answer.id == answer_id,
+                Answer.is_correct == True
             ).first()
             is_correct = answer is not None
     else :
         # Для выбора вариантов
         if answer_id :
-            answer = db.query(models.Answer).filter(models.Answer.id == answer_id).first()
-            if answer :
+            answer = db.query(Answer).filter(Answer.id == answer_id).first()
+            if answer:
                 is_correct = answer.is_correct
 
     if is_correct :
         points_earned = question.points
 
-    db_answer = models.UserAnswer(
+    db_answer = UserAnswer(
         quiz_result_id=quiz_result_id,
         question_id=question_id,
         answer_text=answer_text,

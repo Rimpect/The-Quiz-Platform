@@ -10,7 +10,7 @@ from model_user_answer import UserAnswer
 
 
 
-class QuizResult(Base) :
+class QuizResult(Base):
     __tablename__ = "quiz_results"
 
     # Сохраняемые поля

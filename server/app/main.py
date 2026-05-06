@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
 
-from app.database import engine, Base
-from app.routers import (
+from .database.database import engine, Base
+from .routers import (
     users_router,
     quizzes_router,
     questions_router,

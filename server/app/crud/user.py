@@ -1,30 +1,32 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from app import models, schemas
-from app.utils.security import get_password_hash
+from ..models.model_statistic import QuizResult
+from ..models.model_user import User
+from ...app import schemas
+from ...app.utils.security import get_password_hash
 from datetime import datetime
 from typing import Optional, List
 
 
-def get_user(db: Session, user_id: int) -> Optional[models.User] :
-    return db.query(models.User).filter(models.User.id == user_id).first()
+def get_user(db: Session, user_id: int) -> Optional[User] :
+    return db.query(User).filter(User.id == user_id).first()
 
 
-def get_user_by_login(db: Session, login: str) -> Optional[models.User] :
-    return db.query(models.User).filter(models.User.login == login).first()
+def get_user_by_login(db: Session, login: str) -> Optional[User] :
+    return db.query(User).filter(User.login == login).first()
 
 
-def get_user_by_email(db: Session, email: str) -> Optional[models.User] :
-    return db.query(models.User).filter(models.User.email == email).first()
+def get_user_by_email(db: Session, email: str) -> Optional[User] :
+    return db.query(User).filter(User.email == email).first()
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[models.User] :
-    return db.query(models.User).offset(skip).limit(limit).all()
+def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[User] :
+    return db.query(User).offset(skip).limit(limit).all()
 
 
-def create_user(db: Session, user: schemas.UserCreate) -> models.User :
+def create_user(db: Session, user: schemas.UserCreate) -> User :
     hashed_password = get_password_hash(user.password)
-    db_user = models.User(
+    db_user = User(
         nickname=user.nickname,
         login=user.login,
         email=user.email,
@@ -37,7 +39,7 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.User :
     return db_user
 
 
-def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate) -> Optional[models.User] :
+def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate) -> Optional[User] :
     db_user = get_user(db, user_id)
     if db_user :
         update_data = user_update.model_dump(exclude_unset=True)
@@ -49,7 +51,7 @@ def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate) -> O
     return db_user
 
 
-def update_user_photo(db: Session, user_id: int, photo_url: str) -> Optional[models.User] :
+def update_user_photo(db: Session, user_id: int, photo_url: str) -> Optional[User] :
     db_user = get_user(db, user_id)
     if db_user :
         db_user.photo_profile = photo_url
@@ -70,19 +72,19 @@ def delete_user(db: Session, user_id: int) -> bool :
 
 def get_user_statistics(db: Session, user_id: int) -> dict :
     """Получение статистики пользователя"""
-    total_quizzes = db.query(models.QuizResult).filter(
-        models.QuizResult.user_id == user_id,
-        models.QuizResult.is_completed == True
+    total_quizzes = db.query(QuizResult).filter(
+        QuizResult.user_id == user_id,
+        QuizResult.is_completed == True
     ).count()
 
-    avg_score = db.query(func.avg(models.QuizResult.score)).filter(
-        models.QuizResult.user_id == user_id,
-        models.QuizResult.is_completed == True
+    avg_score = db.query(func.avg(QuizResult.score)).filter(
+        QuizResult.user_id == user_id,
+        QuizResult.is_completed == True
     ).scalar() or 0
 
-    total_points = db.query(func.sum(models.QuizResult.score)).filter(
-        models.QuizResult.user_id == user_id,
-        models.QuizResult.is_completed == True
+    total_points = db.query(func.sum(QuizResult.score)).filter(
+        QuizResult.user_id == user_id,
+        QuizResult.is_completed == True
     ).scalar() or 0
 
     return {
