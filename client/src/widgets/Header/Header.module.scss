@@ -1,7 +1,7 @@
 // Header.module.scss
 @use '../../app/GlobalStyles/media';
 @use '../../app/GlobalStyles/mixins';
-
+//@TODO подправить классы и их название
 .headerContainer {
   width: 100%;
   background-color: var(--color-light);
@@ -43,7 +43,6 @@
 }
 
 .logoTitle {
-
 }
 
 .user {
@@ -55,15 +54,28 @@
 }
 
 .userLink {
-
 }
+.adminButton {
+  display: flex;
+  gap: 15px;
+  padding: 5px 10px;
+  background-color: var(--color-white);
+  border: solid 1px var(--gray-600);
+  color: var(--color-dark);
+  border-radius: var(--border-radius-small);
+  cursor: pointer;
+  transition: all 0.15s ease;
 
+  &:hover {
+    opacity: 0.8;
+  }
+}
 .userButton {
   // потом вынести кнопку это в ui
   padding: 5px 10px;
-  background-color: var(--color-dark);
-  border: solid 1px var(--color-dark);
-  color: var(--color-light);
+  border: solid 1px var(--gray-600);
+  background-color: var(--color-white);
+  color: var(--color-dark);
   border-radius: var(--border-radius-small);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -78,5 +90,4 @@
 }
 
 .userText {
-  
 }

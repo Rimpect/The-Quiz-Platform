@@ -1,11 +1,11 @@
+import { ProfileStats, QuizHistory } from '@widgets'
+
 import {
   mockUser,
   recentQuizzes,
   myQuizzes,
   achievements,
 } from '../../MockData'
-import { ProfileStats } from '../../widgets/ProfileStats/ProfileStats'
-import { QuizHistory } from '../../widgets/QuizHistory/QuizHistory'
 
 import styles from './PersonalAccount.module.scss'
 

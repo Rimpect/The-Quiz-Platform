@@ -1,0 +1,23 @@
+// компоненты для страницы AdminPanel
+export { AdminHeader } from './AdminHeader/AdminHeader'
+export { QuizTabs } from './QuizTabs/QuizTabs'
+export { SearchBar } from './SearchBar/SearchBar'
+export { StatsCards } from './StatsCards/StatsCards'
+// компоненты для страницы PersonalAccount
+export { ProfileStats } from './ProfileStats/ProfileStats'
+export { QuizHistory } from './QuizHistory/QuizHistory'
+// компоненты для страницы MainPage
+export { QuizSearch } from './QuizSearch/QuizSearch'
+export { QuizeBoard } from './QuizeBoard/QuizeBoard'
+// компоненты для страницы QuizDescriptionPage
+export { QuizDescription } from './QuizDescription/QuizDescription'
+// компоненты для страницы QuizPage
+export { Quiz } from './Quiz/Quiz'
+// компоненты для страницы FinishQuizPage
+export { FinishQuiz } from './FinishQuiz/FinishQuiz'
+// компоненты для страницы SignUpPage
+export { SignUp } from './SignUp/SignUp'
+// компоненты для страницы ProfileSettingsPage
+export { ProfileSettings } from './ProfileSettings/ProfileSettings'
+// компоненты для страницы RegistrationPage
+export { Registration } from './Registration/Registration'

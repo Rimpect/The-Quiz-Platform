@@ -2,13 +2,13 @@ import React, { useState } from 'react'
 
 import { Link } from 'react-router-dom'
 
-import { SmallButton } from '../../shared/Buttons/SmallButton/SmallButton'
 import { ModalNotifications } from '../../shared/Modal/ModalNotifications/ModalNotifications'
 import { QuizCard } from '../../shared/QuizCard/QuizCard/QuizCard'
+import { Pagination } from '../../shared/ui/Pagination/Pagination'
 
 import styles from './QuizeBoard.module.scss'
 
-export function QuizeBoard() {
+export function QuizeBoard({ currentPage, onPageChange, totalPages }) {
   const [open, setOpen] = useState(false)
 
   const quizzes = [
@@ -155,11 +155,11 @@ export function QuizeBoard() {
           </ModalNotifications>
         )}
       </div>
-      <div className={styles.nav}>
-        <SmallButton>Кнопка вперед</SmallButton>
-        <div>выбрать страницу</div>
-        <SmallButton>Кнопка Назад</SmallButton>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+      />
     </div>
   )
 }

@@ -1,8 +1,6 @@
 import React from 'react'
 
-import { QuizSearch } from '../../widgets/QuizSearch/QuizSearch'
-
-import { QuizeBoard } from './../../widgets/QuizeBoard/QuizeBoard'
+import { QuizSearch, QuizeBoard } from '@widgets'
 
 export function MainPage() {
   return (

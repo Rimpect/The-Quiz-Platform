@@ -1,11 +1,7 @@
 import { useState } from 'react'
 
-import { RejectQuizDialog } from '../../shared/RejectQuizDialog/RejectQuizDialog'
-import { ViewQuizDialog } from '../../shared/ViewQuizDialog/ViewQuizDialog'
-import { AdminHeader } from '../../widgets/AdminHeader/AdminHeader'
-import { QuizTabs } from '../../widgets/QuizTabs/QuizTabs'
-import { SearchBar } from '../../widgets/SearchBar/SearchBar'
-import { StatsCards } from '../../widgets/StatsCards/StatsCards'
+import { RejectQuizDialog, ViewQuizDialog } from '@shared'
+import { AdminHeader, QuizTabs, SearchBar, StatsCards } from '@widgets'
 
 import styles from './AdminPanel.module.scss'
 

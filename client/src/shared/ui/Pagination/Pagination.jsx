@@ -1,4 +1,5 @@
 import styles from './Pagination.module.scss'
+
 export function Pagination({ currentPage, totalPages, onPageChange }) {
   if (totalPages <= 1) return null
 

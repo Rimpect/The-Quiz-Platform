@@ -1,5 +1,5 @@
 import { myQuizzes } from '../../MockData/myQuizzes'
-import { Pagination } from '../Pagination/Pagination'
+import { Pagination } from '../../shared/ui/Pagination/Pagination'
 import { QuizInfo } from '../QuizInfo/QuizInfo'
 
 import styles from './QuizTabs.module.scss'

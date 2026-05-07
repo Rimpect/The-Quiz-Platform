@@ -1,15 +1,17 @@
 import './App.scss'
+import {
+  AdminPanel,
+  FinishQuizPage,
+  MainPage,
+  PersonalAccount,
+  ProfileSettingsPage,
+  QuizDescriptionPage,
+  QuizPage,
+  RegistrationPage,
+  SignUpPage,
+} from '@pages'
 import { Routes, Route } from 'react-router-dom'
 
-import { AdminPanel } from './pages/AdminPanel/AdminPanel'
-import { FinishQuiz } from './pages/FinishQuiz/FinishQuiz'
-import { MainPage } from './pages/MainPage/MainPage'
-import { PersonalAccount } from './pages/PersonalAccount/PersonalAccount'
-import { ProfileSettings } from './pages/ProfileSettings/ProfileSettings'
-import { QuizDescriptionPage } from './pages/QuizDescriptionPage/QuizDescriptionPage.jsx'
-import { QuizPage } from './pages/QuizPage/QuizPage'
-import { RegistrationPage } from './pages/RegistrationPage/RegistrationPage.jsx'
-import { SignUp } from './pages/SignUp/SignUp.jsx'
 import { Layout } from './widgets/Layout/Layout.jsx'
 
 function App() {
@@ -19,15 +21,15 @@ function App() {
         <Route path="/MainPage" element={<MainPage />} />
         <Route path="/PersonalAccount" element={<PersonalAccount />} />
         <Route path="/QuizDescription/:id" element={<QuizDescriptionPage />} />
-        <Route path="/ProfileSettings" element={<ProfileSettings />} />
+        <Route path="/ProfileSettingsPage" element={<ProfileSettingsPage />} />
         <Route path="/AdminPanel/" element={<AdminPanel />} />
 
         {/* <Route path="/CreateQuiz" element={<CreateQuiz />} /> */}
       </Route>
-      <Route path="/" element={<SignUp />} />
+      <Route path="/" element={<SignUpPage />} />
       <Route path="/RegistrationPage" element={<RegistrationPage />} />
       <Route path="/QuizPage/:id" element={<QuizPage />} />
-      <Route path="/FinishQuiz/:id" element={<FinishQuiz />} />
+      <Route path="/FinishQuizPage/:id" element={<FinishQuizPage />} />
     </Routes>
   )
 }
