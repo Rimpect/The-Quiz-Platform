@@ -35,8 +35,8 @@ class User(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)  # Дата изменения
 
     # Связи
-    refresh_tokens = relationship(JWTToken, back_populates="user", cascade="all, delete-orphan")
-    quiz_results = relationship(QuizResult, back_populates="user", cascade="all, delete-orphan")
+    jwt_tokens = relationship(JWTToken, back_populates="users", cascade="all, delete-orphan")
+    quiz_results = relationship(QuizResult, back_populates="users", cascade="all, delete-orphan")
 
     def __repr__(self) :
         return f"<User {self.login}>"

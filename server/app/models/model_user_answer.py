@@ -24,5 +24,5 @@ class UserAnswer(Base) :
     # Связи
     quiz_result = relationship(QuizResult, back_populates="user_answers")
     question = relationship(Question, back_populates="user_answers")
-    selected_answer = relationship(Answer, back_populates="user_selected_answers")
+    #selected_answer = relationship(Answer, back_populates="user_selected_answers")
     

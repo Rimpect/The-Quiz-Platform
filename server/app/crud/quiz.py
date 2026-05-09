@@ -18,14 +18,14 @@ def get_quizzes(
         is_public: Optional[bool] = None
 ) -> list[Type[Quiz]]:
     query = db.query(Quiz)
-    if category :
+    if category:
         query = query.filter(Quiz.category == category)
-    if is_public is not None :
+    if is_public is not None:
         query = query.filter(Quiz.is_public == is_public)
     return query.offset(skip).limit(limit).all()
 
 
-def create_quiz(db: Session, quiz: schemas.QuizCreate) -> Quiz :
+def create_quiz(db: Session, quiz: schemas.QuizCreate) -> Quiz:
     db_quiz = Quiz(
         title=quiz.title,
         category=quiz.category,
@@ -40,11 +40,11 @@ def create_quiz(db: Session, quiz: schemas.QuizCreate) -> Quiz :
     return db_quiz
 
 
-def update_quiz(db: Session, quiz_id: int, quiz_update: schemas.QuizUpdate) -> Optional[Quiz] :
+def update_quiz(db: Session, quiz_id: int, quiz_update: schemas.QuizUpdate) -> Optional[Quiz]:
     db_quiz = get_quiz(db, quiz_id)
-    if db_quiz :
+    if db_quiz:
         update_data = quiz_update.model_dump(exclude_unset=True)
-        for field, value in update_data.items() :
+        for field, value in update_data.items():
             setattr(db_quiz, field, value)
         db_quiz.updated_at = datetime.utcnow()
         db.commit()
@@ -52,9 +52,9 @@ def update_quiz(db: Session, quiz_id: int, quiz_update: schemas.QuizUpdate) -> O
     return db_quiz
 
 
-def update_quiz_cover(db: Session, quiz_id: int, cover_url: str) -> Optional[Quiz] :
+def update_quiz_cover(db: Session, quiz_id: int, cover_url: str) -> Optional[Quiz]:
     db_quiz = get_quiz(db, quiz_id)
-    if db_quiz :
+    if db_quiz:
         db_quiz.cover_url = cover_url
         db_quiz.updated_at = datetime.utcnow()
         db.commit()
@@ -62,23 +62,23 @@ def update_quiz_cover(db: Session, quiz_id: int, cover_url: str) -> Optional[Qui
     return db_quiz
 
 
-def delete_quiz(db: Session, quiz_id: int) -> bool :
+def delete_quiz(db: Session, quiz_id: int) -> bool:
     db_quiz = get_quiz(db, quiz_id)
-    if db_quiz :
+    if db_quiz:
         db.delete(db_quiz)
         db.commit()
         return True
     return False
 
 
-def get_quiz_with_details(db: Session, quiz_id: int) -> Optional[Quiz] :
+def get_quiz_with_details(db: Session, quiz_id: int) -> Optional[Quiz]:
     """Получение квиза со всеми вопросами и ответами"""
     return db.query(Quiz).options(
         joinedload(Quiz.questions).joinedload(Quest.answers)
     ).filter(Quiz.id == quiz_id).first()
 
 
-def get_quiz_categories(db: Session) -> List[str] :
+def get_quiz_categories(db: Session) -> List[str]:
     """Получение всех уникальных категорий"""
     categories = db.query(Quiz.category).distinct().all()
     return [cat[0] for cat in categories]

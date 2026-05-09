@@ -20,7 +20,5 @@ class Answer(Base):
     question = relationship(Question, back_populates="answers")
     user_selected_answers = relationship(UserAnswer, back_populates="selected_answer")
 
-    def __repr__(self) :
+    def __repr__(self):
         return f"<Answer {self.id}: {self.answer_text[:30]}>"
-
-

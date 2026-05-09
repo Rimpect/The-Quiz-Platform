@@ -8,9 +8,7 @@ from model_quiz import Quiz
 from model_user_answer import UserAnswer
 
 
-
-
-class QuizResult(Base):
+class QuizResult(Base) :
     __tablename__ = "quiz_results"
 
     # Сохраняемые поля
@@ -28,8 +26,8 @@ class QuizResult(Base):
 
     # Связи
     user = relationship(User, back_populates="quiz_results")
-    quiz = relationship(Quiz, back_populates="results")
-    user_answers = relationship(UserAnswer, back_populates="quiz_result", cascade="all, delete-orphan")
+    quiz = relationship(Quiz, back_populates="quiz_results")
+    user_answers = relationship(UserAnswer, back_populates="quiz_results", cascade="all, delete-orphan")
 
     # Вычисляемые свойства
     @property

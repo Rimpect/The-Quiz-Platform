@@ -72,3 +72,15 @@ def get_current_user(
             detail="User not found"
         )
     return user
+
+    def verify_refresh_token(token: str) -> Optional[dict]:
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+
+            if payload.get("type") != "refresh":
+                return None
+
+            return payload
+
+        except JWTError:
+            return None

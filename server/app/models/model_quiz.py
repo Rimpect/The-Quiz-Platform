@@ -39,8 +39,8 @@ class Quiz(Base) :
     # times_taken - вычисляется из статистики прохождений
 
     # Связи
-    questions = relationship(Question, back_populates="quiz", cascade="all, delete-orphan")
-    results = relationship(QuizResult, back_populates="quiz", cascade="all, delete-orphan")
+    questions = relationship(Question, back_populates="quizzes", cascade="all, delete-orphan")
+    results = relationship(QuizResult, back_populates="quizzes", cascade="all, delete-orphan")
 
     # Вычисляемые свойства (property)
     @property

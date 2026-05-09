@@ -1,10 +1,14 @@
 # ========== Таблица 3: Вопрос ==========
-from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, ForeignKey, Float, Enum as SQLEnum
+from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
+from .model_answer import Answer
+from .model_quiz import Quiz
+from .model_user_answer import UserAnswer
 from ..database.database import Base
 import enum
-from .model_quiz import Quiz
+
 
 
 
@@ -32,9 +36,9 @@ class Question(Base) :
     time_limit_seconds = Column(Integer, nullable=True)  # Время ожидания ответа (в секундах)
 
     # Связи
-    quiz = relationship("Quiz", back_populates="questions")
-    answers = relationship("Answer", back_populates="question", cascade="all, delete-orphan")
-    user_answers = relationship("UserAnswer", back_populates="question", cascade="all, delete-orphan")
+    quiz = relationship(Quiz, back_populates="questions")
+    answers = relationship(Answer, back_populates="questions", cascade="all, delete-orphan")
+    user_answers = relationship(UserAnswer, back_populates="questions", cascade="all, delete-orphan")
 
     def __repr__(self) :
         return f"<Question {self.id}: {self.question_text[:50]}>"
