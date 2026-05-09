@@ -1,22 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
-from datetime import datetime
-from jose import JWTError, jwt
 
+from ..crud import jwt_token as crud_jwt
 from ..crud import user as crud_user
-from ..crud import refresh_token as crud_refresh_token
-from ...app import schemas
 from ..database.database import get_db
 from ..utils.security import (
     verify_password,
     create_access_token,
     create_refresh_token,
     verify_refresh_token,
-    SECRET_KEY,
-    ALGORITHM,
-    REFRESH_TOKEN_EXPIRE_DAYS
+    get_current_user
 )
-from ..models.model_refresh_token import RefreshToken
+from ...app import schemas
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -27,8 +22,8 @@ def login(
         login_data: schemas.LoginRequest,
         db: Session = Depends(get_db)
 ) :
-    """Вход пользователя - создание access и refresh токенов"""
-    # Ищем пользователя по логину или email
+    """Вход пользователя - создание пары токенов"""
+    # Ищем пользователя
     user = crud_user.get_user_by_login(db, login_data.login)
     if not user :
         user = crud_user.get_user_by_email(db, login_data.login)
@@ -43,14 +38,14 @@ def login(
     access_token = create_access_token(data={"sub" : str(user.id)})
     refresh_token = create_refresh_token(data={"sub" : str(user.id)})
 
-    # Получаем информацию об устройстве
+    # Сохраняем пару токенов в БД
     user_agent = request.headers.get("user-agent")
     ip_address = request.client.host if request.client else None
 
-    # Сохраняем refresh токен в БД (хешированным)
-    crud_refresh_token.create_refresh_token(
+    crud_jwt.create_token_pair(
         db=db,
         user_id=user.id,
+        access_token=access_token,
         refresh_token=refresh_token,
         user_agent=user_agent,
         ip_address=ip_address
@@ -69,47 +64,18 @@ def refresh_token(
         refresh_data: schemas.RefreshTokenRequest,
         db: Session = Depends(get_db)
 ) :
-    """
-    Обновление access токена с помощью refresh токена
-
-    Процесс:
-    1. Проверяем валидность refresh токена (подпись, срок действия)
-    2. Ищем токен в БД
-    3. Проверяем, не отозван ли токен
-    4. Проверяем, не истек ли токен
-    5. Создаем новые токены
-    6. Сохраняем новый refresh токен
-    7. Отзываем старый refresh токен (одноразовый)
-    """
-    # 1. Проверяем валидность refresh токена
-    try :
-        payload = jwt.decode(
-            refresh_data.refresh_token,
-            SECRET_KEY,
-            algorithms=[ALGORITHM]
-        )
-
-        # Проверяем тип токена
-        if payload.get("type") != "refresh" :
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token type"
-            )
-
-        user_id = int(payload.get("sub"))
-        if user_id is None :
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token payload"
-            )
-
-    except JWTError as e :
+    """Обновление access токена с помощью refresh токена"""
+    # 1. Проверяем refresh токен
+    payload = verify_refresh_token(refresh_data.refresh_token)
+    if not payload :
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Invalid refresh token: {str(e)}"
+            detail="Invalid refresh token"
         )
 
-    # 2. Проверяем существование пользователя
+    user_id = int(payload.get("sub"))
+
+    # 2. Проверяем пользователя
     user = crud_user.get_user(db, user_id)
     if not user or not user.is_active :
         raise HTTPException(
@@ -117,58 +83,46 @@ def refresh_token(
             detail="User not found or inactive"
         )
 
-    # 3. Ищем refresh токен в БД
-    db_token = crud_refresh_token.get_refresh_token_by_value(db, refresh_data.refresh_token)
-    if not db_token :
+    # 3. Находим старую пару токенов
+    old_token = crud_jwt.get_token_by_refresh(db, refresh_data.refresh_token)
+    if not old_token or old_token.user_id != user_id :
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Refresh token not found in database"
+            detail="Refresh token not found"
         )
 
-    # 4. Проверяем, не отозван ли токен
-    if db_token.revoked_at is not None :
+    # 4. Проверяем валидность refresh токена
+    if not old_token.is_refresh_valid :
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Refresh token has been revoked"
+            detail="Refresh token is revoked or expired"
         )
 
-    # 5. Проверяем, не истек ли токен
-    if db_token.expires_at < datetime.utcnow() :
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Refresh token has expired"
-        )
-
-    # 6. Проверяем соответствие пользователя
-    if db_token.user_id != user_id :
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token-user mismatch"
-        )
-
-    # 7. Создаем новые токены
+    # 5. Создаем новые токены
     new_access_token = create_access_token(data={"sub" : str(user.id)})
     new_refresh_token = create_refresh_token(data={"sub" : str(user.id)})
 
-    # 8. Получаем информацию об устройстве
+    # 6. Создаем новую пару и отзываем старую
     user_agent = request.headers.get("user-agent")
     ip_address = request.client.host if request.client else None
 
-    # 9. Сохраняем новый refresh токен в БД
-    new_db_token = crud_refresh_token.create_refresh_token(
+    new_token = crud_jwt.refresh_access_token(
         db=db,
-        user_id=user.id,
-        refresh_token=new_refresh_token,
-        user_agent=user_agent,
-        ip_address=ip_address
+        old_refresh_token=refresh_data.refresh_token,
+        new_access_token=new_access_token,
+        new_refresh_token=new_refresh_token
     )
 
-    # 10. Отзываем старый refresh токен (одноразовое использование)
-    crud_refresh_token.revoke_refresh_token(
-        db=db,
-        token_id=db_token.id,
-        reason="Used for token refresh"
-    )
+    if not new_token :
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Failed to refresh tokens"
+        )
+
+    # Опционально: обновляем метаданные (если изменились)
+    new_token.user_agent = user_agent
+    new_token.ip_address = ip_address
+    db.commit()
 
     return {
         "access_token" : new_access_token,
@@ -183,32 +137,50 @@ def logout(
         db: Session = Depends(get_db)
 ) :
     """
-    Выход пользователя - отзыв refresh токена
+    Выход пользователя - отзыв пары токенов
     """
-    db_token = crud_refresh_token.get_refresh_token_by_value(db, refresh_data.refresh_token)
-    if db_token :
-        crud_refresh_token.revoke_refresh_token(
-            db=db,
-            token_id=db_token.id,
-            reason="User logged out"
-        )
+    crud_jwt.revoke_both_tokens(
+        db=db,
+        refresh_token=refresh_data.refresh_token,
+        reason="User logged out"
+    )
     return None
 
 
 @router.post("/logout-all", status_code=status.HTTP_204_NO_CONTENT)
 def logout_all_devices(
-        current_user: schemas.User = Depends(get_current_user),  # Добавьте эту зависимость
+        current_user: schemas.User = Depends(get_current_user),
         db: Session = Depends(get_db)
 ) :
     """
-    Выход со всех устройств - отзыв всех refresh токенов пользователя
+    Выход со всех устройств - отзыв всех токенов пользователя
     """
-    crud_refresh_token.revoke_all_user_tokens(
+    crud_jwt.revoke_all_user_tokens(
         db=db,
         user_id=current_user.id,
         reason="User logged out from all devices"
     )
     return None
+
+
+@router.post("/revoke-access")
+def revoke_access_token(
+        refresh_data: schemas.RefreshTokenRequest,
+        db: Session = Depends(get_db)
+) :
+    """
+    Отзыв только access токена (refresh остается активным)
+    """
+    success = crud_jwt.revoke_access_token(
+        db=db,
+        access_token=refresh_data.refresh_token,  # TODO: передавать access токен отдельно
+        reason="Access token revoked"
+    )
+
+    if not success :
+        raise HTTPException(status_code=404, detail="Token not found")
+
+    return {"message" : "Access token revoked"}
 
 
 @router.get("/sessions")
@@ -219,42 +191,45 @@ def get_active_sessions(
     """
     Получение всех активных сессий пользователя
     """
-    active_tokens = crud_refresh_token.get_user_active_tokens(db, current_user.id)
+    active_tokens = crud_jwt.get_user_active_tokens(db, current_user.id)
 
     sessions = []
     for token in active_tokens :
         sessions.append({
             "session_id" : token.id,
             "created_at" : token.created_at,
-            "last_used_at" : token.last_login,
-            "expires_at" : token.expires_at,
+            "last_used_at" : token.last_used_at,
+            "access_expires_at" : token.access_expires_at,
+            "refresh_expires_at" : token.refresh_expires_at,
             "user_agent" : token.user_agent,
-            "ip_address" : token.ip_address,
-            "is_current" : False  # Можно определить по текущему токену
+            "ip_address" : token.ip_address
         })
 
     return {"sessions" : sessions}
 
 
-@router.delete("/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
-def revoke_session(
-        session_id: int,
+@router.get("/sessions/history")
+def get_sessions_history(
         current_user: schemas.User = Depends(get_current_user),
+        limit: int = 50,
         db: Session = Depends(get_db)
 ) :
     """
-    Отзыв конкретной сессии по ID
+    Получение истории сессий (включая завершенные)
     """
-    token = crud_refresh_token.get_refresh_token_by_id(db, session_id)
-    if not token or token.user_id != current_user.id :
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Session not found"
-        )
+    tokens = crud_jwt.get_user_tokens_history(db, current_user.id, limit)
 
-    crud_refresh_token.revoke_refresh_token(
-        db=db,
-        token_id=session_id,
-        reason="Session revoked by user"
-    )
-    return None
+    history = []
+    for token in tokens :
+        history.append({
+            "session_id" : token.id,
+            "created_at" : token.created_at,
+            "revoked_at" : token.revoked_at,
+            "revoked_reason" : token.revoked_reason,
+            "was_access_valid" : token.is_access_valid,
+            "was_refresh_valid" : token.is_refresh_valid,
+            "user_agent" : token.user_agent,
+            "ip_address" : token.ip_address
+        })
+
+    return {"history" : history}

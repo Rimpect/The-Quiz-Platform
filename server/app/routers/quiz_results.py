@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from app import crud, schemas
-from app.database import get_db
-from app.utils.security import get_current_user
+from ..crud import quiz as crud_quiz, quiz_result as crud_quiz_results
+from ...app import schemas
+from ..database.database import get_db
+from ..utils.security import get_current_user
 
 router = APIRouter(prefix="/quiz-results", tags=["quiz_results"])
 
@@ -17,9 +18,9 @@ def start_quiz(
 ) :
     """Начало прохождения квиза"""
     # Проверяем существование квиза
-    if not crud.get_quiz(db, quiz_id) :
+    if not crud_quiz.get_quiz(db, quiz_id) :
         raise HTTPException(status_code=404, detail="Quiz not found")
-    return crud.create_quiz_result(db, current_user.id, quiz_id)
+    return crud_quiz_results.create_quiz_result(db, current_user.id, quiz_id)
 
 
 @router.get("/me", response_model=List[schemas.QuizResult])
@@ -30,7 +31,7 @@ def get_my_results(
         current_user: schemas.User = Depends(get_current_user)
 ) :
     """Получение всех результатов текущего пользователя"""
-    return crud.get_user_quiz_results(db, current_user.id, skip, limit)
+    return crud_quiz_results.get_user_quiz_results(db, current_user.id, skip, limit)
 
 
 @router.get("/{result_id}", response_model=schemas.QuizResult)
@@ -40,7 +41,7 @@ def get_quiz_result(
         current_user: schemas.User = Depends(get_current_user)
 ) :
     """Получение результата по ID"""
-    result = crud.get_quiz_result(db, result_id)
+    result = crud_quiz_results.get_quiz_result(db, result_id)
     if not result or result.user_id != current_user.id :
         raise HTTPException(status_code=404, detail="Result not found")
     return result
@@ -54,14 +55,14 @@ def submit_answer(
         current_user: schemas.User = Depends(get_current_user)
 ) :
     """Сохранение ответа пользователя"""
-    result = crud.get_quiz_result(db, result_id)
+    result = crud_quiz_results.get_quiz_result(db, result_id)
     if not result or result.user_id != current_user.id :
         raise HTTPException(status_code=404, detail="Result not found")
 
     if result.is_completed :
         raise HTTPException(status_code=400, detail="Quiz already completed")
 
-    return crud.save_user_answer(
+    return crud_quiz_results.save_user_answer(
         db,
         result_id,
         answer_data.question_id,
@@ -78,14 +79,14 @@ def complete_quiz(
         current_user: schemas.User = Depends(get_current_user)
 ) :
     """Завершение квиза"""
-    result = crud.get_quiz_result(db, result_id)
+    result = crud_quiz_results.get_quiz_result(db, result_id)
     if not result or result.user_id != current_user.id :
         raise HTTPException(status_code=404, detail="Result not found")
 
     if result.is_completed :
         raise HTTPException(status_code=400, detail="Quiz already completed")
 
-    return crud.complete_quiz_result(db, result_id)
+    return crud_quiz_results.complete_quiz_result(db, result_id)
 
 
 @router.get("/quiz/{quiz_id}/leaderboard")
@@ -95,6 +96,6 @@ def get_quiz_leaderboard(
         db: Session = Depends(get_db)
 ) :
     """Таблица лидеров для квиза"""
-    if not crud.get_quiz(db, quiz_id) :
+    if not crud_quiz.get_quiz(db, quiz_id) :
         raise HTTPException(status_code=404, detail="Quiz not found")
-    return crud.get_quiz_leaderboard(db, quiz_id, limit)
+    return crud_quiz_results.get_quiz_leaderboard(db, quiz_id, limit)

@@ -2,9 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from app import crud, schemas
-from app.database import get_db
-from app.utils.security import get_current_user
+from ..crud import question as crud_question, quiz as crud_quiz
+from ...app import schemas
+from ..database.database import get_db
+from ..utils.security import get_current_user
 
 router = APIRouter(prefix="/quizzes/{quiz_id}/questions", tags=["questions"])
 
@@ -18,9 +19,9 @@ def create_question(
 ) :
     """Создание вопроса в квизе"""
     # Проверяем существование квиза
-    if not crud.get_quiz(db, quiz_id) :
+    if not crud_quiz.get_quiz(db, quiz_id) :
         raise HTTPException(status_code=404, detail="Quiz not found")
-    return crud.create_question(db, question, quiz_id)
+    return crud_question.create_question(db, question, quiz_id)
 
 
 @router.get("/", response_model=List[schemas.Question])
@@ -31,7 +32,7 @@ def read_questions(
         db: Session = Depends(get_db)
 ) :
     """Получение всех вопросов квиза"""
-    return crud.get_questions_by_quiz(db, quiz_id, skip, limit)
+    return crud_question.get_questions_by_quiz(db, quiz_id, skip, limit)
 
 
 @router.get("/{question_id}", response_model=schemas.Question)
@@ -41,7 +42,7 @@ def read_question(
         db: Session = Depends(get_db)
 ) :
     """Получение вопроса по ID"""
-    question = crud.get_question(db, question_id)
+    question = crud_question.get_question(db, question_id)
     if not question or question.quiz_id != quiz_id :
         raise HTTPException(status_code=404, detail="Question not found")
     return question
@@ -56,10 +57,10 @@ def update_question(
         current_user: schemas.User = Depends(get_current_user)
 ) :
     """Обновление вопроса"""
-    question = crud.get_question(db, question_id)
+    question = crud_question.get_question(db, question_id)
     if not question or question.quiz_id != quiz_id :
         raise HTTPException(status_code=404, detail="Question not found")
-    return crud.update_question(db, question_id, question_update)
+    return crud_question.update_question(db, question_id, question_update)
 
 
 @router.delete("/{question_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -70,7 +71,7 @@ def delete_question(
         current_user: schemas.User = Depends(get_current_user)
 ) :
     """Удаление вопроса"""
-    question = crud.get_question(db, question_id)
+    question = crud_question.get_question(db, question_id)
     if not question or question.quiz_id != quiz_id :
         raise HTTPException(status_code=404, detail="Question not found")
-    crud.delete_question(db, question_id)
+    crud_question.delete_question(db, question_id)
