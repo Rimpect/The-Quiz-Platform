@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { Button } from '@shared'
 import { ArrowLeft, Users, Clock, Trophy, Star, Award } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -146,9 +147,10 @@ export function QuizDescription() {
                   </span>
                 </li>
               </ul>
-
-              <Link to={`/QuizPage/:id`} className={styles.startBtn}>
-                <span>Начать квиз</span>
+              <Link to={`/QuizPage/{id}`} style={{ textDecoration: 'none' }}>
+                <Button variant="black" size="medium" fullWidth>
+                  Начать квиз
+                </Button>
               </Link>
             </div>
           </div>

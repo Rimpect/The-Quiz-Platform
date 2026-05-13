@@ -1,3 +1,4 @@
+import { Button } from '@shared'
 import { Eye, Dot, Users, Check, X } from 'lucide-react'
 
 import styles from './QuizInfo.module.scss'
@@ -48,32 +49,32 @@ export function QuizInfo({ quiz, onApprove, onReject, onView }) {
         <div className={styles.quizActions}>
           {quiz.status === 'pending' && (
             <>
-              <button
-                className={`${styles.actionButton} ${styles.approveButton}`}
+              <Button
+                variant="green"
+                size="medium"
+                icon={<Check size={20} />}
                 onClick={() => onApprove(quiz)}
               >
-                <span>
-                  <Check size={16} />
-                  &nbsp; Одобрить
-                </span>
-              </button>
-              <button
-                className={`${styles.actionButton} ${styles.rejectButton}`}
+                Одобрить
+              </Button>
+              <Button
+                variant="red"
+                size="medium"
+                icon={<X size={20} />}
                 onClick={() => onReject(quiz)}
               >
-                <span>
-                  <X size={16} />
-                  &nbsp; Отклонить
-                </span>
-              </button>
+                Отклонить
+              </Button>
             </>
           )}
-          <button
-            className={`${styles.actionButton} ${styles.viewButton}`}
+          <Button
+            variant="white"
+            size="medium"
+            icon={<Eye size={20} />}
             onClick={() => onView(quiz)}
           >
-            <Eye size={20}></Eye> <span>Просмотр</span>
-          </button>
+            Просмотр
+          </Button>
         </div>
       </div>
     </div>

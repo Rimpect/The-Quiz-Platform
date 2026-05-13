@@ -1,2 +1,3 @@
-export { ViewQuizDialog } from './ViewQuizDialog/ViewQuizDialog'
-export { RejectQuizDialog } from './RejectQuizDialog/RejectQuizDialog'
+export { ViewQuizDialog } from './ui/ViewQuizDialog/ViewQuizDialog'
+export { RejectQuizDialog } from './ui/RejectQuizDialog/RejectQuizDialog'
+export { Button } from './ui/Button'

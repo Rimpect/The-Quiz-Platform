@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+import { Button } from '@shared'
 import { Mail, User, Lock, Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -134,10 +135,9 @@ export function Registration() {
               {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-
-          <button type="submit" className={styles.submitButton}>
+          <Button variant="black" size="medium" fullWidth>
             Зарегистрироваться
-          </button>
+          </Button>
         </div>
       </form>
     </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+import { Button } from '@shared'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -56,6 +57,7 @@ export function SignUp() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+
             <button
               type="button"
               className={styles.eyeButton}
@@ -64,10 +66,9 @@ export function SignUp() {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-
-          <button type="submit" className={styles.submitButton}>
+          <Button variant="black" size="medium" fullWidth>
             Войти
-          </button>
+          </Button>
         </div>
 
         <div className={styles.authFooter}>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { Button } from '@shared'
 import { User, Shield, Sun, Moon } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -15,23 +16,23 @@ export function Header() {
           <div className={styles.logoTitle}>QuizMaster</div>
         </div>
         <div className={styles.user}>
-          <button
+          <Button
             onClick={() => setTheme(!isTheme)}
-            className={styles.adminButton}
-          >
-            {isTheme ? <Sun size={24} /> : <Moon size={24} />}
-          </button>
-
+            variant="white"
+            size="medium"
+            icon={isTheme ? <Sun size={20} /> : <Moon size={20} />}
+          />
           <Link to="/AdminPanel" className={styles.userLink}>
-            <span className={styles.adminButton}>
-              <Shield />
+            <Button variant="white" size="medium" icon={<Shield size={20} />}>
               Админка
-            </span>
+            </Button>
           </Link>
           <User className={styles.userIcon} />
           <span className={styles.userText}>Имя пользователя/Гость</span>
           <Link to="/PersonalAccount" className={styles.userLink}>
-            <span className={styles.userButton}>Войти</span>
+            <Button variant="white" size="medium">
+              Войти
+            </Button>
           </Link>
         </div>
       </div>
