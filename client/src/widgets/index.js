@@ -1,7 +1,6 @@
 // компоненты для страницы AdminPanel
 export { AdminHeader } from './AdminHeader/AdminHeader'
 export { QuizTabs } from './QuizTabs/QuizTabs'
-export { SearchBar } from './SearchBar/SearchBar'
 export { StatsCards } from './StatsCards/StatsCards'
 // компоненты для страницы PersonalAccount
 export { ProfileStats } from './ProfileStats/ProfileStats'

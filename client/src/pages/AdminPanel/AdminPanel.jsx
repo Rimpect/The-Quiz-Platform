@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-import { RejectQuizDialog, ViewQuizDialog } from '@shared'
-import { AdminHeader, QuizTabs, SearchBar, StatsCards } from '@widgets'
+import { RejectQuizDialog, ViewQuizDialog, SearchBar } from '@shared'
+import { AdminHeader, QuizTabs, StatsCards } from '@widgets'
 
 import styles from './AdminPanel.module.scss'
 
@@ -82,6 +82,7 @@ export function AdminPanel({
         <SearchBar
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}
+          elevated={true}
         />
 
         <QuizTabs
