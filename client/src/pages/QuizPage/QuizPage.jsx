@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Quiz } from '../../widgets/Quiz/Quiz'
+import { Quiz } from '@widgets'
 
 export function QuizPage() {
   return (

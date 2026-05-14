@@ -1,3 +1,4 @@
+import { Button } from '@shared'
 import {
   Trophy,
   Target,
@@ -74,16 +75,18 @@ export function ProfileStats({ user }) {
 
           <div className={styles.actionButtons}>
             <Link to="/MainPage">
-              <button className={styles.btnOutline}>
-                <Home size={16} />
+              <Button variant="white" size="medium" icon={<Home size={20} />}>
                 Главная
-              </button>
+              </Button>
             </Link>
             <Link to="/ProfileSettings">
-              <button className={styles.btnOutline}>
-                <SettingsIcon size={16} />
+              <Button
+                variant="white"
+                size="medium"
+                icon={<SettingsIcon size={20} />}
+              >
                 Настройки
-              </button>
+              </Button>
             </Link>
           </div>
         </div>

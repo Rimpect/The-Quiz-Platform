@@ -1,4 +1,4 @@
-import { QuizDescription } from '../../widgets/QuizDescription/QuizDescription'
+import { QuizDescription } from '@widgets'
 
 export function QuizDescriptionPage() {
   return (

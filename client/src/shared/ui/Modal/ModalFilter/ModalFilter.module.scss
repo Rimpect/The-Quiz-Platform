@@ -1,4 +1,4 @@
-.modal-overlay {
+.overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -12,7 +12,7 @@
   padding: 1rem;
 }
 
-.modal-content {
+.content {
   background: white;
   border-radius: 12px;
   max-width: 672px;
@@ -22,10 +22,28 @@
   box-shadow:
     0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  animation: modal-appear 0.2s ease-out;
+  animation: modalAppear 0.2s ease-out;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+
+    &:hover {
+      background: #a1a1a1;
+    }
+  }
 }
 
-@keyframes modal-appear {
+@keyframes modalAppear {
   from {
     opacity: 0;
     transform: scale(0.95);
@@ -36,7 +54,7 @@
   }
 }
 
-.modal-header {
+.header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -49,14 +67,14 @@
   border-radius: 12px 12px 0 0;
 }
 
-.modal-title {
+.title {
   font-size: 1.25rem;
   font-weight: 600;
   color: #111827;
   margin: 0;
 }
 
-.modal-close {
+.closeBtn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,29 +92,29 @@
   }
 }
 
-.modal-close-icon {
+.closeIcon {
   width: 18px;
   height: 18px;
   color: #6b7280;
 }
 
-.modal-body {
+.body {
   padding: 1.5rem;
 }
 
-.modal-footer {
+.footer {
   display: flex;
   gap: 0.75rem;
   padding: 1.5rem;
   border-top: 1px solid #e5e7eb;
+  justify-content: space-between;
   position: sticky;
   bottom: 0;
   background: white;
   border-radius: 0 0 12px 12px;
 }
 
-/* Filter sections */
-.filter-section {
+.section {
   margin-bottom: 1.5rem;
 
   &:last-child {
@@ -104,7 +122,7 @@
   }
 }
 
-.filter-label {
+.label {
   display: block;
   font-size: 1rem;
   font-weight: 500;
@@ -112,7 +130,7 @@
   margin-bottom: 0.75rem;
 }
 
-.categories-grid {
+.categoriesGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.75rem;
@@ -122,20 +140,20 @@
   }
 }
 
-.checkbox-item {
+.checkboxItem {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.checkbox-input {
+.checkboxInput {
   width: 16px;
   height: 16px;
   cursor: pointer;
   accent-color: #2563eb;
 }
 
-.checkbox-label {
+.checkboxLabel {
   font-size: 0.875rem;
   color: #374151;
   cursor: pointer;
@@ -146,32 +164,32 @@
   }
 }
 
-.checkbox-group {
+.checkboxGroup {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.radio-group {
+.radioGroup {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.radio-item {
+.radioItem {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.radio-input {
+.radioInput {
   width: 16px;
   height: 16px;
   cursor: pointer;
   accent-color: #2563eb;
 }
 
-.radio-label {
+.radioLabel {
   font-size: 0.875rem;
   color: #374151;
   cursor: pointer;
@@ -181,17 +199,17 @@
   }
 }
 
-.media-icon {
+.mediaIcon {
   width: 16px;
   height: 16px;
   color: #6b7280;
 }
 
-.slider-container {
+.sliderContainer {
   margin-top: 0.5rem;
 }
 
-.slider-input {
+.sliderInput {
   width: 100%;
   height: 6px;
   border-radius: 9999px;
@@ -228,7 +246,7 @@
   }
 }
 
-.slider-labels {
+.sliderLabels {
   display: flex;
   justify-content: space-between;
   margin-top: 0.5rem;
@@ -236,7 +254,7 @@
   color: #6b7280;
 }
 
-.modal-button {
+.button {
   flex: 1;
   padding: 0.625rem 1rem;
   border-radius: 6px;
@@ -245,42 +263,24 @@
   cursor: pointer;
   transition: all 0.2s;
   border: 1px solid transparent;
-
-  &--outline {
-    background: white;
-    border-color: #e5e7eb;
-    color: #374151;
-
-    &:hover {
-      background: #f9fafb;
-      border-color: #d1d5db;
-    }
-  }
-
-  &--primary {
-    background: #2563eb;
-    color: white;
-
-    &:hover {
-      background: #1d4ed8;
-    }
-  }
 }
 
-.modal-content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.modal-content::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.modal-content::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+.buttonOutline {
+  background: white;
+  border-color: #e5e7eb;
+  color: #374151;
 
   &:hover {
-    background: #a1a1a1;
+    background: #f9fafb;
+    border-color: #d1d5db;
+  }
+}
+
+.buttonPrimary {
+  background: #2563eb;
+  color: white;
+
+  &:hover {
+    background: #1d4ed8;
   }
 }

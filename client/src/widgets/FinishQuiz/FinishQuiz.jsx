@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Trophy, Award, Target, Clock, Home, RotateCcw } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 import styles from './FinishQuiz.module.scss'
 
@@ -42,14 +43,15 @@ export function FinishQuiz() {
         </div>
 
         <div className={styles.buttons}>
-          <div className={styles.buttonHome}>
+          <Link to="/MainPage" className={styles.buttonHome}>
             <Home />
-            На главную
-          </div>
-          <div className={styles.buttonRetry}>
+            <span>На главную</span>
+          </Link>
+
+          <Link to="/QuizPage/:id" className={styles.buttonRetry}>
             <RotateCcw />
-            Пройти еще раз
-          </div>
+            <span>Пройти еще раз</span>
+          </Link>
         </div>
       </section>
 

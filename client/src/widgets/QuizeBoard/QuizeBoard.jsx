@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
 
+import { Pagination, QuizCard, ModalNotifications } from '@shared'
 import { Link } from 'react-router-dom'
-
-import { SmallButton } from '../../shared/Buttons/SmallButton/SmallButton'
-import { ModalNotifications } from '../../shared/Modal/ModalNotifications/ModalNotifications'
-import { QuizCard } from '../../shared/QuizCard/QuizCard/QuizCard'
 
 import styles from './QuizeBoard.module.scss'
 
-export function QuizeBoard() {
+export function QuizeBoard({ currentPage, onPageChange, totalPages }) {
   const [open, setOpen] = useState(false)
+
+  currentPage = 2
+  totalPages = 7
+  onPageChange = 7
 
   const quizzes = [
     {
@@ -155,11 +156,13 @@ export function QuizeBoard() {
           </ModalNotifications>
         )}
       </div>
-      <div className={styles.nav}>
-        <SmallButton>Кнопка вперед</SmallButton>
-        <div>выбрать страницу</div>
-        <SmallButton>Кнопка Назад</SmallButton>
-      </div>
+      <Pagination
+        variant="main"
+        pageInfo="hidden"
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+      />
     </div>
   )
 }

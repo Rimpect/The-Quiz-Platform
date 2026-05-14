@@ -1,15 +1,14 @@
 import { useState } from 'react'
 
-import { RejectQuizDialog } from '../../shared/RejectQuizDialog/RejectQuizDialog'
-import { ViewQuizDialog } from '../../shared/ViewQuizDialog/ViewQuizDialog'
-import { AdminHeader } from '../../widgets/AdminHeader/AdminHeader'
-import { QuizTabs } from '../../widgets/QuizTabs/QuizTabs'
-import { SearchBar } from '../../widgets/SearchBar/SearchBar'
-import { StatsCards } from '../../widgets/StatsCards/StatsCards'
+import { RejectQuizDialog, ViewQuizDialog, SearchBar } from '@shared'
+import { AdminHeader, QuizTabs, StatsCards } from '@widgets'
 
 import styles from './AdminPanel.module.scss'
 
-export function AdminPanel({ onBack, quizzes = [], onApprove, onReject }) {
+export function AdminPanel({
+  onBack,
+  quizzes = [], //onApprove, onReject
+}) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedQuiz, setSelectedQuiz] = useState(null)
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false)
@@ -17,9 +16,7 @@ export function AdminPanel({ onBack, quizzes = [], onApprove, onReject }) {
   const [filterStatus, setFilterStatus] = useState('pending')
   const [currentPage, setCurrentPage] = useState(1)
 
-  const safeQuizzes = Array.isArray(quizzes) ? quizzes : []
-
-  const filteredQuizzes = safeQuizzes.filter((quiz) => {
+  const filteredQuizzes = quizzes.filter((quiz) => {
     const matchesSearch =
       quiz.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       quiz.author.toLowerCase().includes(searchQuery.toLowerCase())
@@ -27,19 +24,27 @@ export function AdminPanel({ onBack, quizzes = [], onApprove, onReject }) {
     return matchesSearch && matchesStatus
   })
 
-  const pendingCount = safeQuizzes.filter((q) => q.status === 'pending').length
-  const approvedCount = safeQuizzes.filter(
-    (q) => q.status === 'approved',
-  ).length
-  const rejectedCount = safeQuizzes.filter(
-    (q) => q.status === 'rejected',
-  ).length
-
-  const handleApprove = (quiz) => {
-    onApprove(quiz.id)
-    alert(`Квиз "${quiz.title}" одобрен`)
+  const handleFilterChange = (newStatus) => {
+    setFilterStatus(newStatus)
+    setCurrentPage(1)
   }
 
+  const handleSearchChange = (query) => {
+    setSearchQuery(query)
+    setCurrentPage(1)
+  }
+
+  const pendingCount = quizzes.filter((q) => q.status === 'pending').length
+  const approvedCount = quizzes.filter((q) => q.status === 'approved').length
+  const rejectedCount = quizzes.filter((q) => q.status === 'rejected').length
+
+  // const handleApprove = (quiz) => {
+  //   onApprove(quiz.id)
+  //   alert(`Квиз "${quiz.title}" одобрен`)
+  // }
+  const handleApprove = () => {
+    alert(`Квиз одобрен`)
+  } //@TODO заглушка пока что вместо алертов будут кастомные модалки
   const handleRejectClick = (quiz) => {
     setSelectedQuiz(quiz)
     setIsRejectDialogOpen(true)
@@ -50,14 +55,19 @@ export function AdminPanel({ onBack, quizzes = [], onApprove, onReject }) {
     setIsViewDialogOpen(true)
   }
 
-  const handleRejectConfirm = (reason) => {
+  const handleRejectConfirm = () => {
     if (!selectedQuiz) return
-    onReject(selectedQuiz.id, reason)
-    alert(`Квиз "${selectedQuiz.title}" отклонен`)
+    alert(`Квиз отклонен`)
     setIsRejectDialogOpen(false)
-    setSelectedQuiz(null)
+    setSelectedQuiz(null) //@TODO заглушка пока что вместо алертов будут кастомные модалки
   }
-
+  // const handleRejectConfirm = (reason) => {
+  //   if (!selectedQuiz) return
+  //   onReject(selectedQuiz.id, reason)
+  //   alert(`Квиз "${selectedQuiz.title}" отклонен`)
+  //   setIsRejectDialogOpen(false)
+  //   setSelectedQuiz(null)
+  // }
   return (
     <div className={styles.adminPanel}>
       <div className={styles.container}>
@@ -69,12 +79,16 @@ export function AdminPanel({ onBack, quizzes = [], onApprove, onReject }) {
           rejectedCount={rejectedCount}
         />
 
-        <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+        <SearchBar
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          elevated={true}
+        />
 
         <QuizTabs
           quizzes={filteredQuizzes}
           filterStatus={filterStatus}
-          onFilterChange={setFilterStatus}
+          onFilterChange={handleFilterChange}
           currentPage={currentPage}
           onPageChange={setCurrentPage}
           onApprove={handleApprove}

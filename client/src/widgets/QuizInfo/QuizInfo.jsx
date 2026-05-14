@@ -1,3 +1,6 @@
+import { Button } from '@shared'
+import { Eye, Dot, Users, Check, X } from 'lucide-react'
+
 import styles from './QuizInfo.module.scss'
 
 export function QuizInfo({ quiz, onApprove, onReject, onView }) {
@@ -25,47 +28,53 @@ export function QuizInfo({ quiz, onApprove, onReject, onView }) {
           </div>
           <p className={styles.quizDescription}>{quiz.description}</p>
           <div className={styles.quizMeta}>
-            <span className={styles.metaItem}>👤 Автор: {quiz.author}</span>
-            <span>•</span>
             <span className={styles.metaItem}>
-              📁 Категория: {quiz.category}
+              <Users /> Автор: {quiz.author}
             </span>
-            <span>•</span>
+            <Dot />
+            <span className={styles.metaItem}>Категория: {quiz.category}</span>
+            <Dot />
             <span className={styles.metaItem}>
-              ❓ Вопросов: {quiz.questionCount}
+              Вопросов: {quiz.questionCount}
             </span>
-            <span>•</span>
+            <Dot />
             <span className={styles.metaItem}>
-              📊 Сложность: {quiz.difficulty}
+              Сложность: {quiz.difficulty}
             </span>
-            <span>•</span>
-            <span className={styles.metaItem}>📅 {quiz.createdAt}</span>
+            <Dot />
+            <span className={styles.metaItem}> {quiz.createdAt}</span>
           </div>
         </div>
 
         <div className={styles.quizActions}>
           {quiz.status === 'pending' && (
             <>
-              <button
-                className={`${styles.actionButton} ${styles.approveButton}`}
+              <Button
+                variant="green"
+                size="medium"
+                icon={<Check size={20} />}
                 onClick={() => onApprove(quiz)}
               >
-                ✓ Одобрить
-              </button>
-              <button
-                className={`${styles.actionButton} ${styles.rejectButton}`}
+                Одобрить
+              </Button>
+              <Button
+                variant="red"
+                size="medium"
+                icon={<X size={20} />}
                 onClick={() => onReject(quiz)}
               >
-                ✗ Отклонить
-              </button>
+                Отклонить
+              </Button>
             </>
           )}
-          <button
-            className={`${styles.actionButton} ${styles.viewButton}`}
+          <Button
+            variant="white"
+            size="medium"
+            icon={<Eye size={20} />}
             onClick={() => onView(quiz)}
           >
-            👁️ Просмотр
-          </button>
+            Просмотр
+          </Button>
         </div>
       </div>
     </div>

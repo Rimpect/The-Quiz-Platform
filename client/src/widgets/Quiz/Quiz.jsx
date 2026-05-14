@@ -1,7 +1,7 @@
 // Quiz.jsx
 import React, { useState, useEffect } from 'react'
 
-import { useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 
 import styles from './Quiz.module.scss'
 
@@ -249,7 +249,10 @@ export function Quiz() {
     <div className={styles.quizContainer}>
       <div className={styles.quizHeader}>
         <div className={styles.quizInfo}>
-          <div className={styles.quizId}>Выход</div>
+          <Link to={`/MainPage`} className={styles.quizId}>
+            Выход
+          </Link>
+
           <div className={styles.quizCategory}>
             {currentQ.category || 'Общий'}
           </div>
