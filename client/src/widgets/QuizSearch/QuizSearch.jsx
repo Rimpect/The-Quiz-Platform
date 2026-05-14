@@ -1,14 +1,13 @@
 import React, { useState } from 'react'
 
-import { SlidersHorizontal, Search } from 'lucide-react'
+import { Button, SearchBar, ModalFilter } from '@shared'
+import { SlidersHorizontal } from 'lucide-react'
 
-import ModalFilter from '../../shared/Modal/ModalFilter/ModalFilter'
-import { Button, SearchBar } from '@shared'
 import styles from './QuizSearch.module.scss'
 
 export function QuizSearch() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
+  // const [searchQuery, setSearchQuery] = useState('')
 
   // Заглушка для обработки поиска
   // const handleSearch = (e) => {

@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
 
-import { Pagination } from '@shared'
+import { Pagination, QuizCard, ModalNotifications } from '@shared'
 import { Link } from 'react-router-dom'
-
-import { ModalNotifications } from '../../shared/Modal/ModalNotifications/ModalNotifications'
-import { QuizCard } from '../../shared/QuizCard/QuizCard/QuizCard'
 
 import styles from './QuizeBoard.module.scss'
 
