@@ -1,6 +1,12 @@
 import styles from './Pagination.module.scss'
 
-export function Pagination({ currentPage, totalPages, onPageChange }) {
+export function Pagination({
+  variant = 'main',
+  pageInfo = 'hidden',
+  currentPage,
+  totalPages,
+  onPageChange,
+}) {
   if (totalPages <= 1) return null
 
   const getPageNumbers = () => {
@@ -18,8 +24,8 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
   }
 
   return (
-    <div className={styles.pagination}>
-      <p className={styles.pageInfo}>
+    <div className={styles[variant]}>
+      <p className={styles[pageInfo]}>
         Страница {currentPage} из {totalPages}
       </p>
       <div className={styles.paginationControls}>

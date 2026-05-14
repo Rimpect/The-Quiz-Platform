@@ -1,4 +1,4 @@
-.pagination {
+.admin {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -12,10 +12,26 @@
     flex-direction: column;
   }
 }
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 
-.pageInfo {
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+.visibly {
   font-size: 0.875rem;
   color: #6b7280;
+}
+.hidden {
+  display: none;
 }
 
 .paginationControls {
@@ -65,6 +81,5 @@
   &.active {
     background: var(--color-black);
     color: white;
-
   }
 }

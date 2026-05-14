@@ -1,5 +1,6 @@
+import { Pagination } from '@shared'
+
 import { myQuizzes } from '../../MockData/myQuizzes'
-import { Pagination } from '../../shared/ui/Pagination/Pagination'
 import { QuizInfo } from '../QuizInfo/QuizInfo'
 
 import styles from './QuizTabs.module.scss'
@@ -87,6 +88,8 @@ export function QuizTabs({
             ))}
 
             <Pagination
+              variant="admin"
+              pageInfo="visibly"
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={onPageChange}
