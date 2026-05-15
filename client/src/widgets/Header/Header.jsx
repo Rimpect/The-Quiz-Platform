@@ -12,7 +12,12 @@ export function Header() {
     <header className={styles.headerContainer}>
       <div className={styles.headerInner}>
         <div className={styles.logo}>
-          <div className={styles.logoIcon}>Q</div>
+          <div className={styles.logoIcon}>
+            {' '}
+            <Link to="/MainPage" className={styles.userLink}>
+              Q
+            </Link>
+          </div>
           <div className={styles.logoTitle}>QuizMaster</div>
         </div>
         <div className={styles.user}>
