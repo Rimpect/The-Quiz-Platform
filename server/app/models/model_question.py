@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from .model_answer import Answer
+from .model_media import MediaEntity, MediaType
 from .model_quiz import Quiz
 from .model_user_answer import UserAnswer
 from ..database.database import Base
@@ -39,6 +40,26 @@ class Question(Base) :
     quiz = relationship(Quiz, back_populates="questions")
     answers = relationship(Answer, back_populates="questions", cascade="all, delete-orphan")
     user_answers = relationship(UserAnswer, back_populates="questions", cascade="all, delete-orphan")
+
+    @property
+    def images(self) :
+        """Изображения вопроса"""
+        from ..crud import media as media_crud
+        from ..database.database import SessionLocal
+        db = SessionLocal()
+        return media_crud.get_entity_media(
+            db, MediaEntity.QUESTION, self.id, MediaType.IMAGE
+        )
+
+    @property
+    def audio_files(self) :
+        """Аудиофайлы вопроса"""
+        from ..crud import media as media_crud
+        from ..database.database import SessionLocal
+        db = SessionLocal()
+        return media_crud.get_entity_media(
+            db, MediaEntity.QUESTION, self.id, MediaType.AUDIO
+        )
 
     def __repr__(self) :
         return f"<Question {self.id}: {self.question_text[:50]}>"

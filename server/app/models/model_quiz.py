@@ -1,7 +1,11 @@
 # ========== Таблица 2: Квиз ==========
+from typing import Optional
+
 from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, ForeignKey, Float, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
+from .model_media import MediaEntity, MediaType
 from ..database.database import Base
 import enum
 from model_question import Question
@@ -75,6 +79,17 @@ class Quiz(Base) :
     def times_taken(self) -> int:
         """Количество прохождений квиза"""
         return len(self.results) if self.results else 0
+
+    @property
+    def cover_image_url(self) -> Optional[str] :
+        """URL обложки квиза"""
+        from ..crud import media as media_crud
+        from ..database.database import SessionLocal
+        db = SessionLocal()
+        media = media_crud.get_entity_primary_media(
+            db, MediaEntity.QUIZ, self.id, MediaType.IMAGE
+        )
+        return media.url if media else None
 
     def __repr__(self) :
         return f"<Quiz {self.title}>"
