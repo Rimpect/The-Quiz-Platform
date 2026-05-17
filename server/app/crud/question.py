@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from ..models.model_question import Question as Quest
-from ...app import schemas
+from .. import schemas
 from datetime import datetime
 from typing import Optional, Type
 

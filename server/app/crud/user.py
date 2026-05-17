@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from ..models.model_statistic import QuizResult
+from ..models.model_quiz_result import QuizResult
 from ..models.model_user import User
-from ...app import schemas
-from ...app.utils.security import get_password_hash
+from .. import schemas
+from ..utils.security import get_password_hash
 from datetime import datetime
 from typing import Optional, Type
 

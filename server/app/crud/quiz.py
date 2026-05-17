@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session, joinedload
 from ..models.model_quiz import Quiz
 from ..models.model_question import Question as Quest
-from ...app import schemas
+from .. import schemas
 from datetime import datetime
 from typing import Optional, List, Type
 

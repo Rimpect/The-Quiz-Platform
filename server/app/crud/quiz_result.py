@@ -2,11 +2,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from ..models.model_answer import Answer
-from ..models.model_statistic import QuizResult
+from ..models.model_quiz_result import QuizResult
 from ..models.model_question import Question
 from ..models.model_user import User
 from ..models.model_user_answer import UserAnswer
-from ...app import schemas
+from .. import schemas
 from datetime import datetime
 from typing import Optional, List, Type
 

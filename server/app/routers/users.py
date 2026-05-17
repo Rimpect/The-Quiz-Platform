@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from ..crud import user as crud_user
-from ...app import schemas
+from .. import schemas
 from ..database.database import get_db
 from ..utils.security import get_current_user
 

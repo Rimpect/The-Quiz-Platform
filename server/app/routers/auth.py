@@ -11,7 +11,7 @@ from ..utils.security import (
     verify_refresh_token,
     get_current_user
 )
-from ...app import schemas
+from .. import schemas
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 

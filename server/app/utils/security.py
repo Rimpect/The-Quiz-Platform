@@ -10,13 +10,13 @@ from sqlalchemy.orm import Session
 
 from ..crud import user as crud_user
 from ..database.database import get_db
-from ...app import schemas
+from .. import schemas
 
 # Конфигурация
 SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 15  # 15 минут
-REFRESH_TOKEN_EXPIRE_DAYS = 7
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
+REFRESH_TOKEN_EXPIRE_DAYS = os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()

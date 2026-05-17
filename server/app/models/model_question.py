@@ -3,10 +3,8 @@ from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from .model_answer import Answer
+
 from .model_media import MediaEntity, MediaType
-from .model_quiz import Quiz
-from .model_user_answer import UserAnswer
 from ..database.database import Base
 import enum
 
@@ -37,9 +35,9 @@ class Question(Base) :
     time_limit_seconds = Column(Integer, nullable=True)  # Время ожидания ответа (в секундах)
 
     # Связи
-    quiz = relationship(Quiz, back_populates="questions")
-    answers = relationship(Answer, back_populates="questions", cascade="all, delete-orphan")
-    user_answers = relationship(UserAnswer, back_populates="questions", cascade="all, delete-orphan")
+    quiz = relationship("Quiz", back_populates="questions")
+    answers = relationship("Answer", back_populates="question", cascade="all, delete-orphan")
+    user_answers = relationship("UserAnswer", back_populates="questions", cascade="all, delete-orphan")
 
     @property
     def images(self) :

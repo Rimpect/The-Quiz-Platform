@@ -4,8 +4,7 @@ from sqlalchemy.orm import relationship
 
 from .model_media import MediaEntity, MediaType
 from ..database.database import Base
-from .model_question import Question
-from .model_user_answer import UserAnswer
+
 
 
 class Answer(Base):
@@ -19,8 +18,8 @@ class Answer(Base):
     is_correct = Column(Boolean, default=False, nullable=False)  # Правильный ли ответ
 
     # Связи
-    question = relationship(Question, back_populates="answers")
-    user_selected_answers = relationship(UserAnswer, back_populates="selected_answer")
+    question = relationship("Question", back_populates="answers")
+    user_selected_answers = relationship("UserAnswer", back_populates="selected_answer")
 
     @property
     def images(self):

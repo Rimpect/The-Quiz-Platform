@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from ..models.model_answer import Answer as Ans
-from ...app import schemas
+from .. import schemas
 from typing import Optional, List, Type
 
 

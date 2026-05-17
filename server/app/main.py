@@ -6,10 +6,10 @@ import os
 import logging
 
 from .database.database import engine, Base
-from .routers import (
-    auth_router, users_router, quizzes_router,
-    questions_router, answers_router, quiz_results_router, media_router
-)
+from .routers import (auth_router, users_router, quizzes_router,
+                      questions_router, answers_router, quiz_results_router, media_router)
+
+
 from .middleware.logging_middleware import LoggingMiddleware, RequestIDMiddleware
 from .middleware.rate_limit_middleware import RateLimitMiddleware
 from .middleware.error_handler_middleware import ErrorHandlerMiddleware, ValidationErrorMiddleware
@@ -18,7 +18,7 @@ from .middleware.cors_middleware import setup_cors_middleware
 # Настройка логирования
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format='%(pastime)s - %(name)s - %(levelness)s - %(message)s',
     handlers=[
         logging.FileHandler("logs/app.log"),
         logging.StreamHandler()
@@ -53,7 +53,7 @@ async def lifespan(app: FastAPI) :
 app = FastAPI(
     title="Quiz API",
     description="API для системы квизов с полной поддержкой медиа",
-    version="2.0.0",
+    version="0.1.0",
     lifespan=lifespan,
     docs_url="/api/docs",
     redoc_url="/api/redoc",
@@ -61,19 +61,21 @@ app = FastAPI(
 )
 
 
-setup_cors_middleware(app)
+#setup_cors_middleware(app)
 
-app.add_middleware(RequestIDMiddleware)
+#pp.add_middleware(RequestIDMiddleware)
 
-app.add_middleware(LoggingMiddleware)
+#app.add_middleware(LoggingMiddleware)
 
-app.add_middleware(RateLimitMiddleware)
+#app.add_middleware(RateLimitMiddleware)
 
-app.add_middleware(ErrorHandlerMiddleware)
+#app.add_middleware(ErrorHandlerMiddleware)
 
-app.add_middleware(ValidationErrorMiddleware)
+#app.add_middleware(ValidationErrorMiddleware)
 
 # ========== Статические файлы ==========
+if not os.path.exists("media_files"):
+    os.makedirs("media_files")
 app.mount("/media", StaticFiles(directory="media_files"), name="media")
 
 # ========== Роутеры ==========

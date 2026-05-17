@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from ..crud import quiz as crud_quiz
-from ...app import schemas
+from .. import schemas
 from ..database.database import get_db
 from ..utils.security import get_current_user
 

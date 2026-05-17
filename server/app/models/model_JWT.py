@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from datetime import datetime
 from ..database.database import Base
-from .model_user import User
+
 
 
 class JWTToken(Base) :
@@ -47,7 +47,7 @@ class JWTToken(Base) :
     last_used_at = Column(DateTime(timezone=True), nullable=True)  # Время последнего использования
 
     # ========== Связи ==========
-    user = relationship(User, back_populates="jwt_tokens")
+    user = relationship("User", back_populates="jwt_tokens")
 
     def __repr__(self) :
         return f"<JWTToken id={self.id}, user_id={self.user_id}>"

@@ -1,9 +1,10 @@
-from ..database.database import Base
-from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, ForeignKey, Boolean, Text
-from model_statistic import QuizResult
-from model_question import Question
-from model_answer import Answer
+from sqlalchemy.orm import relationship
+
+from ..database.database import Base
+
+
+#from .model_answer import Answer
 
 class UserAnswer(Base) :
     __tablename__ = "user_answers"
@@ -22,7 +23,7 @@ class UserAnswer(Base) :
     time_spent_seconds = Column(Integer, nullable=True)  # Время затраченное на вопрос
 
     # Связи
-    quiz_result = relationship(QuizResult, back_populates="user_answers")
-    question = relationship(Question, back_populates="user_answers")
+    quiz_result = relationship("QuizResult", back_populates="user_answers")
+    question = relationship("Question", back_populates="user_answers")
     #selected_answer = relationship(Answer, back_populates="user_selected_answers")
-    
+
