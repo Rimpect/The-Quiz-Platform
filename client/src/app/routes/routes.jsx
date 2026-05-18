@@ -8,6 +8,7 @@ import {
   QuizPage,
   RegistrationPage,
   SignUpPage,
+  CreateQuizPage,
 } from '@pages'
 import { createHashRouter } from 'react-router-dom'
 
@@ -44,6 +45,10 @@ export const routes = createHashRouter([
       {
         path: '/AdminPanel',
         element: <AdminPanel />,
+      },
+      {
+        path: '/CreateQuizPage',
+        element: <CreateQuizPage />,
       },
     ],
   },

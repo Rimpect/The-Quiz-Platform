@@ -1,0 +1,73 @@
+.radioLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+
+  // Скрываем нативный радио
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+
+    &:checked + .radioCustom {
+      border-color: var(--primary, #3b82f6);
+      background-color: var(--primary, #3b82f6);
+
+      &::after {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    &:focus-visible + .radioCustom {
+      outline: 2px solid var(--ring, #3b82f6);
+      outline-offset: 2px;
+    }
+
+    &:disabled + .radioCustom {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  // Кастомная радиокнопка (кружок)
+  .radioCustom {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border, #cbd5e1);
+    border-radius: 50%;
+    position: relative;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    // Внутренний кружок (галочка)
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: white;
+      transition: transform 0.2s ease;
+    }
+  }
+
+  .radioText {
+    font-size: 14px;
+    color: var(--foreground, #0f172a);
+    user-select: none;
+  }
+
+  // Hover эффект
+  &:hover {
+    .radioCustom {
+      border-color: var(--primary, #3b82f6);
+    }
+  }
+}

@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { Button } from '@shared'
 import { Save } from 'lucide-react'
+
 import styles from './ProfileInfo.module.scss'
 
 export function ProfileInfo({ user }) {

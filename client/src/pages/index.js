@@ -1,5 +1,5 @@
 export { AdminPanel } from './AdminPanel/AdminPanel'
-export { CreateQuiz } from './CreateQuiz/CreateQuiz'
+export { CreateQuizPage } from './CreateQuizPage/CreateQuizPage'
 export { FinishQuizPage } from './FinishQuizPage/FinishQuizPage'
 export { MainPage } from './MainPage/MainPage'
 export { PersonalAccount } from './PersonalAccount/PersonalAccount'
