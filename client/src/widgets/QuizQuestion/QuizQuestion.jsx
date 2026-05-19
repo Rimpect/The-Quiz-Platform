@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
-import { Input, Textarea } from '@shared'
-
+import { Input, Textarea, Button } from '@shared'
+import { Plus, Trash2, Image, Video, Music, X } from 'lucide-react'
 import styles from './QuizQuestion.module.scss'
 
 export function QuizQuestion() {
@@ -139,175 +139,201 @@ export function QuizQuestion() {
   }
 
   return (
-    <div className={styles.quizBuilder}>
+    <div>
       <div className={styles.headerBar}>
         <h2 className={styles.headerTitle}>Вопросы</h2>
-        <button
+        <Button
+          variant="black"
+          size="medium"
+          icon={<Plus size={20} />}
           type="button"
           onClick={addQuestion}
-          className={styles.addQuestionBtn}
         >
-          + Добавить вопрос
-        </button>
+          Добавить вопрос
+        </Button>
       </div>
+      <div className={styles.quizBuilder}>
+        {questions.map((question, index) => (
+          <div key={question.id} className={styles.questionCard}>
+            <div className={styles.questionCardHeader}>
+              <div className={styles.questionNumber}>Вопрос {index + 1}</div>
+              <Button
+                variant="red"
+                size="medium"
+                icon={<Trash2 size={20} />}
+                type="button"
+                onClick={() => deleteQuestion(question.id)}
+                disabled={questions.length <= 1}
+              ></Button>
+            </div>
 
-      {questions.map((question, index) => (
-        <div key={question.id} className={styles.questionCard}>
-          <div className={styles.questionCardHeader}>
-            <div className={styles.questionNumber}>Вопрос {index + 1}</div>
-            <button
-              type="button"
-              onClick={() => deleteQuestion(question.id)}
-              className={styles.deleteQuestionBtn}
-              disabled={questions.length <= 1}
-            >
-              ✕ Удалить вопрос
-            </button>
-          </div>
+            <div className={styles.questionSettings}>
+              <div className={styles.typeSelector}>
+                <div className={styles.fieldLabel}>Тип вопроса</div>
+                <div className={styles.typeButtons}>
+                  <Button
+                    className={`${styles.typeBtn} ${question.questionType === 'single' ? styles.typeBtnActive : ''}`}
+                    type="button"
+                    onClick={() =>
+                      handleQuestionTypeChange(question.id, 'single')
+                    }
+                  >
+                    Один ответ
+                  </Button>
+                  <Button
+                    type="button"
+                    className={`${styles.typeBtn} ${question.questionType === 'multiple' ? styles.typeBtnActive : ''}`}
+                    onClick={() =>
+                      handleQuestionTypeChange(question.id, 'multiple')
+                    }
+                  >
+                    Несколько ответов
+                  </Button>
+                </div>
+              </div>
 
-          <div className={styles.questionSettings}>
-            <div className={styles.typeSelector}>
-              <div className={styles.fieldLabel}>Тип вопроса</div>
-              <div className={styles.typeButtons}>
-                <button
-                  type="button"
-                  className={`${styles.typeBtn} ${question.questionType === 'single' ? styles.typeBtnActive : ''}`}
-                  onClick={() =>
-                    handleQuestionTypeChange(question.id, 'single')
+              <div className={styles.pointsField}>
+                <div className={styles.fieldLabel}>Баллы за ответ</div>
+                <Input
+                  type="number"
+                  value={question.points}
+                  onChange={(e) =>
+                    updateQuestion(
+                      question.id,
+                      'points',
+                      Number(e.target.value),
+                    )
                   }
-                >
-                  Один ответ
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.typeBtn} ${question.questionType === 'multiple' ? styles.typeBtnActive : ''}`}
-                  onClick={() =>
-                    handleQuestionTypeChange(question.id, 'multiple')
-                  }
-                >
-                  Несколько ответов
-                </button>
+                  min={1}
+                  step={1}
+                  className={styles.pointsInput}
+                />
               </div>
             </div>
 
-            <div className={styles.pointsField}>
-              <div className={styles.fieldLabel}>Баллы за ответ</div>
-              <Input
-                type="number"
-                value={question.points}
+            <div className={styles.mediaSection}>
+              <div className={styles.fieldLabel}>Добавить медиа</div>
+              <div className={styles.mediaButtons}>
+                <Button
+                  variant="white"
+                  size="medium"
+                  icon={<Image size={20} />}
+                  type="button"
+                >
+                  картинка
+                </Button>
+                <Button
+                  variant="white"
+                  size="medium"
+                  icon={<Video size={20} />}
+                  type="button"
+                >
+                  Видео
+                </Button>
+                <Button
+                  variant="white"
+                  size="medium"
+                  icon={<Music size={20} />}
+                  type="button"
+                >
+                  Аудио
+                </Button>
+              </div>
+            </div>
+
+            <div className={styles.questionTextField}>
+              <div className={styles.fieldLabel}>Текст вопроса *</div>
+              <Textarea
+                value={question.questionText}
                 onChange={(e) =>
-                  updateQuestion(question.id, 'points', Number(e.target.value))
+                  updateQuestion(question.id, 'questionText', e.target.value)
                 }
-                min={1}
-                step={1}
-                className={styles.pointsInput}
+                placeholder="Введите текст вопроса..."
+                rows={3}
               />
             </div>
-          </div>
 
-          <div className={styles.mediaSection}>
-            <div className={styles.fieldLabel}>Добавить медиа</div>
-            <div className={styles.mediaButtons}>
-              <button type="button" className={styles.mediaBtn}>
-                📷 Загрузить изображение
-              </button>
-              <button type="button" className={styles.mediaBtn}>
-                🎥 Загрузить видео
-              </button>
-            </div>
-          </div>
-
-          <div className={styles.questionTextField}>
-            <div className={styles.fieldLabel}>Текст вопроса *</div>
-            <Textarea
-              value={question.questionText}
-              onChange={(e) =>
-                updateQuestion(question.id, 'questionText', e.target.value)
-              }
-              placeholder="Введите текст вопроса..."
-              rows={3}
-            />
-          </div>
-
-          <div className={styles.answersSection}>
-            <div className={styles.answersHeader}>
-              <div className={styles.fieldLabel}>Варианты ответов *</div>
-              <button
-                type="button"
-                onClick={() => addAnswer(question.id)}
-                className={styles.addAnswerBtn}
-              >
-                + Добавить вариант
-              </button>
-            </div>
-
-            <div className={styles.answersList}>
-              {question.answers.map((answer, answerIndex) => (
-                <div
-                  key={answer.id}
-                  className={`${styles.answerRow} ${answer.isCorrect ? styles.answerRowCorrect : ''}`}
+            <div className={styles.answersSection}>
+              <div className={styles.answersHeader}>
+                <div className={styles.fieldLabel}>Варианты ответов *</div>
+                <Button
+                  variant="black"
+                  size="medium"
+                  icon={<Plus size={20} />}
+                  type="button"
+                  onClick={() => addAnswer(question.id)}
                 >
-                  <div className={styles.correctMarker}>
-                    {question.questionType === 'single' ? (
-                      <label className={styles.radioControl}>
-                        <input
-                          type="radio"
-                          name={`question-${question.id}-correct`}
-                          checked={answer.isCorrect}
-                          onChange={(e) =>
-                            updateAnswerCorrect(
-                              question.id,
-                              answer.id,
-                              e.target.checked,
-                            )
-                          }
-                        />
-                        <span className={styles.radioCustom}></span>
-                      </label>
-                    ) : (
-                      <label className={styles.checkboxControl}>
-                        <input
-                          type="checkbox"
-                          checked={answer.isCorrect}
-                          onChange={(e) =>
-                            updateAnswerCorrect(
-                              question.id,
-                              answer.id,
-                              e.target.checked,
-                            )
-                          }
-                        />
-                        <span className={styles.checkboxCustom}></span>
-                      </label>
-                    )}
-                  </div>
+                  Добавить вариант
+                </Button>
+              </div>
 
-                  <div className={styles.answerIndex}>{answerIndex + 1}</div>
-
-                  <Input
-                    type="text"
-                    value={answer.text}
-                    onChange={(e) =>
-                      updateAnswerText(question.id, answer.id, e.target.value)
-                    }
-                    placeholder={`Вариант ${answerIndex + 1}`}
-                    className={styles.answerInput}
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => removeAnswer(question.id, answer.id)}
-                    className={styles.removeAnswerBtn}
-                    disabled={question.answers.length <= 2}
+              <div className={styles.answersList}>
+                {question.answers.map((answer, answerIndex) => (
+                  <div
+                    key={answer.id}
+                    className={`${styles.answerRow} ${answer.isCorrect ? styles.answerRowCorrect : ''}`}
                   >
-                    ✕
-                  </button>
-                </div>
-              ))}
+                    <div className={styles.correctMarker}>
+                      {question.questionType === 'single' ? (
+                        <label className={styles.radioControl}>
+                          <input
+                            type="radio"
+                            name={`question-${question.id}-correct`}
+                            checked={answer.isCorrect}
+                            onChange={(e) =>
+                              updateAnswerCorrect(
+                                question.id,
+                                answer.id,
+                                e.target.checked,
+                              )
+                            }
+                          />
+                          <span className={styles.radioCustom}></span>
+                        </label>
+                      ) : (
+                        <label className={styles.checkboxControl}>
+                          <input
+                            type="checkbox"
+                            checked={answer.isCorrect}
+                            onChange={(e) =>
+                              updateAnswerCorrect(
+                                question.id,
+                                answer.id,
+                                e.target.checked,
+                              )
+                            }
+                          />
+                          <span className={styles.checkboxCustom}></span>
+                        </label>
+                      )}
+                    </div>
+
+                    <div className={styles.answerIndex}>{answerIndex + 1}</div>
+
+                    <Input
+                      type="text"
+                      value={answer.text}
+                      onChange={(e) =>
+                        updateAnswerText(question.id, answer.id, e.target.value)
+                      }
+                      placeholder={`Вариант ${answerIndex + 1}`}
+                      className={styles.answerInput}
+                    />
+                    <Button
+                      className={styles.removeAnswerBtn}
+                      size="medium"
+                      icon={<X size={20} />}
+                      type="button"
+                      onClick={() => removeAnswer(question.id, answer.id)}
+                      disabled={question.answers.length <= 2}
+                    ></Button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }

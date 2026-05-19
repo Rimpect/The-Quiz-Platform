@@ -9,7 +9,7 @@ export function CreateQuizPage() {
     <div className={styles.main}>
       <HeaderCreateQuiz></HeaderCreateQuiz>
       <div className={styles.container}>
-        <div>Создать квиз</div>
+        <div className={styles.label}>Создать новый квиз</div>
         <div>
           <QuizStats></QuizStats>
           <div className={styles.questions}></div>

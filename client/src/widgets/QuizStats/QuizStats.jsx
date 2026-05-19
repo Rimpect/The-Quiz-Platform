@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Input, Textarea, Select } from '@shared'
+import { Input, Textarea, Select, CoverUpload } from '@shared'
 
 import styles from './QuizStats.module.scss'
 
@@ -8,8 +8,7 @@ export function QuizStats() {
   return (
     <div className={styles.container}>
       <div>
-        <div>Обложка квиза</div>
-
+        <CoverUpload></CoverUpload>
         <div className={styles.fieldGroup}>
           <label htmlFor="quiz-title">Название квиза *</label>
           <Input

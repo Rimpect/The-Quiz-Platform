@@ -7,11 +7,11 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: none;
   border-radius: var(--border-radius-small);
+  line-height: 1;
+  white-space: nowrap;
 }
 
-// Размеры (просто классы)
 .small {
   padding: 6px 12px;
   font-size: 12px;
@@ -27,7 +27,6 @@
   font-size: 18px;
 }
 
-// Варианты
 .black {
   background: var(--color-dark);
   color: var(--color-light);
@@ -74,7 +73,14 @@
     background: var(--red-800);
   }
 }
-
+.transparent {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  &:hover {
+    background: rgba(59, 130, 246, 0.1);
+  }
+}
 // Состояния
 .fullWidth {
   width: 100%;
@@ -85,17 +91,25 @@
   cursor: not-allowed;
 }
 
-// Элементы (просто классы)
 .icon {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   line-height: 0;
+  flex-shrink: 0;
+
+  svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+  }
 }
 
+// Для текста
+.button span:not(.icon) {
+  line-height: 1.2;
+  vertical-align: middle;
+}
 .text {
   display: inline-block;
 }
-// варианты кнопок (черный фон, белые буквы и белая иконка,
-// и белый фон черные иконки и буквы, и серая обводка,
-//  красный фон и белый текст и иконки, зеленый фон,
-//   белые конки и текст, при наведении белые кнопки сереют)
