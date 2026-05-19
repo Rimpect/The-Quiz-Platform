@@ -7,11 +7,43 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: none;
   border-radius: var(--border-radius-small);
+  line-height: 1;
+  white-space: nowrap;
+}
+.primary {
+  background: var(--color-black);
+  color: white;
+  border: 1px solid var(--color-black);
+
+  &:hover:not(:disabled) {
+    background: var(--color-black);
+    border-color: var(--color-black);
+  }
+}
+.outline {
+  background: transparent;
+  border: 1px solid var(--border, #e2e8f0);
+  color: var(--gray-700, #334155);
+
+  &:hover:not(:disabled) {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--color-black);
+    color: var(--color-black);
+  }
 }
 
-// Размеры (просто классы)
+.outlineActive {
+  background: var(--color-black);
+  border: 1px solid var(--color-black);
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: var(--color-black);
+    border-color: var(--color-black);
+  }
+}
+
 .small {
   padding: 6px 12px;
   font-size: 12px;
@@ -27,7 +59,6 @@
   font-size: 18px;
 }
 
-// Варианты
 .black {
   background: var(--color-dark);
   color: var(--color-light);
@@ -74,7 +105,27 @@
     background: var(--red-800);
   }
 }
+.transparent {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--gray-700, #334155);
 
+  &:hover:not(:disabled) {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--color-black);
+    color: var(--color-black);
+  }
+
+  &.active {
+    background: var(--color-black);
+    border-color: var(--color-black);
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: var(--color-black);
+    }
+  }
+}
 // Состояния
 .fullWidth {
   width: 100%;
@@ -85,17 +136,25 @@
   cursor: not-allowed;
 }
 
-// Элементы (просто классы)
 .icon {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   line-height: 0;
+  flex-shrink: 0;
+
+  svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+  }
 }
 
+// Для текста
+.button span:not(.icon) {
+  line-height: 1.2;
+  vertical-align: middle;
+}
 .text {
   display: inline-block;
 }
-// варианты кнопок (черный фон, белые буквы и белая иконка,
-// и белый фон черные иконки и буквы, и серая обводка,
-//  красный фон и белый текст и иконки, зеленый фон,
-//   белые конки и текст, при наведении белые кнопки сереют)

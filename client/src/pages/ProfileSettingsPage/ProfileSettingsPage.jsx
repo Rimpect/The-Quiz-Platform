@@ -1,9 +1,27 @@
-import { ProfileSettings } from '@widgets'
+import { ProfileInfo, ChangePassword, DangerZone } from '@widgets'
+
+import styles from './ProfileSettingsPage.module.scss'
+
+const mockUser = {
+  name: 'Максим',
+  email: 'example@gmail.com',
+  // avatar: '',
+}
 
 export function ProfileSettingsPage() {
   return (
-    <div>
-      <ProfileSettings></ProfileSettings>
+    <div className={styles.page}>
+      <div className={styles.container}>
+        <h1 className={styles.title}>Настройки профиля</h1>
+
+        <div className={styles.content}>
+          <ProfileInfo user={mockUser} />
+
+          <ChangePassword />
+
+          <DangerZone />
+        </div>
+      </div>
     </div>
   )
 }

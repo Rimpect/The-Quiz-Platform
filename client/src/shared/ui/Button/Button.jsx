@@ -10,6 +10,7 @@ export function Button({
   children,
   fullWidth = false,
   disabled = false,
+  active = false, // Добавить
   className,
   ...props
 }) {
@@ -22,6 +23,7 @@ export function Button({
         {
           [styles.fullWidth]: fullWidth,
           [styles.disabled]: disabled,
+          [styles.active]: active,
         },
         className,
       )}

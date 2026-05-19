@@ -1,0 +1,21 @@
+.main {
+  margin: auto;
+  max-width: 1280px;
+}
+
+.container {
+  background-color: var(--color-white);
+  border: solid 1px var(--gray-600);
+  border-radius: var(--border-radius);
+  margin-top: 3vh;
+  padding: 24px;
+  margin-bottom: 20vh;
+}
+.questions {
+  margin-top: 20px;
+}
+.label {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
