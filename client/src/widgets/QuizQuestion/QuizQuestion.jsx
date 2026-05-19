@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 
 import { Input, Textarea, Button } from '@shared'
 import { Plus, Trash2, Image, Video, Music, X } from 'lucide-react'
+
 import styles from './QuizQuestion.module.scss'
 
 export function QuizQuestion() {
@@ -158,9 +159,9 @@ export function QuizQuestion() {
             <div className={styles.questionCardHeader}>
               <div className={styles.questionNumber}>Вопрос {index + 1}</div>
               <Button
-                variant="red"
+                variant="transparent"
                 size="medium"
-                icon={<Trash2 size={20} />}
+                icon={<Trash2 size={20} color="red" />}
                 type="button"
                 onClick={() => deleteQuestion(question.id)}
                 disabled={questions.length <= 1}
@@ -172,17 +173,24 @@ export function QuizQuestion() {
                 <div className={styles.fieldLabel}>Тип вопроса</div>
                 <div className={styles.typeButtons}>
                   <Button
-                    className={`${styles.typeBtn} ${question.questionType === 'single' ? styles.typeBtnActive : ''}`}
+                    variant="transparent"
+                    size="medium"
+                    active={question.questionType === 'single'}
                     type="button"
+                    fullWidth
                     onClick={() =>
                       handleQuestionTypeChange(question.id, 'single')
                     }
                   >
                     Один ответ
                   </Button>
+
                   <Button
+                    variant="transparent"
+                    size="medium"
+                    active={question.questionType === 'multiple'}
                     type="button"
-                    className={`${styles.typeBtn} ${question.questionType === 'multiple' ? styles.typeBtnActive : ''}`}
+                    fullWidth
                     onClick={() =>
                       handleQuestionTypeChange(question.id, 'multiple')
                     }

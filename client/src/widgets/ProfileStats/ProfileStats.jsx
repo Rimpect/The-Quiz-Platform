@@ -79,7 +79,7 @@ export function ProfileStats({ user }) {
                 Главная
               </Button>
             </Link>
-            <Link to="/ProfileSettings">
+            <Link to="/ProfileSettingsPage">
               <Button
                 variant="white"
                 size="medium"

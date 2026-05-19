@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { Button } from '@shared'
 import {
   FileText,
   Plus,
@@ -8,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 import styles from './QuizHistory.module.scss'
 
@@ -159,10 +161,11 @@ export function QuizHistory({
               <h2 className={styles.tabTitle}>
                 Созданные квизы ({myQuizzes.length})
               </h2>
-              <button onClick={onCreateQuiz} className={styles.createBtn}>
-                <Plus size={16} />
-                Создать квиз
-              </button>
+              <Link to="/CreateQuizPage">
+                <Button onClick={onCreateQuiz} icon={<Plus size={16} />}>
+                  Создать квиз
+                </Button>
+              </Link>
             </div>
             {myQuizzes.length === 0 ? (
               <div className={styles.emptyState}>
@@ -170,10 +173,9 @@ export function QuizHistory({
                 <p className={styles.emptyText}>
                   У вас пока нет созданных квизов
                 </p>
-                <button onClick={onCreateQuiz} className={styles.createBtn}>
-                  <Plus size={16} />
+                <Button onClick={onCreateQuiz} icon={<Plus size={16} />}>
                   Создать первый квиз
-                </button>
+                </Button>
               </div>
             ) : (
               <>
@@ -200,14 +202,14 @@ export function QuizHistory({
                           </div>
                         </div>
                         <div className={styles.quizActions}>
-                          <button className={styles.iconBtn}>
-                            <Edit size={16} />
-                          </button>
-                          <button
-                            className={`${styles.iconBtn} ${styles.deleteBtn}`}
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                          <Button
+                            icon={<Edit size={16} />}
+                            variant="transparent"
+                          ></Button>
+                          <Button
+                            icon={<Trash2 size={16} />}
+                            variant="transparent"
+                          ></Button>
                         </div>
                       </div>
                       {quiz.status === 'rejected' && (

@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
+
 import { Image } from 'lucide-react'
+
 import styles from './CoverUpload.module.scss'
 
 export function CoverUpload() {

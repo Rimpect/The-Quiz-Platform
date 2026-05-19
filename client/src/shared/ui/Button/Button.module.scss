@@ -11,6 +11,38 @@
   line-height: 1;
   white-space: nowrap;
 }
+.primary {
+  background: var(--color-black);
+  color: white;
+  border: 1px solid var(--color-black);
+
+  &:hover:not(:disabled) {
+    background: var(--color-black);
+    border-color: var(--color-black);
+  }
+}
+.outline {
+  background: transparent;
+  border: 1px solid var(--border, #e2e8f0);
+  color: var(--gray-700, #334155);
+
+  &:hover:not(:disabled) {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--color-black);
+    color: var(--color-black);
+  }
+}
+
+.outlineActive {
+  background: var(--color-black);
+  border: 1px solid var(--color-black);
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: var(--color-black);
+    border-color: var(--color-black);
+  }
+}
 
 .small {
   padding: 6px 12px;
@@ -75,10 +107,23 @@
 }
 .transparent {
   background: transparent;
-  border: none;
-  cursor: pointer;
-  &:hover {
+  border: 1px solid transparent;
+  color: var(--gray-700, #334155);
+
+  &:hover:not(:disabled) {
     background: rgba(59, 130, 246, 0.1);
+    border-color: var(--color-black);
+    color: var(--color-black);
+  }
+
+  &.active {
+    background: var(--color-black);
+    border-color: var(--color-black);
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: var(--color-black);
+    }
   }
 }
 // Состояния
