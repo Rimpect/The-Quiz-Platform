@@ -8,3 +8,12 @@
   gap: 20px;
   justify-content: space-between;
 }
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9999; // 👈 высокий z-index
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
