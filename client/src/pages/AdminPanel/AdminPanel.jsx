@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { RejectQuizDialog, ViewQuizDialog, SearchBar } from '@shared'
 import { AdminHeader, QuizTabs, StatsCards } from '@widgets'
+import { toast } from 'sonner'
 
 import styles from './AdminPanel.module.scss'
 
@@ -43,7 +44,9 @@ export function AdminPanel({
   //   alert(`Квиз "${quiz.title}" одобрен`)
   // }
   const handleApprove = () => {
-    alert(`Квиз одобрен`)
+    toast.success('Квиз одобрен', {
+      description: 'Эта функция еще не доработана',
+    })
   } //@TODO заглушка пока что вместо алертов будут кастомные модалки
   const handleRejectClick = (quiz) => {
     setSelectedQuiz(quiz)
@@ -57,7 +60,9 @@ export function AdminPanel({
 
   const handleRejectConfirm = () => {
     if (!selectedQuiz) return
-    alert(`Квиз отклонен`)
+    toast.success('Квиз отклонен', {
+      description: 'Эта функция еще не доработана',
+    })
     setIsRejectDialogOpen(false)
     setSelectedQuiz(null) //@TODO заглушка пока что вместо алертов будут кастомные модалки
   }

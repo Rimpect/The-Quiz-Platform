@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+
 import {
   Info,
   CheckCircle,
@@ -8,6 +9,7 @@ import {
   ListChecks,
   X,
 } from 'lucide-react'
+
 import styles from './ModalHelp.module.scss'
 
 export function ModalHelp({ onClose }) {

@@ -1,14 +1,7 @@
 import { useState } from 'react'
 
-import { Button } from '@shared'
-import {
-  FileText,
-  Plus,
-  Edit,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react'
+import { Button, Pagination } from '@shared'
+import { FileText, Plus, Edit, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import styles from './QuizHistory.module.scss'
@@ -117,41 +110,14 @@ export function QuizHistory({
               ))}
             </div>
 
-            {historyTotalPages > 1 && (
-              <div className={styles.pagination}>
-                <p className={styles.paginationInfo}>
-                  Показано {historyStartIndex + 1}-
-                  {Math.min(
-                    historyStartIndex + ITEMS_PER_PAGE,
-                    recentQuizzes.length,
-                  )}{' '}
-                  из {recentQuizzes.length}
-                </p>
-                <div className={styles.paginationButtons}>
-                  <button
-                    className={styles.paginationBtn}
-                    onClick={() => setHistoryPage(historyPage - 1)}
-                    disabled={historyPage === 1}
-                  >
-                    <ChevronLeft size={16} />
-                    Назад
-                  </button>
-                  <div className={styles.paginationPage}>
-                    <span>
-                      Страница {historyPage} из {historyTotalPages}
-                    </span>
-                  </div>
-                  <button
-                    className={styles.paginationBtn}
-                    onClick={() => setHistoryPage(historyPage + 1)}
-                    disabled={historyPage === historyTotalPages}
-                  >
-                    Вперед
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Заменяем старую пагинацию на новый компонент */}
+            <Pagination
+              variant="main"
+              pageInfo="visible"
+              currentPage={historyPage}
+              totalPages={historyTotalPages}
+              onPageChange={setHistoryPage}
+            />
           </div>
         )}
 
@@ -221,41 +187,14 @@ export function QuizHistory({
                   ))}
                 </div>
 
-                {myQuizzesTotalPages > 1 && (
-                  <div className={styles.pagination}>
-                    <p className={styles.paginationInfo}>
-                      Показано {myQuizzesStartIndex + 1}-
-                      {Math.min(
-                        myQuizzesStartIndex + ITEMS_PER_PAGE,
-                        myQuizzes.length,
-                      )}{' '}
-                      из {myQuizzes.length}
-                    </p>
-                    <div className={styles.paginationButtons}>
-                      <button
-                        className={styles.paginationBtn}
-                        onClick={() => setMyQuizzesPage(myQuizzesPage - 1)}
-                        disabled={myQuizzesPage === 1}
-                      >
-                        <ChevronLeft size={16} />
-                        Назад
-                      </button>
-                      <div className={styles.paginationPage}>
-                        <span>
-                          Страница {myQuizzesPage} из {myQuizzesTotalPages}
-                        </span>
-                      </div>
-                      <button
-                        className={styles.paginationBtn}
-                        onClick={() => setMyQuizzesPage(myQuizzesPage + 1)}
-                        disabled={myQuizzesPage === myQuizzesTotalPages}
-                      >
-                        Вперед
-                        <ChevronRight size={16} />
-                      </button>
-                    </div>
-                  </div>
-                )}
+                {/* Заменяем старую пагинацию на новый компонент */}
+                <Pagination
+                  variant="admin"
+                  pageInfo="visible"
+                  currentPage={myQuizzesPage}
+                  totalPages={myQuizzesTotalPages}
+                  onPageChange={setMyQuizzesPage}
+                />
               </>
             )}
           </div>
