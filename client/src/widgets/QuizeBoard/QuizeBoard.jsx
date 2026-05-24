@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Pagination, QuizCard, ModalNotifications } from '@shared'
+import { Pagination, QuizCard, ModalNotifications, createRoute } from '@shared'
 import { Link } from 'react-router-dom'
 
 import styles from './QuizeBoard.module.scss'
@@ -145,7 +145,7 @@ export function QuizeBoard({ currentPage, onPageChange, totalPages }) {
     <div className={styles.containerBoard}>
       <div className={styles.dashboardQuiz}>
         {quizzes.map((quiz) => (
-          <Link key={quiz.id} to={`/QuizDescription/${quiz.id}`}>
+          <Link key={quiz.id} to={createRoute.quizDescription(quiz.id)}>
             <QuizCard {...quiz} />
           </Link>
         ))}

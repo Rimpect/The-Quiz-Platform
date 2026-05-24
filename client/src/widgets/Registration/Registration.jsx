@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 
-import { Button } from '@shared'
+import { Button, ROUTES } from '@shared'
 import { Mail, User, Lock, Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+
 import styles from './RegistrationPage.module.scss'
 
 export function Registration() {
@@ -61,7 +62,7 @@ export function Registration() {
       return
     }
     console.log('Register:', { name, email, password })
-    navigate('/MainPage')
+    navigate(ROUTES.main)
   }
 
   return (

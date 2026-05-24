@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { ROUTES } from '@shared'
 import { Trophy, Award, Target, Clock, Home, RotateCcw } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -43,12 +44,12 @@ export function FinishQuiz() {
         </div>
 
         <div className={styles.buttons}>
-          <Link to="/MainPage" className={styles.buttonHome}>
+          <Link to={ROUTES.main} className={styles.buttonHome}>
             <Home />
             <span>На главную</span>
           </Link>
-
-          <Link to="/QuizPage/:id" className={styles.buttonRetry}>
+          {/* @TODO ИСПРАВИТЬ ССЫЛКУ ПОТОМ С QUIZ */}
+          <Link to={ROUTES.quiz} className={styles.buttonRetry}>
             <RotateCcw />
             <span>Пройти еще раз</span>
           </Link>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Button, ModalHelp } from '@shared'
+import { Button, ModalHelp, ROUTES } from '@shared'
 import { MoveLeft, CircleQuestionMark, Save } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -17,7 +17,7 @@ export function HeaderCreateQuiz() {
   return (
     <>
       <div className={styles.header}>
-        <Link to="/MainPage">
+        <Link to={ROUTES.main}>
           <Button
             variant="transparent"
             size="medium"

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { Button } from '@shared'
+import { Button, ROUTES } from '@shared'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -75,7 +75,7 @@ export function SignUp() {
           <button
             type="button"
             className={styles.guestLink}
-            onClick={() => navigate('/MainPage')}
+            onClick={() => navigate(ROUTES.main)}
           >
             Продолжить как гость
           </button>

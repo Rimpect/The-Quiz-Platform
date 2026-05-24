@@ -1,4 +1,4 @@
-import { Button } from '@shared'
+import { Button, ROUTES } from '@shared'
 import {
   Trophy,
   Target,
@@ -74,12 +74,12 @@ export function ProfileStats({ user }) {
           </div>
 
           <div className={styles.actionButtons}>
-            <Link to="/MainPage">
+            <Link to={ROUTES.main}>
               <Button variant="white" size="medium" icon={<Home size={20} />}>
                 Главная
               </Button>
             </Link>
-            <Link to="/ProfileSettingsPage">
+            <Link to={ROUTES.settings}>
               <Button
                 variant="white"
                 size="medium"

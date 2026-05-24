@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Button } from '@shared'
+import { Button, ROUTES } from '@shared'
 import { User, Shield, Sun, Moon, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -41,7 +41,7 @@ export function Header() {
       <div className={styles.headerInner}>
         <div className={styles.logo}>
           <div className={styles.logoIcon}>
-            <Link to="/MainPage" className={styles.userLink}>
+            <Link to={ROUTES.main} className={styles.userLink}>
               Q
             </Link>
           </div>
@@ -64,7 +64,7 @@ export function Header() {
               className={`${styles.themeButton} ${isAnimating ? styles.rotate : ''} ${styles.headerButton}`}
             />
           </div>
-          <Link to="/AdminPanel" className={styles.userLink}>
+          <Link to={ROUTES.admin} className={styles.userLink}>
             <Button
               variant="white"
               size="medium"
@@ -76,7 +76,7 @@ export function Header() {
           </Link>
           <User className={styles.userIcon} />
           <span className={styles.userText}>Имя пользователя/Гость</span>
-          <Link to="/PersonalAccount" className={styles.userLink}>
+          <Link to={ROUTES.profile} className={styles.userLink}>
             <Button
               variant="white"
               size="medium"

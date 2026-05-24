@@ -1,3 +1,4 @@
+import { ROUTES } from '@shared'
 import { Shield } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -19,7 +20,7 @@ export function AdminHeader() {
           </p>
         </div>
 
-        <Link to="/MainPage" className={styles.backButton}>
+        <Link to={ROUTES.main} className={styles.backButton}>
           <span>Назад</span>
         </Link>
       </div>

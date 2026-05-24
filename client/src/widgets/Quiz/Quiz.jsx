@@ -1,6 +1,7 @@
 // Quiz.jsx
 import React, { useState, useEffect } from 'react'
 
+import { ROUTES } from '@shared'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 
 import styles from './Quiz.module.scss'
@@ -232,7 +233,7 @@ export function Quiz() {
 
   if (isFinished) {
     const percentScore = Math.round((totalScore / maxPossibleScore) * 100)
-    navigate(`/FinishQuiz/${id}`, {
+    navigate(ROUTES.finishQuiz, {
       state: {
         totalScore,
         maxPossibleScore,
@@ -249,7 +250,7 @@ export function Quiz() {
     <div className={styles.quizContainer}>
       <div className={styles.quizHeader}>
         <div className={styles.quizInfo}>
-          <Link to={`/MainPage`} className={styles.quizId}>
+          <Link to={ROUTES.main} className={styles.quizId}>
             Выход
           </Link>
 

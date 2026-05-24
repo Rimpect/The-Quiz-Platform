@@ -11,58 +11,55 @@ import {
   CreateQuizPage,
   NotFoundPage,
 } from '@pages'
+import { ROUTES } from '@shared'
 import { createHashRouter } from 'react-router-dom'
 
 import { Layout } from '../../widgets/Layout/Layout.jsx'
 
-export const routes = createHashRouter([
+export const router = createHashRouter([
   {
-    path: '/',
+    path: ROUTES.auth,
     element: <SignUpPage />,
   },
   {
-    path: '/RegistrationPage',
+    path: ROUTES.register,
     element: <RegistrationPage />,
   },
   {
     element: <Layout />,
     children: [
       {
-        path: '/MainPage',
+        path: ROUTES.main,
         element: <MainPage />,
       },
       {
-        path: '/PersonalAccount',
+        path: ROUTES.profile,
         element: <PersonalAccount />,
       },
       {
-        path: '/QuizDescription/:id',
+        path: ROUTES.quizDescription,
         element: <QuizDescriptionPage />,
       },
       {
-        path: '/ProfileSettingsPage',
+        path: ROUTES.settings,
         element: <ProfileSettingsPage />,
       },
       {
-        path: '/AdminPanel',
+        path: ROUTES.admin,
         element: <AdminPanel />,
       },
       {
-        path: '/CreateQuizPage',
+        path: ROUTES.createQuiz,
         element: <CreateQuizPage />,
       },
     ],
   },
   {
-    path: '/QuizPage/:id',
+    path: ROUTES.quiz,
     element: <QuizPage />,
   },
   {
-    path: '/FinishQuizPage/:id',
+    path: ROUTES.finishQuiz,
     element: <FinishQuizPage />,
-  },
-  {
-    path: '/NotFoundPage',
-    element: <NotFoundPage />,
   },
 ])

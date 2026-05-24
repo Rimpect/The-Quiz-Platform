@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Button, Pagination } from '@shared'
+import { Button, Pagination, ROUTES } from '@shared'
 import { FileText, Plus, Edit, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -127,7 +127,7 @@ export function QuizHistory({
               <h2 className={styles.tabTitle}>
                 Созданные квизы ({myQuizzes.length})
               </h2>
-              <Link to="/CreateQuizPage">
+              <Link to={ROUTES.createQuiz}>
                 <Button onClick={onCreateQuiz} icon={<Plus size={16} />}>
                   Создать квиз
                 </Button>
