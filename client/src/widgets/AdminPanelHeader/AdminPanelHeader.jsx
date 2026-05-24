@@ -2,9 +2,9 @@ import { ROUTES } from '@shared'
 import { Shield } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-import styles from './AdminHeader.module.scss'
+import styles from './AdminPanelHeader.module.scss'
 
-export function AdminHeader() {
+export function AdminPanelHeader() {
   return (
     <div className={styles.header}>
       <div className={styles.headerContent}>

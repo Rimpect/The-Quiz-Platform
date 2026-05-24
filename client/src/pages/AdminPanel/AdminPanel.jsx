@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { RejectQuizDialog, ViewQuizDialog, SearchBar } from '@shared'
-import { AdminHeader, QuizTabs, StatsCards } from '@widgets'
+import { AdminPanelHeader, QuizTabs, StatsCards } from '@widgets'
 import { toast } from 'sonner'
 
 import styles from './AdminPanel.module.scss'
@@ -76,7 +76,7 @@ export function AdminPanel({
   return (
     <div className={styles.adminPanel}>
       <div className={styles.container}>
-        <AdminHeader onBack={onBack} />
+        <AdminPanelHeader onBack={onBack} />
 
         <StatsCards
           pendingCount={pendingCount}

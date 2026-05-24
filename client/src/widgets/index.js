@@ -1,5 +1,5 @@
 // компоненты для страницы AdminPanel
-export { AdminHeader } from './AdminHeader/AdminHeader'
+export { AdminPanelHeader } from './AdminPanelHeader/AdminPanelHeader'
 export { QuizTabs } from './QuizTabs/QuizTabs'
 export { StatsCards } from './StatsCards/StatsCards'
 // компоненты для страницы PersonalAccount
@@ -20,7 +20,7 @@ export { SignUp } from './SignUp/SignUp'
 export { Registration } from './Registration/Registration'
 // компоненты для страницы ProfileSettingsPage
 export { ProfileInfo } from './ProfileInfo/ProfileInfo'
-export { ChangePassword } from './ChangePassword/ChangePassword'
+// export { ChangePassword } from './ChangePassword/ChangePassword'
 export { DangerZone } from './DangerZone/DangerZone'
 // компоненты для страницы CreateQuizPage
 export { QuizQuestion } from './QuizQuestion/QuizQuestion'
