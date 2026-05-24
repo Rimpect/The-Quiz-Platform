@@ -1,8 +1,8 @@
 import './App.scss'
 import { RouterProvider } from 'react-router-dom'
-
-import { routes } from './app/routes/routes.jsx'
 import { Toaster } from 'sonner'
+
+import { routes } from './routes/routes.jsx'
 
 function App() {
   return (

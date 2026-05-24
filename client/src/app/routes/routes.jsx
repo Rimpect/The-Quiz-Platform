@@ -9,6 +9,7 @@ import {
   RegistrationPage,
   SignUpPage,
   CreateQuizPage,
+  NotFoundPage,
 } from '@pages'
 import { createHashRouter } from 'react-router-dom'
 
@@ -59,5 +60,9 @@ export const routes = createHashRouter([
   {
     path: '/FinishQuizPage/:id',
     element: <FinishQuizPage />,
+  },
+  {
+    path: '/NotFoundPage',
+    element: <NotFoundPage />,
   },
 ])

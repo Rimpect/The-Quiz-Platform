@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Button } from '@shared'
 import { Mail, User, Lock, Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-
+import { toast } from 'sonner'
 import styles from './RegistrationPage.module.scss'
 
 export function Registration() {
@@ -19,33 +19,45 @@ export function Registration() {
     e.preventDefault()
     //@TODO сделать потом toast уведомления
     if (!name.trim()) {
-      alert('Введите ваше имя')
+      toast.error('Ошибка', {
+        description: 'Введите ваше имя',
+      })
       return
     }
 
     if (!email.trim()) {
-      alert('Введите email')
+      toast.error('Ошибка', {
+        description: 'Введите email',
+      })
       return
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      alert('Введите корректный email')
+      toast.error('Ошибка', {
+        description: 'Введите корректный email',
+      })
       return
     }
 
     if (!password) {
-      alert('Введите пароль')
+      toast.error('Ошибка', {
+        description: 'Введите пароль',
+      })
       return
     }
 
     if (password.length < 6) {
-      alert('Пароль должен содержать минимум 6 символов')
+      toast.error('Ошибка', {
+        description: 'Пароль должен содержать минимум 6 символов',
+      })
       return
     }
 
     if (password !== confirmPassword) {
-      alert('Пароли не совпадают')
+      toast.error('Ошибка', {
+        description: 'Пароли не совпадают',
+      })
       return
     }
     console.log('Register:', { name, email, password })
