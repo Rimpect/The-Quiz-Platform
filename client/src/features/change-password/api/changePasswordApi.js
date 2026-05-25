@@ -19,7 +19,7 @@ export async function changePasswordApi(data) {
       })
 
       // или иногда можно имитировать ошибку:
-      // reject(new Error('Server error'))
+      reject(new Error('Server error'))
     }, 800)
   })
 }

@@ -21,7 +21,7 @@ export { Registration } from './Registration/Registration'
 // компоненты для страницы ProfileSettingsPage
 export { ProfileInfo } from './ProfileInfo/ProfileInfo'
 // export { ChangePassword } from './ChangePassword/ChangePassword'
-export { DangerZone } from './DangerZone/DangerZone'
+// export { DangerZone } from './DangerZone/DangerZone'
 // компоненты для страницы CreateQuizPage
 export { QuizQuestion } from './QuizQuestion/QuizQuestion'
 export { HeaderCreateQuiz } from './HeaderCreateQuiz/HeaderCreateQuiz'
