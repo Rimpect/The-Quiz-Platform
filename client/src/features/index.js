@@ -9,3 +9,6 @@ export { ThemeToggle } from './theme-toggle'
 // фичи для HeaderCreateQuiz
 export { QuizHelp } from './quiz-help'
 export { SaveQuiz } from './save-quiz'
+// фичи для CreateQuizPage
+export { QuizStats } from './quiz-editor'
+export { QuizQuestions } from './quiz-editor'

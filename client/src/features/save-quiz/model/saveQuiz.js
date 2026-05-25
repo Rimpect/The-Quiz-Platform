@@ -1,4 +1,4 @@
-import { quizSchema } from './quiz.schema'
+import { quizSchema } from '../../quiz-editor/model/quiz.schema'
 
 export const saveQuiz = async (quizData) => {
   const result = quizSchema.safeParse(quizData)

@@ -1,9 +1,15 @@
 import { z } from 'zod'
 
 export const quizSchema = z.object({
-  title: z.string().min(3, 'Введите название'),
-  description: z.string().min(10, 'Введите описание'),
+  title: z.string().min(3, 'Название слишком короткое'),
+
+  description: z.string(),
+
   category: z.string().min(1, 'Выберите категорию'),
+
+  difficulty: z.string().min(1, 'Выберите сложность'),
+
+  duration: z.number().min(1, 'Минимум 1 минута'),
 
   questions: z
     .array(
