@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { HeaderCreateQuiz } from '@widgets'
 import { QuizStats, QuizQuestions } from '@features'
+import { HeaderCreateQuiz } from '@widgets'
 
 import styles from './CreateQuizPage.module.scss'
 

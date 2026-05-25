@@ -2,10 +2,9 @@ import { Button } from '@shared'
 import { Save } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { saveQuiz } from '../model/saveQuiz'
-
-import { useQuizStore } from '../../quiz-editor/model/quiz.store'
 import { quizSchema } from '../../quiz-editor/model/quiz.schema'
+import { useQuizStore } from '../../quiz-editor/model/quiz.store'
+import { saveQuiz } from '../model/saveQuiz'
 
 export function SaveQuiz() {
   const quiz = useQuizStore((state) => state.quiz)
