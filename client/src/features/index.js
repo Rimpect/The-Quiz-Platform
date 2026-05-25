@@ -6,3 +6,6 @@ export { DangerZone } from './delete-account'
 
 // фичи для Header
 export { ThemeToggle } from './theme-toggle'
+// фичи для HeaderCreateQuiz
+export { QuizHelp } from './quiz-help'
+export { SaveQuiz } from './save-quiz'

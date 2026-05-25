@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { ROUTES } from '@shared'
 import { Link } from 'react-router-dom'
 
