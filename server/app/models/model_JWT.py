@@ -7,7 +7,7 @@ from ..database.database import Base
 
 
 
-class JWTToken(Base) :
+class JWTToken(Base):
     """
     Таблица для хранения JWT токенов (access и refresh)
 

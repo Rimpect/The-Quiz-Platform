@@ -25,7 +25,7 @@ class QuizResult(Base) :
     # Связи
     user = relationship("User", back_populates="quiz_results")
     quiz = relationship("Quiz", back_populates="quiz_results")
-    user_answers = relationship("UserAnswer", back_populates="quiz_results", cascade="all, delete-orphan")
+    #user_answers = relationship("UserAnswer", back_populates="quiz_results", cascade="all, delete-orphan")
 
     # Вычисляемые свойства
     @property

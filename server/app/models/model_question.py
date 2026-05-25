@@ -37,7 +37,7 @@ class Question(Base) :
     # Связи
     quiz = relationship("Quiz", back_populates="questions")
     answers = relationship("Answer", back_populates="question", cascade="all, delete-orphan")
-    user_answers = relationship("UserAnswer", back_populates="questions", cascade="all, delete-orphan")
+    #user_answers = relationship("UserAnswer", back_populates="questions", cascade="all, delete-orphan")
 
     @property
     def images(self) :

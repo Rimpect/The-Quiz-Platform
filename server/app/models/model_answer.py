@@ -6,8 +6,7 @@ from .model_media import MediaEntity, MediaType
 from ..database.database import Base
 
 
-
-class Answer(Base):
+class Answer(Base) :
     __tablename__ = "answers"
 
     # Обязательные поля
@@ -19,10 +18,10 @@ class Answer(Base):
 
     # Связи
     question = relationship("Question", back_populates="answers")
-    user_selected_answers = relationship("UserAnswer", back_populates="selected_answer")
+    #user_selected_answers = relationship("UserAnswer", back_populates="selected_answer")
 
     @property
-    def images(self):
+    def images(self) :
         """Изображения ответа"""
         from ..crud import media as media_crud
         from ..database.database import SessionLocal
@@ -31,5 +30,5 @@ class Answer(Base):
             db, MediaEntity.ANSWER, self.id, MediaType.IMAGE
         )
 
-    def __repr__(self):
+    def __repr__(self) :
         return f"<Answer {self.id}: {self.answer_text[:30]}>"

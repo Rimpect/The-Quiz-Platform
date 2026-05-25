@@ -34,11 +34,12 @@ class User(Base):
     email = Column(String(100), unique=True, nullable=False, index=True)  # Почта
     password_hash = Column(String(255), nullable=False)  # Пароль (хеш)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата регистрации
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)  # Дата изменения
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)  # Дата изменения
+    role = Column(SQLEnum(UserRole), default=UserRole.USER, nullable=False)
 
     # Связи
-    jwt_tokens = relationship("JWTToken", back_populates="users", cascade="all, delete-orphan")
-    quiz_results = relationship("QuizResult", back_populates="users", cascade="all, delete-orphan")
+    jwt_tokens = relationship("JWTToken", back_populates="user", cascade="all, delete-orphan")
+    quiz_results = relationship("QuizResult", back_populates="user", cascade="all, delete-orphan")
 
     @property
     def profile_images(self) :
