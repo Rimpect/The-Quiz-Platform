@@ -1,0 +1,92 @@
+.themeButtonWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.themeButton {
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+.rotate {
+  animation: spin 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.sparkles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+
+  .sparkle1,
+  .sparkle2,
+  .sparkle3 {
+    position: absolute;
+    color: #fbbf24;
+    animation: sparkle 0.5s ease-out forwards;
+  }
+
+  .sparkle1 {
+    top: -10px;
+    left: -10px;
+    animation-delay: 0s;
+  }
+
+  .sparkle2 {
+    top: -5px;
+    right: -12px;
+    animation-delay: 0.1s;
+  }
+
+  .sparkle3 {
+    bottom: -8px;
+    left: -8px;
+    animation-delay: 0.2s;
+  }
+}
+
+@keyframes sparkle {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(360deg);
+  }
+}
+
+// Темы
+// .lightTheme {
+//   background: #ffffff;
+//   transition: background 0.3s ease;
+// }
+
+// .darkTheme {
+//   background: #1a1a2e;
+//   transition: background 0.3s ease;
+// }
