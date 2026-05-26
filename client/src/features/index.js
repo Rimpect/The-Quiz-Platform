@@ -12,3 +12,5 @@ export { SaveQuiz } from './save-quiz'
 // фичи для CreateQuizPage
 export { QuizStats } from './quiz-editor'
 export { QuizQuestions } from './quiz-editor'
+// фичи для QuizSearch
+export { QuizSearch } from './search-quiz'

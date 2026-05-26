@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
-
 import { Button, SearchBar, ModalFilter } from '@shared'
 import { SlidersHorizontal } from 'lucide-react'
 
-import styles from './QuizSearch.module.scss'
+import styles from './QuizToolbar.module.scss'
 
-export function QuizSearch() {
+export function QuizToolbar() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   // const [searchQuery, setSearchQuery] = useState('')
 
@@ -48,6 +47,7 @@ export function QuizSearch() {
             />
 
             <SearchBar elevated={false} />
+            {/* @TODO переделать поиск */}
           </div>
         </div>
       </div>

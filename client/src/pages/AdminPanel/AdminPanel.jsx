@@ -1,6 +1,6 @@
 import { useState } from 'react'
-
-import { RejectQuizDialog, ViewQuizDialog, SearchBar } from '@shared'
+import { QuizSearch } from '@features'
+import { RejectQuizDialog, ViewQuizDialog } from '@shared'
 import { AdminPanelHeader, QuizTabs, StatsCards } from '@widgets'
 import { toast } from 'sonner'
 
@@ -27,11 +27,6 @@ export function AdminPanel({
 
   const handleFilterChange = (newStatus) => {
     setFilterStatus(newStatus)
-    setCurrentPage(1)
-  }
-
-  const handleSearchChange = (query) => {
-    setSearchQuery(query)
     setCurrentPage(1)
   }
 
@@ -84,11 +79,7 @@ export function AdminPanel({
           rejectedCount={rejectedCount}
         />
 
-        <SearchBar
-          searchQuery={searchQuery}
-          onSearchChange={handleSearchChange}
-          elevated={true}
-        />
+        <QuizSearch quizzes={quizzes} />
 
         <QuizTabs
           quizzes={filteredQuizzes}

@@ -6,7 +6,7 @@ export { StatsCards } from './StatsCards/StatsCards'
 export { ProfileStats } from './ProfileStats/ProfileStats'
 export { QuizHistory } from './QuizHistory/QuizHistory'
 // компоненты для страницы MainPage
-export { QuizSearch } from './QuizSearch/QuizSearch'
+export { QuizToolbar } from './QuizToolbar/QuizToolbar'
 export { QuizeBoard } from './QuizeBoard/QuizeBoard'
 // компоненты для страницы QuizDescriptionPage
 export { QuizDescription } from './QuizDescription/QuizDescription'
