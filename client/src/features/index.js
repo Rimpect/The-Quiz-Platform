@@ -16,3 +16,4 @@ export { QuizQuestions } from './quiz-editor'
 export { QuizSearch } from './search-quiz'
 
 export { RegistrationForm } from './auth/sign-up'
+export { LoginForm } from './auth/sign-up'

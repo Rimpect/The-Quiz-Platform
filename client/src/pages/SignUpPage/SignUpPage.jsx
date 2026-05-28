@@ -1,9 +1,9 @@
-import { SignUp } from '@widgets'
+import { LoginForm } from '@features'
 
 export function SignUpPage() {
   return (
     <div>
-      <SignUp></SignUp>
+      <LoginForm></LoginForm>
     </div>
   )
 }

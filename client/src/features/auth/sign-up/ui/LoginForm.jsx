@@ -1,20 +1,39 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { Button, ROUTES } from '@shared'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-import styles from './SignUp.module.scss'
+import { useLogin } from '../model/useLogin'
 
-export function SignUp() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+import styles from './LoginForm.module.scss'
+
+export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
-  const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate()
+  const { login, loading } = useLogin()
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  })
+
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }))
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Login:', { email, password })
+
+    const success = await login(formData)
+
+    if (success) {
+      navigate(ROUTES.main)
+    }
   }
 
   return (
@@ -35,12 +54,11 @@ export function SignUp() {
             <input
               type="email"
               placeholder="your@email.com"
-              name="email"
+              value={formData.email}
+              onChange={(e) => handleChange('email', e.target.value)}
               id="email"
               required
               className={styles.input}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
@@ -50,14 +68,12 @@ export function SignUp() {
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
-              name="password"
+              value={formData.password}
+              onChange={(e) => handleChange('password', e.target.value)}
               id="password"
               required
               className={styles.input}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
             />
-
             <button
               type="button"
               className={styles.eyeButton}
@@ -66,8 +82,9 @@ export function SignUp() {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          <Button variant="black" size="medium" fullWidth>
-            Войти
+
+          <Button variant="black" size="medium" fullWidth disabled={loading}>
+            {loading ? 'Загрузка...' : 'Войти'}
           </Button>
         </div>
 
@@ -85,7 +102,7 @@ export function SignUp() {
             <button
               type="button"
               className={styles.registerLink}
-              onClick={() => navigate('/RegistrationPage')}
+              onClick={() => navigate(ROUTES.register)}
             >
               Зарегистрируйтесь
             </button>

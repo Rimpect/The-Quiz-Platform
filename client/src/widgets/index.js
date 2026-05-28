@@ -15,9 +15,9 @@ export { Quiz } from './Quiz/Quiz'
 // компоненты для страницы FinishQuizPage
 export { FinishQuiz } from './FinishQuiz/FinishQuiz'
 // компоненты для страницы SignUpPage
-export { SignUp } from './SignUp/SignUp'
+// export { SignUp } from './SignUp/SignUp'
 // компоненты для страницы RegistrationPage
-export { Registration } from './Registration/Registration'
+// export { Registration } from './Registration/Registration'
 // компоненты для страницы ProfileSettingsPage
 export { ProfileInfo } from './ProfileInfo/ProfileInfo'
 // export { ChangePassword } from './ChangePassword/ChangePassword'

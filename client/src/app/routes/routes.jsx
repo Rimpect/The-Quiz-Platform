@@ -6,7 +6,6 @@ import {
   ProfileSettingsPage,
   QuizDescriptionPage,
   QuizPage,
-  RegistrationPage,
   SignUpPage,
   CreateQuizPage,
   NotFoundPage,
@@ -23,7 +22,7 @@ export const router = createHashRouter([
   },
   {
     path: ROUTES.register,
-    element: <RegistrationPage />,
+    element: <SignUpPage />,
   },
   {
     element: <Layout />,
