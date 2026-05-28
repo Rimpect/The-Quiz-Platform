@@ -34,6 +34,7 @@ class Quiz(Base) :
     quiz_mode = Column(SQLEnum(QuizMode), default=QuizMode.SINGLE, nullable=False)  # Режим команды
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата создания
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)  # Дата изменения
+    author = Column(Text, nullable=True)
 
     # Вычисляемые поля без сохранения 
     # duration_minutes - вычисляется из вопросов
@@ -44,6 +45,7 @@ class Quiz(Base) :
     # Связи
     questions = relationship("Question", back_populates="quiz", cascade="all, delete-orphan")
     quiz_results = relationship("QuizResult", back_populates="quiz", cascade="all, delete-orphan")
+    user_author = relationship("User", back_populates="quiz", cascade="all, delete-orphan")
 
     # Вычисляемые свойства (property)
     @property

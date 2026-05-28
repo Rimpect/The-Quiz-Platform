@@ -40,6 +40,7 @@ class User(Base):
     # Связи
     jwt_tokens = relationship("JWTToken", back_populates="user", cascade="all, delete-orphan")
     quiz_results = relationship("QuizResult", back_populates="user", cascade="all, delete-orphan")
+    quiz = relationship("Quiz", back_populates="user_author", cascade="all, delete-orphan")
 
     @property
     def profile_images(self) :
