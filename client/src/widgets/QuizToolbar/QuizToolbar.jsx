@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+
 import { Button, SearchBar, ModalFilter } from '@shared'
 import { SlidersHorizontal } from 'lucide-react'
 

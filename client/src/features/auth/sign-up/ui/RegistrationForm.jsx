@@ -1,70 +1,44 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 import { Button, ROUTES } from '@shared'
 import { Mail, User, Lock, Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
 
-// import styles from './RegistrationPage.module.scss'
+import { useRegister } from '../model/useRegister'
 
-export function Registration() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+import styles from './RegistrationForm.module.scss'
+
+export function RegistrationForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    //@TODO сделать потом toast уведомления
-    if (!name.trim()) {
-      toast.error('Ошибка', {
-        description: 'Введите ваше имя',
-      })
-      return
-    }
+  const { register, loading } = useRegister()
 
-    if (!email.trim()) {
-      toast.error('Ошибка', {
-        description: 'Введите email',
-      })
-      return
-    }
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  })
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      toast.error('Ошибка', {
-        description: 'Введите корректный email',
-      })
-      return
-    }
-
-    if (!password) {
-      toast.error('Ошибка', {
-        description: 'Введите пароль',
-      })
-      return
-    }
-
-    if (password.length < 6) {
-      toast.error('Ошибка', {
-        description: 'Пароль должен содержать минимум 6 символов',
-      })
-      return
-    }
-
-    if (password !== confirmPassword) {
-      toast.error('Ошибка', {
-        description: 'Пароли не совпадают',
-      })
-      return
-    }
-    console.log('Register:', { name, email, password })
-    navigate(ROUTES.main)
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }))
   }
 
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const success = await register(formData)
+
+    if (success) {
+      navigate(ROUTES.main)
+    }
+  }
   return (
     <div className={styles.page}>
       <form className={styles.container} onSubmit={handleSubmit}>
@@ -80,13 +54,12 @@ export function Registration() {
             <User className={styles.icon} />
             <input
               type="text"
-              placeholder="Ваше имя"
-              name="name"
+              placeholder="Имя"
+              value={formData.name}
+              onChange={(e) => handleChange('name', e.target.value)}
               id="name"
               required
               className={styles.input}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
             />
           </div>
 
@@ -95,13 +68,12 @@ export function Registration() {
             <Mail className={styles.icon} />
             <input
               type="email"
-              placeholder="your@email.com"
-              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={(e) => handleChange('email', e.target.value)}
               id="email"
               required
               className={styles.input}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
@@ -115,8 +87,8 @@ export function Registration() {
               id="password"
               required
               className={styles.input}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={(e) => handleChange('password', e.target.value)}
             />
             <button
               type="button"
@@ -133,12 +105,11 @@ export function Registration() {
             <input
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="••••••••"
-              name="confirmPassword"
+              value={formData.confirmPassword}
               id="confirmPassword"
               required
               className={styles.input}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => handleChange('confirmPassword', e.target.value)}
             />
             <button
               type="button"
@@ -148,8 +119,8 @@ export function Registration() {
               {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          <Button variant="black" size="medium" fullWidth>
-            Зарегистрироваться
+          <Button variant="black" size="medium" fullWidth disabled={loading}>
+            {loading ? 'Загрузка...' : 'Регистрация'}
           </Button>
         </div>
       </form>

@@ -14,3 +14,5 @@ export { QuizStats } from './quiz-editor'
 export { QuizQuestions } from './quiz-editor'
 // фичи для QuizSearch
 export { QuizSearch } from './search-quiz'
+
+export { RegistrationForm } from './auth/sign-up'
