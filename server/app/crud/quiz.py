@@ -8,7 +8,7 @@ from typing import Optional, List, Type
 
 def get_quiz(db: Session, quiz_id: int) -> Optional[Quiz]:
     return db.query(Quiz).filter(Quiz.id == quiz_id).first()
-
+#test commit to GitHub
 
 def get_quizzes(
         db: Session,
