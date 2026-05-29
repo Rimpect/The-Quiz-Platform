@@ -9,7 +9,7 @@ import image1 from '../../assets/img/QuizCardTest/pic.jpg'
 import styles from './QuizDescription.module.scss'
 
 export function QuizDescription() {
-  // Заглушки данных
+  // Заглушки данных заменить потом на пропсы
   const quizData = {
     id: 1,
     title: 'Великие научные открытия',
@@ -147,7 +147,7 @@ export function QuizDescription() {
                   </span>
                 </li>
               </ul>
-              <Link to={ROUTES.quiz} style={{ textDecoration: 'none' }}>
+              <Link to={ROUTES.quiz}>
                 <Button variant="black" size="medium" fullWidth>
                   Начать квиз
                 </Button>

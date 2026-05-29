@@ -18,7 +18,7 @@ export function useRegister() {
       await new Promise((resolve) => setTimeout(resolve, 1000))
       toast.success('Регистрация успешна')
       return true
-    } catch (e) {
+    } catch {
       toast.error('Ошибка регистрации')
       return false
     } finally {
