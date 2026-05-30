@@ -1,5 +1,5 @@
 // Quiz.jsx
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import { mockDataQuestions } from '@entities'
 import {
@@ -25,7 +25,6 @@ export function Quiz() {
   const [totalScore, setTotalScore] = useState(0)
   const [correctCount, setCorrectCount] = useState(0)
   const [isFinished, setIsFinished] = useState(false)
-
   const navigate = useNavigate()
   const questions = mockDataQuestions
 
@@ -40,15 +39,20 @@ export function Quiz() {
     currentQ.correctAnswers,
     currentQ.points,
   )
-  const maxPossibleScore = questions.reduce((sum, q) => sum + q.points, 0)
-  // Вычисляем максимально возможный балл
 
+  const maxPossibleScore = questions.reduce((sum, q) => sum + q.points, 0)
+
+  const handleTimeEnd = () => {
+    if (isAnswered) return
+
+    handleSubmitAnswer()
+    handleNext()
+  }
   const handleSubmitAnswer = () => {
     setIsAnswered(true)
 
     const earnedPoints = currentScore
     setTotalScore((prev) => prev + earnedPoints)
-    // Считаем полностью правильный ответ
     const isFullyCorrect = checkAnswer(selectedAnswers, currentQ.correctAnswers)
     if (isFullyCorrect) {
       setCorrectCount((prev) => prev + 1)
@@ -57,11 +61,10 @@ export function Quiz() {
 
   const handleNext = () => {
     if (currentQuestion + 1 < totalQuestions) {
-      setCurrentQuestion(currentQuestion + 1)
+      setCurrentQuestion((prev) => prev + 1)
       resetAnswers()
       setIsAnswered(false)
     } else {
-      // Квиз завершен
       setIsFinished(true)
     }
   }
@@ -95,11 +98,10 @@ export function Quiz() {
         </div>
 
         <QuizTimer
-          duration={30}
+          key={currentQuestion}
+          duration={5}
           // warningSound={warningSound}
-          onTimeEnd={() => {
-            console.log('Время вышло')
-          }}
+          onTimeEnd={handleTimeEnd}
         />
       </div>
       <QuizProgress
