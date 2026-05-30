@@ -18,6 +18,8 @@ export { QuizSearch } from './search-quiz'
 export { RegistrationForm } from './auth/sign-up'
 export { LoginForm } from './auth/sign-up'
 
-export { QuizTimer } from './quiz-timer'
+// фичи для Quiz
 
+export { QuizTimer } from './quiz-timer'
 export { AnswerList } from './answer-selection'
+export { QuizProgress } from './quiz-progress'

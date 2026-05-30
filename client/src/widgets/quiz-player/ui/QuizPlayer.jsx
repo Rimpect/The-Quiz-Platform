@@ -1,3 +1,4 @@
+import { QuestionCard } from '@entities'
 import {
   AnswerSection,
   SubmitAnswerButton,
@@ -7,8 +8,6 @@ import {
   QuizTimer,
   LeaderboardPreview,
 } from '@features'
-
-import { QuestionCard } from '@entities'
 
 import { useQuizPlayer } from '../model/useQuizPlayer'
 

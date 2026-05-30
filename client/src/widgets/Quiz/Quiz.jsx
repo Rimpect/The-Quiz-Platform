@@ -1,6 +1,7 @@
 // Quiz.jsx
 import React, { useState, useEffect } from 'react'
-import { QuizTimer, AnswerList } from '@features'
+
+import { QuizTimer, AnswerList, QuizProgress } from '@features'
 import { ROUTES } from '@shared'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 
@@ -14,7 +15,6 @@ export function Quiz() {
   const [totalScore, setTotalScore] = useState(0)
   const [maxPossibleScore, setMaxPossibleScore] = useState(0)
   const [correctCount, setCorrectCount] = useState(0)
-  const [timeLeft, setTimeLeft] = useState(30)
   const [isFinished, setIsFinished] = useState(false)
 
   const navigate = useNavigate()
@@ -118,7 +118,6 @@ export function Quiz() {
   ]
 
   const totalQuestions = questions.length
-  const progress = ((currentQuestion + 1) / totalQuestions) * 100
   const currentQ = questions[currentQuestion]
 
   // Вычисляем максимально возможный балл
@@ -193,7 +192,6 @@ export function Quiz() {
       setCurrentQuestion(currentQuestion + 1)
       setSelectedAnswers([])
       setIsAnswered(false)
-      setTimeLeft(30)
     } else {
       // Квиз завершен
       setIsFinished(true)
@@ -254,21 +252,12 @@ export function Quiz() {
           }}
         />
       </div>
-
-      <div className={styles.progressContainer}>
-        <div
-          className={styles.progressBar}
-          style={{ width: `${progress}%` }}
-        ></div>
-        <div className={styles.progressInfo}>
-          <div className={styles.progressInfoText}>
-            Вопрос {currentQuestion + 1} из {totalQuestions}
-          </div>
-          <div className={styles.progressInfoScore}>
-            Баллы: {totalScore} / {maxPossibleScore}
-          </div>
-        </div>
-      </div>
+      <QuizProgress
+        currentQuestion={currentQuestion}
+        totalQuestions={totalQuestions}
+        totalScore={totalScore}
+        maxPossibleScore={maxPossibleScore}
+      />
 
       <div className={styles.questionContainer}>
         {currentQ.mediaUrl && (
