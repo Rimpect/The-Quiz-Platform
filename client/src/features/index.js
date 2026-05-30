@@ -17,3 +17,7 @@ export { QuizSearch } from './search-quiz'
 
 export { RegistrationForm } from './auth/sign-up'
 export { LoginForm } from './auth/sign-up'
+
+export { QuizTimer } from './quiz-timer'
+
+export { AnswerList } from './answer-selection'

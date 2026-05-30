@@ -1,6 +1,6 @@
 // Quiz.jsx
 import React, { useState, useEffect } from 'react'
-
+import { QuizTimer, AnswerList } from '@features'
 import { ROUTES } from '@shared'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 
@@ -127,19 +127,6 @@ export function Quiz() {
     setMaxPossibleScore(maxScore)
   }, [])
 
-  // Таймер
-  useEffect(() => {
-    if (isAnswered) return
-
-    if (timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
-      return () => clearTimeout(timer)
-    } else {
-      // Время истекло
-      handleSubmitAnswer()
-    }
-  }, [timeLeft, isAnswered])
-
   const toggleAnswer = (index) => {
     if (isAnswered) return
 
@@ -259,13 +246,13 @@ export function Quiz() {
           </div>
         </div>
 
-        <div className={styles.timer}>
-          <span
-            className={`${styles.timerValue} ${timeLeft <= 10 ? styles.warning : ''}`}
-          >
-            {timeLeft} сек
-          </span>
-        </div>
+        <QuizTimer
+          duration={30}
+          // warningSound={warningSound}
+          onTimeEnd={() => {
+            console.log('Время вышло')
+          }}
+        />
       </div>
 
       <div className={styles.progressContainer}>
@@ -316,41 +303,14 @@ export function Quiz() {
             : `Выберите все правильные ответы (${currentQ.points} баллов, частично правильный ответ дает меньше баллов)`}
         </div>
 
-        <div className={styles.answersContainer}>
-          {currentQ.options.map((option, index) => (
-            <div
-              key={index}
-              onClick={() => toggleAnswer(index)}
-              className={getOptionClassName(index)}
-            >
-              {currentQ.questionType === 'multiple' && !isAnswered && (
-                <input
-                  type="checkbox"
-                  checked={selectedAnswers.includes(index)}
-                  onChange={() => {}}
-                  className={styles.answerCheckbox}
-                />
-              )}
-              <span className={styles.answerText}>{option}</span>
-              {isAnswered && currentQ.correctAnswers.includes(index) && (
-                <span
-                  className={`${styles.resultIcon} ${styles.resultIconCorrect}`}
-                >
-                  ✓
-                </span>
-              )}
-              {isAnswered &&
-                selectedAnswers.includes(index) &&
-                !currentQ.correctAnswers.includes(index) && (
-                  <span
-                    className={`${styles.resultIcon} ${styles.resultIconIncorrect}`}
-                  >
-                    ✗
-                  </span>
-                )}
-            </div>
-          ))}
-        </div>
+        <AnswerList
+          options={currentQ.options}
+          selectedAnswers={selectedAnswers}
+          correctAnswers={currentQ.correctAnswers}
+          questionType={currentQ.questionType}
+          isAnswered={isAnswered}
+          onSelect={toggleAnswer}
+        />
 
         {isAnswered && (
           <div
