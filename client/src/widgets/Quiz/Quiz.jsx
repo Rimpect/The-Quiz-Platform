@@ -1,7 +1,7 @@
 // Quiz.jsx
 import React, { useState, useEffect } from 'react'
 
-import { QuizTimer, AnswerList, QuizProgress } from '@features'
+import { QuizTimer, AnswerList, QuizProgress, QuizActions } from '@features'
 import { ROUTES } from '@shared'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 
@@ -325,26 +325,13 @@ export function Quiz() {
         )}
       </div>
 
-      <div className={styles.actions}>
-        {!isAnswered ? (
-          <span
-            onClick={handleSubmitAnswer}
-            disabled={selectedAnswers.length === 0}
-          >
-            Ответить
-          </span>
-        ) : (
-          <span onClick={handleNext}>
-            {currentQuestion + 1 < totalQuestions
-              ? 'Следующий вопрос'
-              : 'Завершить квиз'}
-          </span>
-        )}
-
-        <span onClick={() => handleNext()} variant="secondary">
-          Пропустить вопрос
-        </span>
-      </div>
+      <QuizActions
+        isAnswered={isAnswered}
+        selectedAnswers={selectedAnswers}
+        isLastQuestion={currentQuestion + 1 === totalQuestions}
+        onSubmit={handleSubmitAnswer}
+        onNext={handleNext}
+      />
 
       <div className={styles.leaderboardPreview}>
         <h3>Таблица лидеров</h3>
