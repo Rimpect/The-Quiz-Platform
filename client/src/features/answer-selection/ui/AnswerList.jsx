@@ -1,3 +1,4 @@
+import styles from './AnswerList.module.scss'
 import { AnswerOption } from './AnswerOption'
 
 export function AnswerList({
@@ -9,7 +10,7 @@ export function AnswerList({
   onSelect,
 }) {
   return (
-    <div>
+    <div className={styles.answersContainer}>
       {options.map((option, index) => (
         <AnswerOption
           key={index}

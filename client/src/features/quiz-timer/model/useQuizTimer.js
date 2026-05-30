@@ -1,17 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const WARNING_TIME = 10
 
 export function useQuizTimer({ duration, onTimeEnd, warningSound }) {
   const [timeLeft, setTimeLeft] = useState(duration)
 
+  const hasEnded = useRef(false)
+
   useEffect(() => {
     setTimeLeft(duration)
+    hasEnded.current = false
   }, [duration])
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      onTimeEnd?.()
+      if (!hasEnded.current) {
+        hasEnded.current = true
+        onTimeEnd?.()
+      }
+
       return
     }
 
@@ -24,7 +31,7 @@ export function useQuizTimer({ duration, onTimeEnd, warningSound }) {
     }, 1000)
 
     return () => clearTimeout(timer)
-  }, [timeLeft, onTimeEnd, warningSound])
+  }, [timeLeft])
 
   return {
     timeLeft,

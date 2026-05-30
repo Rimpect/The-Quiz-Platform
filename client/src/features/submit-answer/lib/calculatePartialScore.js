@@ -14,11 +14,10 @@ export function calculatePartialScore(selectedAnswers, correctAnswers, points) {
     }
   })
 
-  if (incorrectSelected > 0) {
-    return 0
-  }
+  const scorePerAnswer = points / correctAnswers.length
 
-  const percentageCorrect = correctSelected / correctAnswers.length
+  const score =
+    correctSelected * scorePerAnswer - incorrectSelected * scorePerAnswer
 
-  return Math.floor(points * percentageCorrect)
+  return Math.max(0, Math.floor(score))
 }

@@ -43,9 +43,16 @@ export function Quiz() {
   const maxPossibleScore = questions.reduce((sum, q) => sum + q.points, 0)
 
   const handleTimeEnd = () => {
-    if (isAnswered) return
+    if (!isAnswered) {
+      handleSubmitAnswer()
 
-    handleSubmitAnswer()
+      setTimeout(() => {
+        handleNext()
+      }, 1000)
+
+      return
+    }
+
     handleNext()
   }
   const handleSubmitAnswer = () => {
@@ -99,7 +106,7 @@ export function Quiz() {
 
         <QuizTimer
           key={currentQuestion}
-          duration={5}
+          duration={10}
           // warningSound={warningSound}
           onTimeEnd={handleTimeEnd}
         />

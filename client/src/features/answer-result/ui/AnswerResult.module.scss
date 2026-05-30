@@ -1,0 +1,25 @@
+.resultMessage {
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.resultMessageCorrect {
+  background: var(--color-quiz-correct-bg);
+  border: 1px solid var(--color-green);
+  color: var(--color-green);
+}
+
+.resultMessagePartial {
+  background: var(--color-quiz-partial-bg);
+  border: 1px solid var(--color-quiz-partial-border);
+  color: var(--color-quiz-partial-text);
+}
+
+.resultMessageIncorrect {
+  background: var(--color-quiz-incorrect-bg);
+  border: 1px solid var(--color-red);
+  color: var(--color-red);
+}

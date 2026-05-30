@@ -1,29 +1,46 @@
+import styles from './QuestionSection.module.scss'
+
 export function QuestionSection({ question }) {
   return (
-    <div>
+    <div className={styles.mediaContainer}>
       {question.mediaUrl && (
         <div>
           {question.mediaType === 'image' && (
-            <img src={question.mediaUrl} alt="media" />
+            <img
+              src={question.mediaUrl}
+              alt="media"
+              className={styles.mediaImage}
+            />
           )}
 
           {question.mediaType === 'video' && (
-            <video src={question.mediaUrl} controls />
+            <video
+              src={question.mediaUrl}
+              controls
+              className={styles.mediaVideo}
+            />
           )}
 
-          {question.mediaType === 'audio' && (
-            <audio src={question.mediaUrl} controls />
+          {question.mediaAudio === 'audio' && (
+            <audio
+              src={question.mediaUrl}
+              controls
+              className={styles.mediaImage}
+            />
           )}
         </div>
       )}
 
-      <h2>{question.question}</h2>
-
-      <div>
+      <h2 className={styles.questionTitle}>{question.question}</h2>
+      {/* <div
+        className={`${styles.questionType} ${
+          question.questionType === 'single' ? styles.single : styles.multiple
+        }`}
+      >
         {question.questionType === 'single'
-          ? 'Выберите один правильный ответ'
-          : 'Выберите несколько правильных ответов'}
-      </div>
+          ? 'Один ответ'
+          : 'Множественный выбор'}
+      </div> */}
     </div>
   )
 }

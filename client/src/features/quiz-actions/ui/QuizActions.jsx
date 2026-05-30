@@ -1,3 +1,7 @@
+import { Button } from '@shared'
+
+import styles from './QuizActions.module.scss'
+
 export function QuizActions({
   isAnswered,
   selectedAnswers,
@@ -6,18 +10,25 @@ export function QuizActions({
   onNext,
 }) {
   return (
-    <div>
+    <div className={styles.container}>
       {!isAnswered ? (
-        <button onClick={onSubmit} disabled={selectedAnswers.length === 0}>
+        <Button
+          variant="green"
+          fullWidth
+          onClick={onSubmit}
+          disabled={selectedAnswers.length === 0}
+        >
           Ответить
-        </button>
+        </Button>
       ) : (
-        <button onClick={onNext}>
+        <Button variant="green" fullWidth onClick={onNext}>
           {isLastQuestion ? 'Завершить квиз' : 'Следующий вопрос'}
-        </button>
+        </Button>
       )}
 
-      <button onClick={onNext}>Пропустить вопрос</button>
+      <Button variant="red" fullWidth onClick={onNext}>
+        Пропустить вопрос
+      </Button>
     </div>
   )
 }
