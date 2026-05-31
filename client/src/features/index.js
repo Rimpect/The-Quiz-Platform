@@ -29,3 +29,9 @@ export { AnswerResult } from './answer-result'
 export { calculatePartialScore } from './submit-answer'
 export { checkAnswer } from './submit-answer'
 export { useAnswerSelection } from './answer-selection'
+
+// фичи для QuizFinish
+
+export { getGrade } from './quiz-finish'
+export { getMessage } from './quiz-finish'
+export { getMotivation } from './quiz-finish'

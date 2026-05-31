@@ -1,12 +1,23 @@
 import React from 'react'
 
+import { getGrade, getMessage, getMotivation } from '@features'
 import { ROUTES } from '@shared'
 import { Trophy, Award, Target, Clock, Home, RotateCcw } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 
 import styles from './FinishQuiz.module.scss'
 
 export function FinishQuiz() {
+  const { state } = useLocation()
+
+  const {
+    quizTitle,
+    maxPossibleScore,
+    percentScore,
+    correctCount,
+    totalQuestions,
+  } = state
+  const grade = getGrade(percentScore)
   return (
     <div className={styles.container}>
       <section className={styles.result}>
@@ -14,31 +25,34 @@ export function FinishQuiz() {
           <div className={styles.trophyWrapper}>
             <Trophy />
           </div>
-          <div className={styles.message}>
-            Хорошая работа!👏 (разные фразы в зависимости от оценки)
+          <div className={styles.message}>{getMessage(percentScore)}</div>
+          <div className={styles.quizTitle}>Квиз "{quizTitle}" завершен</div>
+
+          <div className={styles.percentage}>
+            {percentScore} из {maxPossibleScore} баллов
           </div>
-          <div className={styles.quizTitle}>
-            Квиз "Научные открытия" завершен
+          <div className={styles.gradeRow}>
+            <span className={styles.gradeLabel}>Оценка:</span>
+            <span className={styles.gradeValue}>{grade}</span>
           </div>
-          <div className={styles.gradeLabel}>Оценка</div>
-          <div className={styles.gradeValue}>A</div>
-          <div className={styles.percentage}>85%</div>
         </div>
 
         <div className={styles.stats}>
           <div className={`${styles.statCard} ${styles.correct}`}>
             <Target />
-            <div className={styles.statValue}>10</div>
+            <div className={styles.statValue}>{correctCount}</div>
             <div className={styles.statLabel}>Правильно</div>
           </div>
           <div className={`${styles.statCard} ${styles.wrong}`}>
             <Award />
-            <div className={styles.statValue}>0</div>
+            <div className={styles.statValue}>
+              {totalQuestions - correctCount}
+            </div>
             <div className={styles.statLabel}>Ошибок</div>
           </div>
           <div className={`${styles.statCard} ${styles.total}`}>
             <Clock />
-            <div className={styles.statValue}>10</div>
+            <div className={styles.statValue}>{totalQuestions}</div>
             <div className={styles.statLabel}>Всего вопросов</div>
           </div>
         </div>
@@ -48,7 +62,6 @@ export function FinishQuiz() {
             <Home />
             <span>На главную</span>
           </Link>
-          {/* @TODO ИСПРАВИТЬ ССЫЛКУ ПОТОМ С QUIZ */}
           <Link to={ROUTES.quiz} className={styles.buttonRetry}>
             <RotateCcw />
             <span>Пройти еще раз</span>
@@ -57,8 +70,7 @@ export function FinishQuiz() {
       </section>
 
       <section className={styles.motivation}>
-        Каждая попытка делает вас умнее! Попробуйте пройти квиз снова или
-        выберите другой.
+        {getMotivation(percentScore)}
       </section>
     </div>
   )

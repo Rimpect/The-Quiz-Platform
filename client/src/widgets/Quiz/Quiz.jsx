@@ -80,7 +80,7 @@ export function Quiz() {
     const percentScore = Math.round((totalScore / maxPossibleScore) * 100)
     navigate(ROUTES.finishQuiz, {
       state: {
-        totalScore,
+        quizTitle: currentQ.category,
         maxPossibleScore,
         percentScore,
         correctCount,
