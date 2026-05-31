@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { QuizStats, HeaderCreateQuiz, QuizQuestion } from '@widgets'
+import { QuizStats, QuizQuestions } from '@features'
+import { HeaderCreateQuiz } from '@widgets'
 
 import styles from './CreateQuizPage.module.scss'
 
@@ -13,7 +14,7 @@ export function CreateQuizPage() {
         <div>
           <QuizStats></QuizStats>
           <div className={styles.questions}></div>
-          <QuizQuestion></QuizQuestion>
+          <QuizQuestions />
         </div>
       </div>
     </div>

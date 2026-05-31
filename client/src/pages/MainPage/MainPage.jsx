@@ -1,11 +1,11 @@
 import React from 'react'
 
-import { QuizSearch, QuizeBoard } from '@widgets'
+import { QuizToolbar, QuizeBoard } from '@widgets'
 
 export function MainPage() {
   return (
     <>
-      <QuizSearch></QuizSearch>
+      <QuizToolbar></QuizToolbar>
       <QuizeBoard></QuizeBoard>
     </>
   )

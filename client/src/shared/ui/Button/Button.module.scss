@@ -47,16 +47,19 @@
 .small {
   padding: 6px 12px;
   font-size: 12px;
+  min-height: 40px;
 }
 
 .medium {
   padding: 10px 16px;
   font-size: 16px;
+  min-height: 44px;
 }
 
 .large {
   padding: 12px 24px;
   font-size: 18px;
+  min-height: 48px;
 }
 
 .black {

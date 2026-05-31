@@ -1,10 +1,9 @@
-import React from 'react'
-
 import { Mail, Phone, MapPin } from 'lucide-react'
 
 import styles from './Footer.module.scss'
 
 export function Footer() {
+  // @TODO сделать ссылки интерактивными
   return (
     <footer className={styles.footerContainer}>
       <div className={styles.footerInner}>

@@ -1,0 +1,29 @@
+import { ROUTES } from '@shared'
+import { Shield } from 'lucide-react'
+import { Link } from 'react-router-dom'
+
+import styles from './AdminPanelHeader.module.scss'
+
+export function AdminPanelHeader() {
+  return (
+    <div className={styles.header}>
+      <div className={styles.headerContent}>
+        <div>
+          <div className={styles.titleWrapper}>
+            <span className={styles.shieldIcon}>
+              <Shield color="#1d4ed8" size={26} />
+            </span>
+            <h1 className={styles.title}>Админ-панель</h1>
+          </div>
+          <p className={styles.subtitle}>
+            Управление квизами и модерация контента
+          </p>
+        </div>
+
+        <Link to={ROUTES.main} className={styles.backButton}>
+          <span>Назад</span>
+        </Link>
+      </div>
+    </div>
+  )
+}

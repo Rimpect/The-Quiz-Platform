@@ -1,7 +1,9 @@
 import { useState } from 'react'
 
-import { RejectQuizDialog, ViewQuizDialog, SearchBar } from '@shared'
-import { AdminHeader, QuizTabs, StatsCards } from '@widgets'
+import { QuizSearch } from '@features'
+import { RejectQuizDialog, ViewQuizDialog } from '@shared'
+import { AdminPanelHeader, QuizTabs, StatsCards } from '@widgets'
+import { toast } from 'sonner'
 
 import styles from './AdminPanel.module.scss'
 
@@ -29,11 +31,6 @@ export function AdminPanel({
     setCurrentPage(1)
   }
 
-  const handleSearchChange = (query) => {
-    setSearchQuery(query)
-    setCurrentPage(1)
-  }
-
   const pendingCount = quizzes.filter((q) => q.status === 'pending').length
   const approvedCount = quizzes.filter((q) => q.status === 'approved').length
   const rejectedCount = quizzes.filter((q) => q.status === 'rejected').length
@@ -43,7 +40,9 @@ export function AdminPanel({
   //   alert(`Квиз "${quiz.title}" одобрен`)
   // }
   const handleApprove = () => {
-    alert(`Квиз одобрен`)
+    toast.success('Квиз одобрен', {
+      description: 'Эта функция еще не доработана',
+    })
   } //@TODO заглушка пока что вместо алертов будут кастомные модалки
   const handleRejectClick = (quiz) => {
     setSelectedQuiz(quiz)
@@ -57,7 +56,9 @@ export function AdminPanel({
 
   const handleRejectConfirm = () => {
     if (!selectedQuiz) return
-    alert(`Квиз отклонен`)
+    toast.success('Квиз отклонен', {
+      description: 'Эта функция еще не доработана',
+    })
     setIsRejectDialogOpen(false)
     setSelectedQuiz(null) //@TODO заглушка пока что вместо алертов будут кастомные модалки
   }
@@ -71,7 +72,7 @@ export function AdminPanel({
   return (
     <div className={styles.adminPanel}>
       <div className={styles.container}>
-        <AdminHeader onBack={onBack} />
+        <AdminPanelHeader onBack={onBack} />
 
         <StatsCards
           pendingCount={pendingCount}
@@ -79,11 +80,7 @@ export function AdminPanel({
           rejectedCount={rejectedCount}
         />
 
-        <SearchBar
-          searchQuery={searchQuery}
-          onSearchChange={handleSearchChange}
-          elevated={true}
-        />
+        <QuizSearch quizzes={quizzes} />
 
         <QuizTabs
           quizzes={filteredQuizzes}

@@ -3,7 +3,12 @@ import { Search } from 'lucide-react'
 
 import styles from './SearchBar.module.scss'
 
-export function SearchBar({ searchQuery, onSearchChange, elevated = true }) {
+export function SearchBar({
+  value,
+  onChange,
+  placeholder = 'Поиск...',
+  elevated = true,
+}) {
   return (
     <div
       className={clsx(styles.searchCard, {
@@ -18,10 +23,10 @@ export function SearchBar({ searchQuery, onSearchChange, elevated = true }) {
 
         <input
           type="text"
-          placeholder="Поиск по названию или автору..."
+          placeholder={placeholder}
           className={styles.searchInput}
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
         />
       </div>
     </div>

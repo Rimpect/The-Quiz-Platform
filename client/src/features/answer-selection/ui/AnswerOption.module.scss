@@ -1,0 +1,59 @@
+.answerOption {
+  padding: 15px 20px;
+  border: 2px solid var(--color-quiz-border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all var(--transition-duration) ease;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  &:hover {
+    border-color: var(--color-quiz-border-hover);
+    background: var(--color-quiz-selected-bg);
+  }
+}
+
+.selected {
+  border-color: var(--color-quiz-border-hover);
+  background: var(--color-quiz-selected-bg);
+}
+
+.correct {
+  border-color: var(--color-green);
+  background: var(--color-quiz-correct-bg);
+}
+
+.incorrect {
+  border-color: var(--color-red);
+  background: var(--color-quiz-incorrect-bg);
+}
+
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.answerCheckbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.answerText {
+  flex: 1;
+  font-size: 16px;
+}
+
+.resultIcon {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.resultIconCorrect {
+  color: var(--color-green);
+}
+
+.resultIconIncorrect {
+  color: var(--color-red);
+}

@@ -1,0 +1,1 @@
+export { mockDataQuestions } from './Question'

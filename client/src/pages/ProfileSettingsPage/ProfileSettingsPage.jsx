@@ -1,4 +1,4 @@
-import { ProfileInfo, ChangePassword, DangerZone } from '@widgets'
+import { ChangePassword, DangerZone, ProfileInfo } from '@features'
 
 import styles from './ProfileSettingsPage.module.scss'
 

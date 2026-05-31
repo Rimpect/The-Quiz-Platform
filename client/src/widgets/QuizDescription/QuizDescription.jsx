@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Button } from '@shared'
+import { Button, ROUTES } from '@shared'
 import { ArrowLeft, Users, Clock, Trophy, Star, Award } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -9,7 +9,7 @@ import image1 from '../../assets/img/QuizCardTest/pic.jpg'
 import styles from './QuizDescription.module.scss'
 
 export function QuizDescription() {
-  // Заглушки данных
+  // Заглушки данных заменить потом на пропсы
   const quizData = {
     id: 1,
     title: 'Великие научные открытия',
@@ -28,7 +28,7 @@ export function QuizDescription() {
     <div className={styles.description}>
       <div className={styles.container}>
         {/* Навигация */}
-        <Link to={`/MainPage`} className={styles.nav}>
+        <Link to={ROUTES.main} className={styles.nav}>
           <ArrowLeft className={styles.navIcon} />
           <span>Назад к списку</span>
         </Link>
@@ -147,7 +147,7 @@ export function QuizDescription() {
                   </span>
                 </li>
               </ul>
-              <Link to={`/QuizPage/{id}`} style={{ textDecoration: 'none' }}>
+              <Link to={ROUTES.quiz}>
                 <Button variant="black" size="medium" fullWidth>
                   Начать квиз
                 </Button>
