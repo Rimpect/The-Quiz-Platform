@@ -1,13 +1,15 @@
 import { ThemeToggle } from '@features'
+import { useCurrentUser } from '@shared/hooks/useCurrentUser'
 
 import styles from './HeaderActions.module.scss'
 import { AdminButton, UserMenu } from './ui'
 
 export function HeaderActions() {
+  const { isAdmin } = useCurrentUser()
+
   return (
     <div className={styles.container}>
-      {/* @TODO сделать потом для кнопки с админкой сокрытие если пользовать не является админом! и так же для UserMenu доработать вариант с авторизованым и неавторизованым пользователем */}
-      <AdminButton />
+      {isAdmin && <AdminButton />}
       <ThemeToggle />
       <UserMenu />
     </div>

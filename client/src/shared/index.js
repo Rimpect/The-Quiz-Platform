@@ -16,5 +16,7 @@ export { Radio } from './ui/Radio'
 export { Checkbox } from './ui/Checkbox'
 export { CoverUpload } from './ui/CoverUpload'
 
+export { useCurrentUser } from './hooks/useCurrentUser'
+
 export { ROUTES } from './config'
 export { createRoute } from './config'

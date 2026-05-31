@@ -1,8 +1,9 @@
+// model/useLogin.js
 import { useState } from 'react'
-
 import { toast } from 'sonner'
-
 import { loginSchema } from './loginSchema'
+
+const API_URL = 'http://localhost:3001'
 
 export function useLogin() {
   const [loading, setLoading] = useState(false)
@@ -18,28 +19,32 @@ export function useLogin() {
     try {
       setLoading(true)
 
-      // mock api
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      // имитация запроса к беку (пока что обращаемся к серверу)
+      const response = await fetch(
+        `${API_URL}/users?email=${encodeURIComponent(formData.email)}&password=${encodeURIComponent(formData.password)}`,
+      )
 
-      // @TODO ВРЕМЕННО: принимаются любые данные
+      if (!response.ok) {
+        throw new Error('Ошибка сервера')
+      }
 
-      if (formData.email && formData.password) {
-        localStorage.setItem(
-          'user',
-          JSON.stringify({
-            email: formData.email,
-            name: formData.email.split('@')[0],
-          }),
-        )
+      const users = await response.json()
 
-        toast.success('Успешный вход(ВРЕМЕННО РАБОТАЕТ С ЛЮБЫМИ ДАННЫМИ)')
+      if (users && users.length > 0) {
+        const user = users[0]
+
+        const { password, ...userWithoutPassword } = user
+        localStorage.setItem('user', JSON.stringify(userWithoutPassword))
+
+        toast.success(`Добро пожаловать, ${user.name}!`)
         return true
       } else {
-        toast.error('Заполните все поля')
+        toast.error('Неверный email или пароль')
         return false
       }
-    } catch {
-      toast.error('Неверный email или пароль')
+    } catch (error) {
+      console.error('Login error:', error)
+      toast.error('Ошибка соединения с сервером')
       return false
     } finally {
       setLoading(false)

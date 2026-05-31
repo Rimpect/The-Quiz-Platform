@@ -14,6 +14,5 @@ export { QuizDescription } from './QuizDescription/QuizDescription'
 export { Quiz } from './Quiz/Quiz'
 // компоненты для страницы FinishQuizPage
 export { FinishQuiz } from './FinishQuiz/FinishQuiz'
-
 // компоненты для страницы CreateQuizPage
 export { HeaderCreateQuiz } from './HeaderCreateQuiz/HeaderCreateQuiz'
