@@ -1,8 +1,7 @@
 import { ThemeToggle } from '@features'
 
 import styles from './HeaderActions.module.scss'
-import { AdminButton } from './ui/AdminButton'
-import { UserMenu } from './ui/UserMenu'
+import { AdminButton, UserMenu } from './ui'
 
 export function HeaderActions() {
   return (

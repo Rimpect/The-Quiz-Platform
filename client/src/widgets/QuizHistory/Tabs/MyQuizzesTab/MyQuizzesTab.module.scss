@@ -1,0 +1,137 @@
+.tabContent {
+  margin-top: 0;
+}
+
+.tabHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.tabTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.quizzesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.quizItem {
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+  transition: box-shadow var(--transition-duration);
+
+  &:hover {
+    box-shadow: 0 4px 6px -1px var(--color-shadow);
+  }
+}
+
+.quizContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.quizInfo {
+  flex: 1;
+}
+
+.quizHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-xs);
+}
+
+.quizTitle {
+  font-weight: 600;
+  margin: 0;
+}
+
+.quizCategory {
+  font-size: 0.875rem;
+  color: var(--color-gray-text);
+  margin-bottom: var(--spacing-xs);
+}
+
+.quizMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 0.875rem;
+  color: var(--color-gray-text);
+  flex-wrap: wrap;
+}
+
+.quizActions {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.rejectionMessage {
+  font-size: 0.875rem;
+  color: var(--color-red-text);
+  background-color: var(--red-100);
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badgeApproved {
+  background-color: var(--green-100);
+  color: var(--green-800);
+}
+
+.badgePending {
+  background-color: var(--yellow-100);
+  color: var(--yellow-800);
+}
+
+.badgeRejected {
+  background-color: var(--red-100);
+  color: var(--red-800);
+}
+
+.emptyState {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-gray-bg);
+}
+
+.emptyIcon {
+  width: var(--spacing-2xl);
+  height: var(--spacing-2xl);
+  color: var(--color-icon-gray);
+  margin: 0 auto var(--spacing-sm);
+}
+
+.emptyText {
+  color: var(--color-gray-text);
+  margin-bottom: var(--spacing-md);
+}
+.paginationWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-border-light);
+}

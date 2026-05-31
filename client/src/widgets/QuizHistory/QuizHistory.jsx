@@ -1,10 +1,7 @@
 import { useState } from 'react'
 
-import { Button, Pagination, ROUTES } from '@shared'
-import { FileText, Plus, Edit, Trash2 } from 'lucide-react'
-import { Link } from 'react-router-dom'
-
 import styles from './QuizHistory.module.scss'
+import { AchievementsTab, HistoryTab, MyQuizzesTab } from './Tabs'
 
 export function QuizHistory({
   onCreateQuiz,
@@ -17,6 +14,7 @@ export function QuizHistory({
   const [activeTab, setActiveTab] = useState('history')
   const ITEMS_PER_PAGE = 5
 
+  // Пагинация для истории
   const historyTotalPages = Math.ceil(recentQuizzes.length / ITEMS_PER_PAGE)
   const historyStartIndex = (historyPage - 1) * ITEMS_PER_PAGE
   const paginatedHistory = recentQuizzes.slice(
@@ -24,33 +22,13 @@ export function QuizHistory({
     historyStartIndex + ITEMS_PER_PAGE,
   )
 
+  // Пагинация для моих квизов
   const myQuizzesTotalPages = Math.ceil(myQuizzes.length / ITEMS_PER_PAGE)
   const myQuizzesStartIndex = (myQuizzesPage - 1) * ITEMS_PER_PAGE
   const paginatedMyQuizzes = myQuizzes.slice(
     myQuizzesStartIndex,
     myQuizzesStartIndex + ITEMS_PER_PAGE,
   )
-
-  const getStatusBadge = (status) => {
-    const variants = {
-      approved: { label: 'Одобрен', className: styles.badgeApproved },
-      pending: { label: 'На модерации', className: styles.badgePending },
-      rejected: { label: 'Отклонен', className: styles.badgeRejected },
-    }
-    const variant = variants[status]
-    return (
-      <span className={`${styles.badge} ${variant.className}`}>
-        {variant.label}
-      </span>
-    )
-  }
-
-  const getScoreColor = (score) => {
-    if (score >= 90) return styles.scoreHigh
-    if (score >= 70) return styles.scoreMedium
-    if (score >= 50) return styles.scoreLow
-    return styles.scoreVeryLow
-  }
 
   return (
     <div className={styles.historyCard}>
@@ -77,161 +55,26 @@ export function QuizHistory({
         </div>
 
         {activeTab === 'history' && (
-          <div className={styles.tabContent}>
-            <div className={styles.tabHeader}>
-              <h2 className={styles.tabTitle}>
-                История квизов ({recentQuizzes.length})
-              </h2>
-            </div>
-            <div className={styles.quizzesList}>
-              {paginatedHistory.map((quiz) => (
-                <div key={quiz.id} className={styles.quizItem}>
-                  <div className={styles.quizContent}>
-                    <div className={styles.quizInfo}>
-                      <h3 className={styles.quizTitle}>{quiz.title}</h3>
-                      <p className={styles.quizCategory}>{quiz.category}</p>
-                      <div className={styles.quizMeta}>
-                        <span>
-                          {quiz.correctAnswers}/{quiz.totalQuestions} правильных
-                        </span>
-                        <span>•</span>
-                        <span>{quiz.time}</span>
-                        <span>•</span>
-                        <span>{quiz.date}</span>
-                      </div>
-                    </div>
-                    <div
-                      className={`${styles.quizScore} ${getScoreColor(quiz.score)}`}
-                    >
-                      {quiz.score}%
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Заменяем старую пагинацию на новый компонент */}
-            <Pagination
-              variant="main"
-              pageInfo="visible"
-              currentPage={historyPage}
-              totalPages={historyTotalPages}
-              onPageChange={setHistoryPage}
-            />
-          </div>
+          <HistoryTab
+            recentQuizzes={paginatedHistory}
+            currentPage={historyPage}
+            totalPages={historyTotalPages}
+            onPageChange={setHistoryPage}
+          />
         )}
 
         {activeTab === 'my-quizzes' && (
-          <div className={styles.tabContent}>
-            <div className={styles.tabHeader}>
-              <h2 className={styles.tabTitle}>
-                Созданные квизы ({myQuizzes.length})
-              </h2>
-              <Link to={ROUTES.createQuiz}>
-                <Button onClick={onCreateQuiz} icon={<Plus size={16} />}>
-                  Создать квиз
-                </Button>
-              </Link>
-            </div>
-            {myQuizzes.length === 0 ? (
-              <div className={styles.emptyState}>
-                <FileText className={styles.emptyIcon} />
-                <p className={styles.emptyText}>
-                  У вас пока нет созданных квизов
-                </p>
-                <Button onClick={onCreateQuiz} icon={<Plus size={16} />}>
-                  Создать первый квиз
-                </Button>
-              </div>
-            ) : (
-              <>
-                <div className={styles.quizzesList}>
-                  {paginatedMyQuizzes.map((quiz) => (
-                    <div key={quiz.id} className={styles.quizItem}>
-                      <div className={styles.quizContent}>
-                        <div className={styles.quizInfo}>
-                          <div className={styles.quizHeader}>
-                            <h3 className={styles.quizTitle}>{quiz.title}</h3>
-                            {getStatusBadge(quiz.status)}
-                          </div>
-                          <p className={styles.quizCategory}>{quiz.category}</p>
-                          <div className={styles.quizMeta}>
-                            <span>Участников: {quiz.participants}</span>
-                            {quiz.status === 'approved' && (
-                              <>
-                                <span>•</span>
-                                <span>Рейтинг: {quiz.rating}</span>
-                              </>
-                            )}
-                            <span>•</span>
-                            <span>{quiz.createdAt}</span>
-                          </div>
-                        </div>
-                        <div className={styles.quizActions}>
-                          <Button
-                            icon={<Edit size={16} />}
-                            variant="transparent"
-                          ></Button>
-                          <Button
-                            icon={<Trash2 size={16} />}
-                            variant="transparent"
-                          ></Button>
-                        </div>
-                      </div>
-                      {quiz.status === 'rejected' && (
-                        <div className={styles.rejectionMessage}>
-                          Причина отклонения: Недостаточно уникальных вопросов
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Заменяем старую пагинацию на новый компонент */}
-                <Pagination
-                  variant="admin"
-                  pageInfo="visible"
-                  currentPage={myQuizzesPage}
-                  totalPages={myQuizzesTotalPages}
-                  onPageChange={setMyQuizzesPage}
-                />
-              </>
-            )}
-          </div>
+          <MyQuizzesTab
+            onCreateQuiz={onCreateQuiz}
+            myQuizzes={paginatedMyQuizzes}
+            currentPage={myQuizzesPage}
+            totalPages={myQuizzesTotalPages}
+            onPageChange={setMyQuizzesPage}
+          />
         )}
 
         {activeTab === 'achievements' && (
-          <div className={styles.tabContent}>
-            <div className={styles.tabHeader}>
-              <h2 className={styles.tabTitle}>
-                Достижения ({achievements.filter((a) => a.unlocked).length}/
-                {achievements.length})
-              </h2>
-            </div>
-            <div className={styles.achievementsGrid}>
-              {achievements.map((achievement, index) => (
-                <div
-                  key={index}
-                  className={`${styles.achievementCard} ${
-                    achievement.unlocked ? styles.unlocked : styles.locked
-                  }`}
-                >
-                  <div className={styles.achievementIcon}>
-                    {achievement.icon}
-                  </div>
-                  <h3 className={styles.achievementTitle}>
-                    {achievement.title}
-                  </h3>
-                  <p className={styles.achievementDescription}>
-                    {achievement.description}
-                  </p>
-                  {achievement.unlocked && (
-                    <div className={styles.achievementUnlocked}>✓ Получено</div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <AchievementsTab achievements={achievements} />
         )}
       </div>
     </div>
