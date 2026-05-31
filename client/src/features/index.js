@@ -35,3 +35,6 @@ export { useAnswerSelection } from './answer-selection'
 export { getGrade } from './quiz-finish'
 export { getMessage } from './quiz-finish'
 export { getMotivation } from './quiz-finish'
+// фичи для ProfileSettingsPage
+
+export { ProfileInfo } from './edit-profile'

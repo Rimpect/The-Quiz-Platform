@@ -1,14 +1,3 @@
-.card {
-  background: white;
-  border-radius: 20px;
-  padding: 24px;
-}
-
-.title {
-  font-size: 24px;
-  margin-bottom: 24px;
-}
-
 .avatarBlock {
   display: flex;
   align-items: center;
@@ -41,19 +30,9 @@
   border-radius: 10px;
   cursor: pointer;
 }
-
-.field {
-  margin-bottom: 20px;
-
-  label {
-    display: block;
-    margin-bottom: 8px;
-  }
-
-  input {
-    width: 100%;
-    border: 1px solid #d1d5db;
-    border-radius: 10px;
-    padding: 12px;
-  }
+.error {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-red-text);
+  margin-top: var(--spacing-xs);
 }
