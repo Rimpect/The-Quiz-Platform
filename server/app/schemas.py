@@ -88,6 +88,44 @@ class Quiz(QuizBase) :
         from_attributes = True
 
 
+class AnswerBulkCreate(BaseModel) :
+    """Схема для создания ответа в составе вопроса"""
+    answer_text: str = Field(..., min_length=1)
+    is_correct: bool = False
+    order_number: int = 0
+
+
+class QuestionBulkCreate(BaseModel) :
+    """Схема для создания вопроса с ответами"""
+    answer_type: str = Field(..., description="single/multiple/text/numeric")
+    points: int = Field(1, ge=1, le=100)
+    question_text: str = Field(..., min_length=1)
+    media_url: Optional[str] = None
+    time_limit_seconds: Optional[int] = Field(None, ge=5, le=300)
+    answers: List[AnswerBulkCreate] = Field(default_factory=list, description="Варианты ответов")
+
+
+class QuizBulkCreate(BaseModel) :
+    """Схема для создания квиза с вопросами и ответами"""
+    # Поля квиза
+    title: str = Field(..., min_length=1, max_length=200)
+    category: str = Field(..., min_length=1, max_length=100)
+    description: str = Field(..., min_length=1)
+    cover_url: Optional[str] = None
+    is_public: bool = True
+    quiz_mode: str = "single"
+
+    # Вопросы с ответами
+    questions: List[QuestionBulkCreate] = Field(default_factory=list, description="Вопросы с вариантами ответов")
+
+
+class QuizBulkResponse(BaseModel) :
+    """Ответ при массовом создании квиза"""
+    quiz: dict
+    questions_created: int
+    answers_created: int
+    total_time_limit_minutes: int
+
 # ========== Question Schemas ==========
 class QuestionBase(BaseModel) :
     answer_type: AnswerType
