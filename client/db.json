@@ -2,7 +2,7 @@
   "users": [
     {
       "id": 1,
-      "name": "Алексей Смирнов",
+      "name": "Алексей",
       "email": "alexey@example.com",
       "password": "user123",
       "role": "user",
@@ -10,7 +10,7 @@
     },
     {
       "id": 2,
-      "name": "Елена Петрова",
+      "name": "Елена",
       "email": "elena@example.com",
       "password": "user456",
       "role": "user",
@@ -18,7 +18,7 @@
     },
     {
       "id": 3,
-      "name": "Михаил Иванов",
+      "name": "Михаил",
       "email": "mikhail@example.com",
       "password": "user789",
       "role": "user",

@@ -1,11 +1,11 @@
+import { useAuthStore } from '@entities'
 import { ThemeToggle } from '@features'
-import { useCurrentUser } from '@shared/hooks/useCurrentUser'
 
 import styles from './HeaderActions.module.scss'
 import { AdminButton, UserMenu } from './ui'
 
 export function HeaderActions() {
-  const { isAdmin } = useCurrentUser()
+  const isAdmin = useAuthStore((state) => state.user?.role === 'admin')
 
   return (
     <div className={styles.container}>

@@ -1,20 +1,22 @@
-// ui/UserMenu.jsx
+import { useAuthStore } from '@entities'
 import { Button, ROUTES } from '@shared'
-import { User } from 'lucide-react'
-import { Link } from 'react-router-dom'
-import { useCurrentUser } from '@shared/hooks/useCurrentUser'
+import { User, LogOut } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 import styles from './UserMenu.module.scss'
 
 export function UserMenu() {
-  const { user, isAuthenticated } = useCurrentUser()
-  // const navigate = useNavigate()
+  const user = useAuthStore((state) => state.user)
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const logout = useAuthStore((state) => state.logout)
+  const navigate = useNavigate()
 
-  // const handleLogout = () => {
-  //   localStorage.removeItem('user')
-  //   navigate(ROUTES.main)
-  //   window.location.reload()
-  // }
+  const handleLogout = () => {
+    logout()
+    toast.info('Вы вышли из аккаунта')
+    navigate(ROUTES.main)
+  }
 
   if (!isAuthenticated) {
     return (
@@ -32,11 +34,7 @@ export function UserMenu() {
 
   return (
     <div className={styles.user}>
-      {user?.avatar ? (
-        <img src={user.avatar} alt={user.name} className={styles.avatar} />
-      ) : (
-        <User />
-      )}
+      <User />
       <span>{user?.name}</span>
 
       <div className={styles.actions}>
@@ -45,9 +43,14 @@ export function UserMenu() {
             Профиль
           </Button>
         </Link>
-        {/* <button onClick={handleLogout} className={styles.logoutButton}>
+        <Button
+          variant="white"
+          size="medium"
+          onClick={handleLogout}
+          className={styles.logoutButton}
+        >
           <LogOut size={16} />
-        </button> */}
+        </Button>
       </div>
     </div>
   )

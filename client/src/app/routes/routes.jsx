@@ -11,18 +11,30 @@ import {
   NotFoundPage,
 } from '@pages'
 import { ROUTES } from '@shared'
-import { createHashRouter } from 'react-router-dom'
+import { createHashRouter, Navigate } from 'react-router-dom'
 
 import { Layout } from '../../widgets/Layout/Layout.jsx'
 
+import { ProtectedRoute } from './ProtectedRoute.jsx'
+import { PublicRoute } from './PublicRoute.jsx'
+
 export const router = createHashRouter([
+  // Публичные маршруты (для неавторизованных)
   {
     path: ROUTES.auth,
-    element: <SignUpPage />,
+    element: (
+      <PublicRoute>
+        <SignUpPage />
+      </PublicRoute>
+    ),
   },
   {
     path: ROUTES.register,
-    element: <SignUpPage />,
+    element: (
+      <PublicRoute>
+        <SignUpPage />
+      </PublicRoute>
+    ),
   },
   {
     element: <Layout />,
@@ -32,27 +44,53 @@ export const router = createHashRouter([
         element: <MainPage />,
       },
       {
-        path: ROUTES.profile,
-        element: <PersonalAccount />,
-      },
-      {
         path: ROUTES.quizDescription,
         element: <QuizDescriptionPage />,
       },
+    ],
+  },
+
+  // Защищенные маршруты (с Layout)
+  {
+    element: <Layout />,
+    children: [
+      {
+        path: ROUTES.profile,
+        element: (
+          <ProtectedRoute>
+            <PersonalAccount />
+          </ProtectedRoute>
+        ),
+      },
+
       {
         path: ROUTES.settings,
-        element: <ProfileSettingsPage />,
+        element: (
+          <ProtectedRoute>
+            <ProfileSettingsPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: ROUTES.admin,
-        element: <AdminPanel />,
+        element: (
+          <ProtectedRoute requireAdmin>
+            <AdminPanel />
+          </ProtectedRoute>
+        ),
       },
       {
         path: ROUTES.createQuiz,
-        element: <CreateQuizPage />,
+        element: (
+          <ProtectedRoute>
+            <CreateQuizPage />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
+
+  // Публичные маршруты без Layout
   {
     path: ROUTES.quiz,
     element: <QuizPage />,
@@ -60,5 +98,17 @@ export const router = createHashRouter([
   {
     path: ROUTES.finishQuiz,
     element: <FinishQuizPage />,
+  },
+
+  // 404 страница
+  {
+    path: ROUTES.notFound,
+    element: <NotFoundPage />,
+  },
+
+  // Все неизвестные пути -> 404
+  {
+    path: '*',
+    element: <Navigate to={ROUTES.notFound} replace />,
   },
 ])

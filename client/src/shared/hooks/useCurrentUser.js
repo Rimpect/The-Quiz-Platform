@@ -1,4 +1,3 @@
-// shared/hooks/useCurrentUser.js
 import { useState, useEffect } from 'react'
 
 export function useCurrentUser() {
@@ -6,20 +5,33 @@ export function useCurrentUser() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser))
-      } catch (error) {
-        console.error('Ошибка парсинга пользователя:', error)
-        localStorage.removeItem('user')
+    try {
+      const storedUser = localStorage.getItem('user')
+
+      if (storedUser && storedUser !== 'undefined' && storedUser !== 'null') {
+        const parsedUser = JSON.parse(storedUser)
+
+        // Проверяем, что парсинг дал объект
+        if (parsedUser && typeof parsedUser === 'object') {
+          setUser(parsedUser)
+        } else {
+          // Если данные некорректные - удаляем
+          localStorage.removeItem('user')
+          setUser(null)
+        }
       }
+    } catch (error) {
+      console.error('Ошибка парсинга пользователя:', error)
+      // Удаляем поврежденные данные
+      localStorage.removeItem('user')
+      setUser(null)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [])
 
   const isAdmin = user?.role === 'admin'
-  const isAuthenticated = !!user
+  const isAuthenticated = !!user && Object.keys(user).length > 0
 
   return {
     user,

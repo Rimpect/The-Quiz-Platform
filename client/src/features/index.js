@@ -15,8 +15,11 @@ export { QuizQuestions } from './quiz-editor'
 // фичи для QuizSearch
 export { QuizSearch } from './search-quiz'
 
-export { RegistrationForm } from './auth/sign-up'
-export { LoginForm } from './auth/sign-up'
+export { loginSchema } from './auth'
+export { registerSchema } from './auth'
+
+export { LoginForm } from './auth'
+export { RegistrationForm } from './auth'
 
 // фичи для Quiz
 

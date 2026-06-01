@@ -9,5 +9,6 @@ const ROUTES = {
   settings: '/ProfileSettingsPage',
   admin: '/AdminPanel',
   createQuiz: '/CreateQuizPage',
+  notFound: '/NotFoundPage',
 }
 export { ROUTES }
