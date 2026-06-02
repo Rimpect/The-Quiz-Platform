@@ -1,6 +1,6 @@
 const ROUTES = {
-  main: '/MainPage',
-  auth: '/',
+  main: '/',
+  auth: '/auth',
   register: '/RegistrationPage',
   quiz: '/QuizPage/:id',
   quizDescription: '/QuizDescription/:id',

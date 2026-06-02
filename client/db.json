@@ -32,5 +32,27 @@
       "role": "admin",
       "avatar": "https://i.pravatar.cc/150?img=4"
     }
+  ],
+  "quizzes": [
+    {
+      "id": 1,
+      "img": "/img/QuizCardTest/1.webp",
+      "title": "Основы JavaScript",
+      "description": "Проверьте свои знания основ JavaScript: переменные, функции, циклы и основы ООП",
+      "difficulty": "Легкий",
+      "category": "Программирование",
+      "participants": 1200,
+      "duration": 15
+    },
+    {
+      "id": 2,
+      "img": "/img/QuizCardTest/i2.webp",
+      "title": "Путешествия по Европе",
+      "description": "Угадайте страну по достопримечательности и проверьте свои знания географии",
+      "difficulty": "Средний",
+      "category": "География",
+      "participants": 856,
+      "duration": 20
+    }
   ]
 }

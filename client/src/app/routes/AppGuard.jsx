@@ -2,14 +2,16 @@ import { useIsAuthenticated, useAuthLoading } from '@entities'
 import { ROUTES } from '@shared'
 import { Navigate } from 'react-router-dom'
 
-export function PublicRoute({ children }) {
+export function AppGuard({ children }) {
   const isAuth = useIsAuthenticated()
   const loading = useAuthLoading()
 
-  if (loading) return <div>Loading...</div>
+  if (loading) {
+    return <div>Loading...</div>
+  }
 
-  if (isAuth) {
-    return <Navigate to={ROUTES.main} replace />
+  if (!isAuth) {
+    return <Navigate to={ROUTES.auth} replace />
   }
 
   return children

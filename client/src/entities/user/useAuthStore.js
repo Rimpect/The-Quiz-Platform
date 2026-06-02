@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware'
 
 import { validateUser } from './userSchema'
 
-const API_URL = 'http://localhost:3001'
+const API_URL = import.meta.env.VITE_API_URL
 
 const initialState = {
   user: null,

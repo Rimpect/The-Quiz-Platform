@@ -15,11 +15,10 @@ import { createHashRouter, Navigate } from 'react-router-dom'
 
 import { Layout } from '../../widgets/Layout/Layout.jsx'
 
-import { ProtectedRoute } from './ProtectedRoute.jsx'
+import { AppGuard } from './AppGuard.jsx'
 import { PublicRoute } from './PublicRoute.jsx'
 
 export const router = createHashRouter([
-  // Публичные маршруты (для неавторизованных)
   {
     path: ROUTES.auth,
     element: (
@@ -37,60 +36,43 @@ export const router = createHashRouter([
     ),
   },
   {
-    element: <Layout />,
+    element: (
+      <AppGuard>
+        <Layout />
+      </AppGuard>
+    ),
     children: [
       {
         path: ROUTES.main,
         element: <MainPage />,
       },
+
       {
         path: ROUTES.quizDescription,
         element: <QuizDescriptionPage />,
       },
-    ],
-  },
 
-  // Защищенные маршруты (с Layout)
-  {
-    element: <Layout />,
-    children: [
       {
         path: ROUTES.profile,
-        element: (
-          <ProtectedRoute>
-            <PersonalAccount />
-          </ProtectedRoute>
-        ),
+        element: <PersonalAccount />,
       },
 
       {
         path: ROUTES.settings,
-        element: (
-          <ProtectedRoute>
-            <ProfileSettingsPage />
-          </ProtectedRoute>
-        ),
+        element: <ProfileSettingsPage />,
       },
+
       {
         path: ROUTES.admin,
-        element: (
-          <ProtectedRoute requireAdmin>
-            <AdminPanel />
-          </ProtectedRoute>
-        ),
+        element: <AdminPanel />,
       },
+
       {
         path: ROUTES.createQuiz,
-        element: (
-          <ProtectedRoute>
-            <CreateQuizPage />
-          </ProtectedRoute>
-        ),
+        element: <CreateQuizPage />,
       },
     ],
   },
-
-  // Публичные маршруты без Layout
   {
     path: ROUTES.quiz,
     element: <QuizPage />,
@@ -99,14 +81,11 @@ export const router = createHashRouter([
     path: ROUTES.finishQuiz,
     element: <FinishQuizPage />,
   },
-
-  // 404 страница
   {
     path: ROUTES.notFound,
     element: <NotFoundPage />,
   },
 
-  // Все неизвестные пути -> 404
   {
     path: '*',
     element: <Navigate to={ROUTES.notFound} replace />,

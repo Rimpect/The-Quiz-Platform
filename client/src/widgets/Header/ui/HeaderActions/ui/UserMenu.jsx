@@ -15,7 +15,7 @@ export function UserMenu() {
   const handleLogout = () => {
     logout()
     toast.info('Вы вышли из аккаунта')
-    navigate(ROUTES.main)
+    navigate(ROUTES.main, { replace: true })
   }
 
   if (!isAuthenticated) {
