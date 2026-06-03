@@ -59,6 +59,7 @@ export function RegistrationForm() {
               onChange={(e) => handleChange('name', e.target.value)}
               id="name"
               required
+              maxLength={50}
               className={styles.input}
             />
           </div>
@@ -73,6 +74,7 @@ export function RegistrationForm() {
               onChange={(e) => handleChange('email', e.target.value)}
               id="email"
               required
+              maxLength={50}
               className={styles.input}
             />
           </div>

@@ -30,12 +30,22 @@ export function ProfileForm({ user }) {
       <div className={styles.field}>
         <label>Имя</label>
 
-        <input value={name} onChange={(e) => setName(e.target.value)} />
+        <input
+          type="text"
+          value={name}
+          maxLength={50}
+          onChange={(e) => setName(e.target.value)}
+        />
       </div>
       <div className={styles.field}>
         <label>Email</label>
 
-        <input value={email} onChange={(e) => setEmail(e.target.value)} />
+        <input
+          type="email"
+          value={email}
+          maxLength={50}
+          onChange={(e) => setEmail(e.target.value)}
+        />
       </div>
       <Button variant="white" icon={<Save />} onClick={handleSave}>
         Сохранить изменения

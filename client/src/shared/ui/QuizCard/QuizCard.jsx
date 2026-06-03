@@ -22,9 +22,9 @@ export function QuizCard(props) {
   const badgeClass = difficultyMap[difficulty] || 'easy'
 
   return (
-    <div className={styles.card}>
+    <article className={styles.card}>
       <div className={styles.card__imageWrapper}>
-        <img src={img} alt={`${title}`} className={styles.card__image} />
+        <img src={img} alt={title} className={styles.card__image} />
         <span
           className={`${styles.card__badge} ${styles[`card__badge--${badgeClass}`]}`}
         >
@@ -58,6 +58,6 @@ export function QuizCard(props) {
           </div>
         </div>
       </div>
-    </div>
+    </article>
   )
 }

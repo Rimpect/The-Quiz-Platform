@@ -27,6 +27,7 @@ export function SearchBar({
           className={styles.searchInput}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          maxLength={100}
         />
       </div>
     </div>

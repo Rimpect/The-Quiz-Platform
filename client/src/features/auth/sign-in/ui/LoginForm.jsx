@@ -58,6 +58,7 @@ export function LoginForm() {
               onChange={(e) => handleChange('email', e.target.value)}
               id="email"
               required
+              maxLength={50}
               className={styles.input}
             />
           </div>

@@ -37,6 +37,7 @@ export function RejectQuizDialog({ isOpen, quiz, onClose, onConfirm }) {
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             rows={4}
+            maxLength={500}
           />
         </div>
 

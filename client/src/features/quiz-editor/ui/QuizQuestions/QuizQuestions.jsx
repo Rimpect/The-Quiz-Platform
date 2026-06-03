@@ -90,9 +90,11 @@ export function QuizQuestions() {
 
               <Textarea
                 value={question.questionText}
+                maxLength={100}
                 onChange={(e) =>
                   updateQuestion(question.id, 'questionText', e.target.value)
                 }
+                className={styles.questionTextarea}
               />
             </div>
 
@@ -138,6 +140,7 @@ export function QuizQuestions() {
                     <Input
                       type="text"
                       value={answer.text}
+                      maxLength={40}
                       onChange={(e) =>
                         updateAnswerText(question.id, answer.id, e.target.value)
                       }
