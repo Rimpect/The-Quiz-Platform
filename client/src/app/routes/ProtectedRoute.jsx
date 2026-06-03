@@ -12,9 +12,8 @@ export function ProtectedRoute({ children, requireAdmin = false }) {
       <div style={{ textAlign: 'center', padding: '50px' }}>Загрузка...</div>
     )
   }
-
   if (!isAuthenticated) {
-    return <Navigate to={ROUTES.notFound} replace />
+    return <Navigate to={ROUTES.auth} replace />
   }
 
   if (requireAdmin && !isAdmin) {

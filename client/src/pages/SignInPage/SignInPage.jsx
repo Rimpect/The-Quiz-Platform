@@ -1,6 +1,6 @@
 import { LoginForm } from '@features'
 
-export function SignUpPage() {
+export function SignInPage() {
   return (
     <div>
       <LoginForm></LoginForm>

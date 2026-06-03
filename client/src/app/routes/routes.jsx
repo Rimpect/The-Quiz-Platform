@@ -6,7 +6,8 @@ import {
   ProfileSettingsPage,
   QuizDescriptionPage,
   QuizPage,
-  SignUpPage,
+  SignInPage,
+  RegistrationPage,
   CreateQuizPage,
   NotFoundPage,
 } from '@pages'
@@ -17,23 +18,16 @@ import { Layout } from '../../widgets/Layout/Layout.jsx'
 
 import { AppGuard } from './AppGuard.jsx'
 import { PublicRoute } from './PublicRoute.jsx'
+import { ProtectedRoute } from './ProtectedRoute.jsx'
 
 export const router = createHashRouter([
   {
     path: ROUTES.auth,
-    element: (
-      <PublicRoute>
-        <SignUpPage />
-      </PublicRoute>
-    ),
+    element: <SignInPage />,
   },
   {
     path: ROUTES.register,
-    element: (
-      <PublicRoute>
-        <SignUpPage />
-      </PublicRoute>
-    ),
+    element: <RegistrationPage />,
   },
   {
     element: (
@@ -43,33 +37,33 @@ export const router = createHashRouter([
     ),
     children: [
       {
-        path: ROUTES.main,
-        element: <MainPage />,
-      },
-
-      {
-        path: ROUTES.quizDescription,
-        element: <QuizDescriptionPage />,
-      },
-
-      {
         path: ROUTES.profile,
         element: <PersonalAccount />,
       },
-
       {
         path: ROUTES.settings,
         element: <ProfileSettingsPage />,
       },
-
       {
         path: ROUTES.admin,
         element: <AdminPanel />,
       },
-
       {
         path: ROUTES.createQuiz,
         element: <CreateQuizPage />,
+      },
+    ],
+  },
+  {
+    element: <Layout />,
+    children: [
+      {
+        path: ROUTES.main,
+        element: <MainPage />,
+      },
+      {
+        path: ROUTES.quizDescription,
+        element: <QuizDescriptionPage />,
       },
     ],
   },
@@ -81,6 +75,7 @@ export const router = createHashRouter([
     path: ROUTES.finishQuiz,
     element: <FinishQuizPage />,
   },
+
   {
     path: ROUTES.notFound,
     element: <NotFoundPage />,

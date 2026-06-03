@@ -15,6 +15,7 @@ export function UserMenu() {
   const handleLogout = () => {
     logout()
     toast.info('Вы вышли из аккаунта')
+    console.log('after logout', useAuthStore.getState())
     navigate(ROUTES.main, { replace: true })
   }
 
@@ -23,7 +24,7 @@ export function UserMenu() {
       <div className={styles.user}>
         <User />
         <span>Гость</span>
-        <Link to={ROUTES.login}>
+        <Link to={ROUTES.auth}>
           <Button variant="white" size="medium">
             Войти
           </Button>
