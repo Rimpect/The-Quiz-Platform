@@ -1,4 +1,4 @@
-import { Button, Pagination, ROUTES } from '@shared'
+import { Badge, Button, Pagination, ROUTES } from '@shared'
 import { FileText, Plus, Edit, Trash2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -11,18 +11,10 @@ export function MyQuizzesTab({
   totalPages,
   onPageChange,
 }) {
-  const getStatusBadge = (status) => {
-    const variants = {
-      approved: { label: 'Одобрен', className: styles.badgeApproved },
-      pending: { label: 'На модерации', className: styles.badgePending },
-      rejected: { label: 'Отклонен', className: styles.badgeRejected },
-    }
-    const variant = variants[status]
-    return (
-      <span className={`${styles.badge} ${variant.className}`}>
-        {variant.label}
-      </span>
-    )
+  const statusLabels = {
+    approved: 'Одобрен',
+    pending: 'На модерации',
+    rejected: 'Отклонен',
   }
 
   return (
@@ -55,7 +47,9 @@ export function MyQuizzesTab({
                   <div className={styles.quizInfo}>
                     <div className={styles.quizHeader}>
                       <h3 className={styles.quizTitle}>{quiz.title}</h3>
-                      {getStatusBadge(quiz.status)}
+                      <Badge variant={quiz.status} size="sm">
+                        {statusLabels[quiz.status] || quiz.status}
+                      </Badge>
                     </div>
                     <p className={styles.quizCategory}>{quiz.category}</p>
                     <div className={styles.quizMeta}>

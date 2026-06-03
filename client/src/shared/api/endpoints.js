@@ -2,13 +2,16 @@ export const endpoints = {
   auth: {
     login: '/auth/login',
     logout: '/auth/logout',
+    logoutAll: '/auth/logout-all',
     refresh: '/auth/refresh',
+    revokeAccess: '/auth/revoke-access',
     sessions: '/auth/sessions',
     history: '/auth/history',
   },
 
   users: {
     base: '/users',
+    byId: (id) => `/users/${id}`,
     me: '/users/me',
     statistics: '/users/me/statistics',
   },
@@ -28,12 +31,18 @@ export const endpoints = {
 
   answers: {
     byQuestion: (questionId) => `/questions/${questionId}/answers`,
+    byId: (questionId, answerId) =>
+      `/questions/${questionId}/answers/${answerId}`,
   },
 
   media: {
     upload: (type, id) => `/media/upload/${type}/${id}`,
     uploadMultiple: (type, id) => `/media/upload-multiple/${type}/${id}`,
+    byPath: (path) => `/media/${path}`,
     entity: (type, id) => `/media/entity/${type}/${id}`,
+    update: (id) => `/media/${id}`,
+    delete: (id) => `/media/${id}`,
+    deleteEntity: (type, id) => `/media/entity/${type}/${id}`,
   },
 
   results: {

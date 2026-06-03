@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Button, ROUTES } from '@shared'
+import { Badge, Button, ROUTES } from '@shared'
 import { ArrowLeft, Users, Clock, Trophy, Star, Award } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -28,6 +28,13 @@ export function QuizDescription({ quiz }) {
     image: quiz?.img || quiz?.image || image1,
   }
 
+  let difficultyVariant = 'medium'
+  if (quizData.difficulty === 'Легкий') {
+    difficultyVariant = 'easy'
+  } else if (quizData.difficulty === 'Сложный') {
+    difficultyVariant = 'hard'
+  }
+
   return (
     <div className={styles.description}>
       <div className={styles.container}>
@@ -53,15 +60,9 @@ export function QuizDescription({ quiz }) {
                   <span className={styles.metaCategory}>
                     {quizData.category}
                   </span>
-                  <span
-                    className={`${styles.badge} ${
-                      (quizData.difficulty === 'Легкий' && styles.easy) ||
-                      (quizData.difficulty === 'Средний' && styles.medium) ||
-                      (quizData.difficulty === 'Сложный' && styles.hard)
-                    }`}
-                  >
+                  <Badge variant={difficultyVariant} size="sm">
                     {quizData.difficulty}
-                  </span>
+                  </Badge>
                 </div>
                 <h1 className={styles.title}>{quizData.title}</h1>
                 <div className={styles.rating}>

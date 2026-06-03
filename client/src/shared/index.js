@@ -9,6 +9,7 @@ export { ModalNotifications } from './ui/Modal'
 export { ModalHelp } from './ui/Modal'
 
 export { QuizCard } from './ui/QuizCard'
+export { Badge } from './ui/Badge/Badge'
 export { Input } from './ui/Input'
 export { Textarea } from './ui/Textarea'
 export { Select } from './ui/Select'
@@ -24,3 +25,16 @@ export { createRoute } from './config'
 export { request } from './api/request'
 export { API_URL } from './config/env'
 export { endpoints } from './api/endpoints'
+
+export {
+  authService,
+  usersService,
+  quizzesService,
+  questionsService,
+  answersService,
+  mediaService,
+  resultsService,
+} from './api/services'
+
+export { useMediaStore } from './model/useMediaStore'
+export { useAnswersStore } from './model/useAnswersStore'

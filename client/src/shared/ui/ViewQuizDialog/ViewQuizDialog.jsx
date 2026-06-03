@@ -1,3 +1,4 @@
+import { Badge } from '@shared'
 import styles from './ViewQuizDialog.module.scss'
 
 export function ViewQuizDialog({
@@ -9,18 +10,10 @@ export function ViewQuizDialog({
 }) {
   if (!isOpen || !quiz) return null
 
-  const getStatusBadge = (status) => {
-    const variants = {
-      approved: { label: 'Одобрен', className: styles.badgeApproved },
-      pending: { label: 'На модерации', className: styles.badgePending },
-      rejected: { label: 'Отклонен', className: styles.badgeRejected },
-    }
-    const variant = variants[status]
-    return (
-      <span className={`${styles.badge} ${variant.className}`}>
-        {variant.label}
-      </span>
-    )
+  const statusLabels = {
+    approved: 'Одобрен',
+    pending: 'На модерации',
+    rejected: 'Отклонен',
   }
 
   return (
@@ -40,7 +33,9 @@ export function ViewQuizDialog({
           <div className={styles.viewQuizHeader}>
             <div>
               <h3 className={styles.viewQuizTitle}>{quiz.title}</h3>
-              {getStatusBadge(quiz.status)}
+              <Badge variant={quiz.status} size="sm">
+                {statusLabels[quiz.status] || quiz.status}
+              </Badge>
             </div>
           </div>
 

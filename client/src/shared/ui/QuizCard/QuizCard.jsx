@@ -1,5 +1,6 @@
 import { Users, Clock, Trophy } from 'lucide-react'
 
+import { Badge } from '@shared'
 import styles from './QuizCard.module.scss'
 
 export function QuizCard(props) {
@@ -19,17 +20,15 @@ export function QuizCard(props) {
     Сложный: 'hard',
   }
 
-  const badgeClass = difficultyMap[difficulty] || 'easy'
+  const badgeVariant = difficultyMap[difficulty] || 'easy'
 
   return (
     <article className={styles.card}>
       <div className={styles.card__imageWrapper}>
         <img src={img} alt={title} className={styles.card__image} />
-        <span
-          className={`${styles.card__badge} ${styles[`card__badge--${badgeClass}`]}`}
-        >
+        <Badge variant={badgeVariant} size="sm">
           {difficulty}
-        </span>
+        </Badge>
       </div>
 
       <div className={styles.card__content}>

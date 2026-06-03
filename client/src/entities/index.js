@@ -7,3 +7,7 @@ export {
   useAuthLoading,
   useAuthError,
 } from './user/useAuthStore'
+
+export { useUsersStore } from './user/model/useUsersStore'
+export { useQuizzesStore } from './quiz/model/useQuizzesStore'
+export { useResultsStore } from './Question/model/useResultsStore'
