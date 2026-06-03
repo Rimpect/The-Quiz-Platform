@@ -1,10 +1,9 @@
-import { registerSchema, loginSchema } from '@features'
+import { loginSchema } from '@features'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+import { loginUser } from './api/authApi.js'
 import { validateUser } from './userSchema'
-
-const API_URL = import.meta.env.VITE_API_URL
 
 const initialState = {
   user: null,
@@ -15,7 +14,7 @@ const initialState = {
 
 export const useAuthStore = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...initialState,
 
       login: async (email, password) => {
@@ -29,23 +28,16 @@ export const useAuthStore = create(
         set({ loading: true, error: null })
 
         try {
-          const response = await fetch(
-            `${API_URL}/users?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
-          )
-
-          if (!response.ok) {
-            throw new Error('Ошибка сервера')
-          }
-
-          const users = await response.json()
+          const users = await loginUser({ email, password })
 
           if (users && users.length > 0) {
-            const { password: _, ...userData } = users[0]
+            const { password, ...userData } = users[0]
+            void password
 
             const normalizedUser = {
               ...userData,
               id:
-                typeof userData.id === 'string'
+                typeof userData.id === 'string' && /^\d+$/.test(userData.id)
                   ? parseInt(userData.id, 10)
                   : userData.id,
             }
@@ -61,8 +53,6 @@ export const useAuthStore = create(
               loading: false,
               error: null,
             })
-            console.log('User saved:', userValidation.data)
-            console.log('Is authenticated:', true)
 
             return { success: true, user: userValidation.data }
           } else {
@@ -95,17 +85,10 @@ export const useAuthStore = create(
   ),
 )
 
-export const useUser = () => {
-  const user = useAuthStore((state) => state.user)
-  console.log('useUser hook:', user)
-  return user
-}
+export const useUser = () => useAuthStore((state) => state.user)
 export const useIsAuthenticated = () =>
   useAuthStore((state) => state.isAuthenticated)
-export const useIsAdmin = () => {
-  const isAdmin = useAuthStore((state) => state.user?.role === 'admin')
-  console.log('useIsAdmin hook:', isAdmin)
-  return isAdmin
-}
+export const useIsAdmin = () =>
+  useAuthStore((state) => state.user?.role === 'admin')
 export const useAuthLoading = () => useAuthStore((state) => state.loading)
 export const useAuthError = () => useAuthStore((state) => state.error)

@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Алексей",
       "email": "alexey@example.com",
       "password": "user123",
@@ -9,7 +9,7 @@
       "avatar": "https://i.pravatar.cc/150?img=1"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Елена",
       "email": "elena@example.com",
       "password": "user456",
@@ -17,7 +17,7 @@
       "avatar": "https://i.pravatar.cc/150?img=2"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Михаил",
       "email": "mikhail@example.com",
       "password": "user789",
@@ -25,17 +25,41 @@
       "avatar": "https://i.pravatar.cc/150?img=3"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Администратор",
       "email": "admin@example.com",
       "password": "admin123",
       "role": "admin",
       "avatar": "https://i.pravatar.cc/150?img=4"
+    },
+    {
+      "name": "Максим",
+      "email": "maksim@gmail.com",
+      "password": "123456",
+      "role": "user",
+      "avatar": null,
+      "id": "_Z8gWoSOfFw"
+    },
+    {
+      "name": "Максим",
+      "email": "maks@gmail.com",
+      "password": "maks123",
+      "role": "user",
+      "avatar": null,
+      "id": "n0J9WlQLp_Q"
+    },
+    {
+      "name": "Максим123",
+      "email": "maks123@gmail.com",
+      "password": "maks123",
+      "role": "user",
+      "avatar": null,
+      "id": "cuYyZnxxidw"
     }
   ],
   "quizzes": [
     {
-      "id": 1,
+      "id": "1",
       "img": "/img/QuizCardTest/1.webp",
       "title": "Основы JavaScript",
       "description": "Проверьте свои знания основ JavaScript: переменные, функции, циклы и основы ООП",
@@ -45,7 +69,7 @@
       "duration": 15
     },
     {
-      "id": 2,
+      "id": "2",
       "img": "/img/QuizCardTest/i2.webp",
       "title": "Путешествия по Европе",
       "description": "Угадайте страну по достопримечательности и проверьте свои знания географии",
@@ -54,5 +78,6 @@
       "participants": 856,
       "duration": 20
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

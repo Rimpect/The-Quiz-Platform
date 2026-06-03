@@ -3,9 +3,13 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { registerSchema } from './registerSchema'
+import { registerUser } from '@entities/user/api/authApi.js'
+import { useAuthStore } from '@entities'
 
 export function useRegister() {
   const [loading, setLoading] = useState(false)
+  const login = useAuthStore((state) => state.login)
+
   const register = async (formData) => {
     const result = registerSchema.safeParse(formData)
 
@@ -13,13 +17,25 @@ export function useRegister() {
       toast.error(result.error.issues[0].message)
       return false
     }
+
     try {
       setLoading(true)
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await registerUser({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      })
+
+      const loginResult = await login(formData.email, formData.password)
+      if (!loginResult.success) {
+        toast.error(loginResult.error || 'Не удалось войти после регистрации')
+        return false
+      }
+
       toast.success('Регистрация успешна')
       return true
-    } catch {
-      toast.error('Ошибка регистрации')
+    } catch (error) {
+      toast.error(error?.message || 'Ошибка регистрации')
       return false
     } finally {
       setLoading(false)

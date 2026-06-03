@@ -1,6 +1,6 @@
 import { useIsAuthenticated, useAuthLoading } from '@entities'
-import { Navigate, Outlet } from 'react-router-dom'
 import { ROUTES } from '@shared'
+import { Navigate, Outlet } from 'react-router-dom'
 
 export function AppGuard() {
   const isAuth = useIsAuthenticated()

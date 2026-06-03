@@ -8,9 +8,8 @@ import image1 from '../../assets/img/QuizCardTest/pic.jpg'
 
 import styles from './QuizDescription.module.scss'
 
-export function QuizDescription() {
-  // Заглушки данных заменить потом на пропсы
-  const quizData = {
+export function QuizDescription({ quiz }) {
+  const quizData = quiz ?? {
     id: 1,
     title: 'Великие научные открытия',
     description: 'Квиз о великих научных открытиях и изобретениях человечества',

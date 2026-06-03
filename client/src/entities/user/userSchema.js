@@ -1,7 +1,7 @@
 import { z } from 'zod'
 // Добавляем схему для пользователя (из базы данных)
 export const userSchema = z.object({
-  id: z.number(),
+  id: z.union([z.number(), z.string()]),
   name: z.string().min(2, 'Минимум 2 символа'),
   email: z.string().email('Некорректный email'),
   role: z.enum(['user', 'admin']),

@@ -17,8 +17,8 @@ import { createHashRouter, Navigate } from 'react-router-dom'
 import { Layout } from '../../widgets/Layout/Layout.jsx'
 
 import { AppGuard } from './AppGuard.jsx'
-import { PublicRoute } from './PublicRoute.jsx'
 import { ProtectedRoute } from './ProtectedRoute.jsx'
+import { PublicRoute } from './PublicRoute.jsx'
 
 export const router = createHashRouter([
   {
