@@ -1,7 +1,6 @@
-import { useParams } from 'react-router-dom'
-
-import { QuizDescription } from '@widgets'
 import { useQuiz } from '@entities/quiz'
+import { QuizDescription } from '@widgets'
+import { useParams } from 'react-router-dom'
 
 export function QuizDescriptionPage() {
   const { id } = useParams()

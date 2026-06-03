@@ -9,18 +9,23 @@ import image1 from '../../assets/img/QuizCardTest/pic.jpg'
 import styles from './QuizDescription.module.scss'
 
 export function QuizDescription({ quiz }) {
-  const quizData = quiz ?? {
-    id: 1,
-    title: 'Великие научные открытия',
-    description: 'Квиз о великих научных открытиях и изобретениях человечества',
-    category: 'Наука',
-    difficulty: 'Средний',
-    rating: 4.7,
-    participants: 1234,
-    duration: 45,
-    topScore: 98,
-    questionCount: 20,
-    image: image1,
+  const quizData = {
+    id: quiz?.id ?? 1,
+    title: quiz?.title ?? 'Великие научные открытия',
+    description:
+      quiz?.description ??
+      'Квиз о великих научных открытиях и изобретениях человечества',
+    category: quiz?.category ?? 'Наука',
+    difficulty: quiz?.difficulty ?? 'Средний',
+    rating: quiz?.rating ?? 4.7,
+    participants: quiz?.participants ?? 1234,
+    duration: quiz?.duration ?? 45,
+    topScore: quiz?.topScore ?? 98,
+    questionCount: quiz?.questionCount ?? 20,
+    author: quiz?.author ?? 'QuizStudio',
+    language: quiz?.language ?? 'Русский',
+    lastUpdated: quiz?.lastUpdated ?? '2026-01-01',
+    image: quiz?.img || quiz?.image || image1,
   }
 
   return (
@@ -144,6 +149,24 @@ export function QuizDescription({ quiz }) {
                   <span className={styles.statsValue}>
                     {quizData.questionCount}
                   </span>
+                </li>
+                <li className={styles.statsItem}>
+                  <div className={styles.statsLeft}>
+                    <span className={styles.statsIcon}>
+                      <Award />
+                    </span>
+                    <span className={styles.statsLabel}>Автор:</span>
+                  </div>
+                  <span className={styles.statsValue}>{quizData.author}</span>
+                </li>
+                <li className={styles.statsItem}>
+                  <div className={styles.statsLeft}>
+                    <span className={styles.statsIcon}>
+                      <Award />
+                    </span>
+                    <span className={styles.statsLabel}>Язык:</span>
+                  </div>
+                  <span className={styles.statsValue}>{quizData.language}</span>
                 </li>
               </ul>
               <Link to={ROUTES.quiz}>

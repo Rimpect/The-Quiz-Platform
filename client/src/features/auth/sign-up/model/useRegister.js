@@ -1,10 +1,10 @@
 import { useState } from 'react'
 
+import { useAuthStore } from '@entities'
+import { registerUser } from '@entities/user/api/authApi.js'
 import { toast } from 'sonner'
 
 import { registerSchema } from './registerSchema'
-import { registerUser } from '@entities/user/api/authApi.js'
-import { useAuthStore } from '@entities'
 
 export function useRegister() {
   const [loading, setLoading] = useState(false)
