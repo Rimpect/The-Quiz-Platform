@@ -1,14 +1,15 @@
 import React from 'react'
 
 import { getGrade, getMessage, getMotivation } from '@features'
-import { ROUTES } from '@shared'
+import { ROUTES, getQuizRoute, getFinishQuizRoute } from '@shared'
 import { Trophy, Award, Target, Clock, Home, RotateCcw } from 'lucide-react'
-import { useLocation, Link } from 'react-router-dom'
+import { useLocation, Link, useParams } from 'react-router-dom'
 
 import styles from './FinishQuiz.module.scss'
 
 export function FinishQuiz() {
   const { state } = useLocation()
+  const { id } = useParams()
 
   const {
     quizTitle,
@@ -17,7 +18,9 @@ export function FinishQuiz() {
     correctCount,
     totalQuestions,
   } = state
+
   const grade = getGrade(percentScore)
+
   return (
     <div className={styles.container}>
       <section className={styles.result}>
@@ -62,7 +65,7 @@ export function FinishQuiz() {
             <Home />
             <span>На главную</span>
           </Link>
-          <Link to={ROUTES.quiz} className={styles.buttonRetry}>
+          <Link to={getQuizRoute(id)} className={styles.buttonRetry}>
             <RotateCcw />
             <span>Пройти еще раз</span>
           </Link>

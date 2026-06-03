@@ -1,16 +1,17 @@
 import React from 'react'
 
-import { Badge, Button, ROUTES } from '@shared'
+import { Badge, Button, ROUTES, getQuizRoute } from '@shared'
 import { ArrowLeft, Users, Clock, Trophy, Star, Award } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 
 import image1 from '../../assets/img/QuizCardTest/pic.jpg'
 
 import styles from './QuizDescription.module.scss'
 
 export function QuizDescription({ quiz }) {
+  const { id } = useParams()
   const quizData = {
-    id: quiz?.id ?? 1,
+    id: quiz?.id ?? 2,
     title: quiz?.title ?? 'Великие научные открытия',
     description:
       quiz?.description ??
@@ -170,7 +171,7 @@ export function QuizDescription({ quiz }) {
                   <span className={styles.statsValue}>{quizData.language}</span>
                 </li>
               </ul>
-              <Link to={ROUTES.quiz}>
+              <Link to={getQuizRoute(id)}>
                 <Button variant="black" size="medium" fullWidth>
                   Начать квиз
                 </Button>

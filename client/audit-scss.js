@@ -1,6 +1,8 @@
 const fs = require('fs')
 const path = require('path')
+
 const glob = require('glob')
+
 const root = process.cwd()
 const modules = glob.sync('src/**/*.module.scss')
 for (const file of modules) {

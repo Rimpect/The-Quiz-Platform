@@ -76,7 +76,11 @@ const matchesQuizFilter = (quiz, filter) => {
   return true
 }
 
-export function useQuizBoard(quizzes = [], currentPage = 1, itemsPerPage = DEFAULT_ITEMS_PER_PAGE) {
+export function useQuizBoard(
+  quizzes = [],
+  currentPage = 1,
+  itemsPerPage = DEFAULT_ITEMS_PER_PAGE,
+) {
   const query = useSearchStore((state) => state.query)
   const filter = useSearchStore((state) => state.filter)
 
@@ -91,10 +95,7 @@ export function useQuizBoard(quizzes = [], currentPage = 1, itemsPerPage = DEFAU
     )
 
     const pages = Math.max(1, Math.ceil(filteredQuizList.length / itemsPerPage))
-    const activePage = Math.max(
-      1,
-      Math.min(Number(currentPage) || 1, pages),
-    )
+    const activePage = Math.max(1, Math.min(Number(currentPage) || 1, pages))
 
     const startIndex = (activePage - 1) * itemsPerPage
     const paginatedQuizList = filteredQuizList.slice(

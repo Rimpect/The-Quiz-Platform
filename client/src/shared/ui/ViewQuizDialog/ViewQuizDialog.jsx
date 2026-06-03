@@ -1,4 +1,5 @@
 import { Badge } from '@shared'
+
 import styles from './ViewQuizDialog.module.scss'
 
 export function ViewQuizDialog({

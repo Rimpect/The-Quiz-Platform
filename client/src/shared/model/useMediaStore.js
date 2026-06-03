@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import { mediaService } from '@shared'
+import { create } from 'zustand'
 
 export const useMediaStore = create((set) => ({
   media: [],
@@ -21,7 +21,11 @@ export const useMediaStore = create((set) => ({
   uploadMultiple: async (entityType, entityId, files) => {
     set({ isLoading: true, error: null })
     try {
-      const result = await mediaService.uploadMultiple(entityType, entityId, files)
+      const result = await mediaService.uploadMultiple(
+        entityType,
+        entityId,
+        files,
+      )
       set({ isLoading: false })
       return result
     } catch (err) {

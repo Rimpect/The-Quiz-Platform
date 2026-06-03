@@ -17,8 +17,6 @@ import { createHashRouter, Navigate } from 'react-router-dom'
 import { Layout } from '../../widgets/Layout/Layout.jsx'
 
 import { AppGuard } from './AppGuard.jsx'
-import { ProtectedRoute } from './ProtectedRoute.jsx'
-import { PublicRoute } from './PublicRoute.jsx'
 
 export const router = createHashRouter([
   {
@@ -62,25 +60,23 @@ export const router = createHashRouter([
         element: <MainPage />,
       },
       {
-        path: ROUTES.quizDescription,
+        path: `${ROUTES.quizDescription}/:id`,
         element: <QuizDescriptionPage />,
       },
     ],
   },
   {
-    path: ROUTES.quiz,
+    path: `${ROUTES.quiz}/:id`,
     element: <QuizPage />,
   },
   {
-    path: ROUTES.finishQuiz,
+    path: `${ROUTES.finishQuiz}/:id`,
     element: <FinishQuizPage />,
   },
-
   {
     path: ROUTES.notFound,
     element: <NotFoundPage />,
   },
-
   {
     path: '*',
     element: <Navigate to={ROUTES.notFound} replace />,

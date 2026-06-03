@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { ROUTES } from '@shared'
 import { Link } from 'react-router-dom'
 
 import styles from './NotFoundPage.module.scss'
@@ -14,7 +15,7 @@ export function NotFoundPage() {
         существует. Возможно она была удалена, или вы набрали неверный адрес.
         <br></br>
         Передите на нашу{' '}
-        <Link to="/MainPage" className={styles.link}>
+        <Link to={ROUTES.main} className={styles.link}>
           главную страницу
         </Link>{' '}
         и попробуйте найти необходимую <br></br>

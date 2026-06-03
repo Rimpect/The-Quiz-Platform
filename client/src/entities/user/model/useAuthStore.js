@@ -1,6 +1,6 @@
+import { authService } from '@shared'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { authService } from '@shared'
 
 export const useAuthStore = create(
   persist(
@@ -89,6 +89,6 @@ export const useAuthStore = create(
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
-    }
-  )
+    },
+  ),
 )

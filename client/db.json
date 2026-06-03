@@ -315,5 +315,111 @@
       "lastUpdated": "2026-05-27"
     }
   ],
+  "questions": [
+    {
+      "id": "1",
+      "quizId": 1,
+      "question": "Что изображено на этой картине?",
+      "questionType": "single",
+      "mediaType": "image",
+      "mediaUrl": "https://images.unsplash.com/photo-1770301380828-3ebc4a260d34?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmYW1vdXMlMjBwYWludGluZyUyMGFydCUyMG1hc3RlcnBpZWNlfGVufDF8fHx8MTc3MjUzMTY1N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "options": ["Пейзаж", "Портрет", "Натюрморт", "Абстракция"],
+      "correctAnswers": [0],
+      "points": 10
+    },
+    {
+      "id": "2",
+      "quizId": 1,
+      "question": "Какая планета является самой большой в Солнечной системе?",
+      "questionType": "single",
+      "options": ["Марс", "Сатурн", "Юпитер", "Нептун"],
+      "correctAnswers": [2],
+      "points": 10
+    },
+    {
+      "id": "3",
+      "quizId": 1,
+
+      "question": "Выберите все столицы европейских стран:",
+      "questionType": "multiple",
+      "options": ["Париж", "Токио", "Берлин", "Пекин"],
+      "correctAnswers": [0, 2],
+      "points": 15
+    },
+    {
+      "id": "4",
+      "quizId": 1,
+
+      "question": "Какие инструменты относятся к струнным?",
+      "questionType": "multiple",
+      "mediaType": "image",
+      "mediaUrl": "https://images.unsplash.com/photo-1769942788839-69f12fbd60ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtdXNpY2FsJTIwaW5zdHJ1bWVudHMlMjBvcmNoZXN0cmF8ZW58MXx8fHwxNzcyNTMxNjU3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "options": ["Скрипка", "Труба", "Гитара", "Барабан"],
+      "correctAnswers": [0, 2],
+      "points": 15
+    },
+    {
+      "id": "5",
+      "quizId": 2,
+
+      "question": "Выберите все планеты земной группы:",
+      "questionType": "multiple",
+      "options": ["Марс", "Юпитер", "Венера", "Сатурн"],
+      "correctAnswers": [0, 2],
+      "points": 15
+    },
+    {
+      "id": "6",
+      "quizId": 2,
+      "question": "В каком году началась Вторая мировая война?",
+      "questionType": "single",
+      "options": ["1937", "1939", "1941", "1945"],
+      "correctAnswers": [1],
+      "points": 10
+    },
+    {
+      "id": "7",
+      "quizId": 2,
+      "question": "Выберите произведения Льва Толстого:",
+      "questionType": "multiple",
+      "options": [
+        "Война и мир",
+        "Преступление и наказание",
+        "Анна Каренина",
+        "Мертвые души"
+      ],
+      "correctAnswers": [0, 2],
+      "points": 15
+    },
+    {
+      "id": "8",
+      "quizId": 2,
+      "question": "Что вы видите на этом изображении?",
+      "questionType": "single",
+      "mediaType": "image",
+      "mediaUrl": "https://images.unsplash.com/photo-1600257729950-13a634d32697?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuYXR1cmUlMjBsYW5kc2NhcGUlMjBtb3VudGFpbnN8ZW58MXx8fHwxNzcyNDEwMzI2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "options": ["Океан", "Пустыня", "Горы", "Лес"],
+      "correctAnswers": [2],
+      "points": 10
+    },
+    {
+      "id": "9",
+      "quizId": 2,
+      "question": "Выберите языки программирования:",
+      "questionType": "multiple",
+      "options": ["Python", "HTML", "JavaScript", "CSS"],
+      "correctAnswers": [0, 2],
+      "points": 15
+    },
+    {
+      "id": "10",
+      "quizId": 2,
+      "question": "Какая самая длинная река в мире?",
+      "questionType": "single",
+      "options": ["Амазонка", "Нил", "Янцзы", "Миссисипи"],
+      "correctAnswers": [1],
+      "points": 10
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

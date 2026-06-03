@@ -38,3 +38,9 @@ export {
 
 export { useMediaStore } from './model/useMediaStore'
 export { useAnswersStore } from './model/useAnswersStore'
+
+export {
+  getQuizRoute,
+  getQuizDescriptionRoute,
+  getFinishQuizRoute,
+} from './config/routes/paths.js'

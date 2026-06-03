@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import { usersService } from '@shared'
+import { create } from 'zustand'
 
 export const useUsersStore = create((set) => ({
   currentUser: null,

@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import { answersService } from '@shared'
+import { create } from 'zustand'
 
 export const useAnswersStore = create((set) => ({
   answers: [],
@@ -34,7 +34,11 @@ export const useAnswersStore = create((set) => ({
   updateAnswer: async (questionId, answerId, data) => {
     set({ isLoading: true, error: null })
     try {
-      const answer = await answersService.updateAnswer(questionId, answerId, data)
+      const answer = await answersService.updateAnswer(
+        questionId,
+        answerId,
+        data,
+      )
       set((state) => ({
         answers: state.answers.map((a) => (a.id === answerId ? answer : a)),
         currentAnswer: answer,
@@ -53,7 +57,8 @@ export const useAnswersStore = create((set) => ({
       await answersService.deleteAnswer(questionId, answerId)
       set((state) => ({
         answers: state.answers.filter((a) => a.id !== answerId),
-        currentAnswer: state.currentAnswer?.id === answerId ? null : state.currentAnswer,
+        currentAnswer:
+          state.currentAnswer?.id === answerId ? null : state.currentAnswer,
         isLoading: false,
       }))
     } catch (err) {

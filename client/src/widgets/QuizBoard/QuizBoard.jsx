@@ -2,7 +2,12 @@ import React, { useState } from 'react'
 
 import { useQuizzes } from '@entities/quiz'
 import { useQuizBoard } from '@features/quiz-board'
-import { Pagination, QuizCard, ModalNotifications, createRoute } from '@shared'
+import {
+  Pagination,
+  QuizCard,
+  ModalNotifications,
+  getQuizDescriptionRoute,
+} from '@shared'
 import { Link } from 'react-router-dom'
 
 import styles from './QuizBoard.module.scss'
@@ -26,7 +31,8 @@ export function QuizBoard({ currentPage, onPageChange }) {
         {!loading &&
           !error &&
           paginatedQuizList.map((quiz) => (
-            <Link key={quiz.id} to={createRoute.quizDescription(quiz.id)}>
+            // 👇 используем функцию getQuizDescriptionRoute
+            <Link key={quiz.id} to={getQuizDescriptionRoute(quiz.id)}>
               <QuizCard {...quiz} />
             </Link>
           ))}

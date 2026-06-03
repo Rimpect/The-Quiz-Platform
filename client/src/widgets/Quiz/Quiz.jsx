@@ -1,7 +1,7 @@
 // Quiz.jsx
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
-import { mockDataQuestions } from '@entities'
+import { useQuestions, useQuestionStore } from '@entities'
 import {
   QuizTimer,
   AnswerList,
@@ -13,7 +13,7 @@ import {
   useAnswerSelection,
   checkAnswer,
 } from '@features'
-import { ROUTES } from '@shared'
+import { ROUTES, getFinishQuizRoute } from '@shared'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 
 import styles from './Quiz.module.scss'
@@ -26,21 +26,42 @@ export function Quiz() {
   const [correctCount, setCorrectCount] = useState(0)
   const [isFinished, setIsFinished] = useState(false)
   const navigate = useNavigate()
-  const questions = mockDataQuestions
+  const questions = useQuestions()
+
+  const fetchQuestions = useQuestionStore((state) => state.fetchQuestions)
+  const loading = useQuestionStore((state) => state.loading)
+  const error = useQuestionStore((state) => state.error)
 
   const totalQuestions = questions.length
-  const currentQ = questions[currentQuestion]
 
+  const currentQ = questions[currentQuestion]
   const { selectedAnswers, toggleAnswer, resetAnswers } = useAnswerSelection(
-    currentQ.questionType,
+    currentQ?.questionType || 'single', // добавьте опциональный оператор
   )
   const currentScore = calculatePartialScore(
     selectedAnswers,
-    currentQ.correctAnswers,
-    currentQ.points,
+    currentQ?.correctAnswers || [],
+    currentQ?.points || 0,
   )
-
   const maxPossibleScore = questions.reduce((sum, q) => sum + q.points, 0)
+
+  useEffect(() => {
+    if (id) {
+      fetchQuestions(id)
+    }
+  }, [fetchQuestions, id])
+
+  if (loading) {
+    return <div>Загрузка...</div>
+  }
+
+  if (error) {
+    return <div>{error}</div>
+  }
+
+  if (!questions.length) {
+    return <div>Вопросы не найдены</div>
+  }
 
   const handleTimeEnd = () => {
     if (!isAnswered) {
@@ -78,7 +99,8 @@ export function Quiz() {
 
   if (isFinished) {
     const percentScore = Math.round((totalScore / maxPossibleScore) * 100)
-    navigate(ROUTES.finishQuiz, {
+    // ✅ ПРАВИЛЬНО
+    navigate(getFinishQuizRoute(id), {
       state: {
         quizTitle: currentQ.category,
         maxPossibleScore,
@@ -87,7 +109,6 @@ export function Quiz() {
         totalQuestions,
       },
     })
-
     return null
   }
 

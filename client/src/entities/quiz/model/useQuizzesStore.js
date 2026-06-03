@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import { quizzesService } from '@shared'
+import { create } from 'zustand'
 
 export const useQuizzesStore = create((set) => ({
   quizzes: [],
@@ -74,7 +74,8 @@ export const useQuizzesStore = create((set) => ({
       await quizzesService.deleteQuiz(quizId)
       set((state) => ({
         quizzes: state.quizzes.filter((q) => q.id !== quizId),
-        currentQuiz: state.currentQuiz?.id === quizId ? null : state.currentQuiz,
+        currentQuiz:
+          state.currentQuiz?.id === quizId ? null : state.currentQuiz,
         isLoading: false,
       }))
     } catch (err) {

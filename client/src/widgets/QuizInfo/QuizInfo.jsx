@@ -4,12 +4,6 @@ import { Eye, Dot, Users, Check, X } from 'lucide-react'
 import styles from './QuizInfo.module.scss'
 
 export function QuizInfo({ quiz, onApprove, onReject, onView }) {
-  const statusLabels = {
-    approved: 'Одобрен',
-    pending: 'На модерации',
-    rejected: 'Отклонен',
-  }
-
   const difficultyMap = {
     Легкий: 'easy',
     Средний: 'medium',

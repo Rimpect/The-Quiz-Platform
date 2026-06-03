@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import { resultsService } from '@shared'
+import { create } from 'zustand'
 
 export const useResultsStore = create((set) => ({
   results: [],
@@ -74,9 +74,7 @@ export const useResultsStore = create((set) => ({
       const result = await resultsService.completeQuiz(resultId)
       set((state) => ({
         currentResult: result,
-        results: state.results.map((r) =>
-          r.id === resultId ? result : r
-        ),
+        results: state.results.map((r) => (r.id === resultId ? result : r)),
         isLoading: false,
       }))
       return result
