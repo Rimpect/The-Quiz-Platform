@@ -89,6 +89,10 @@ export const router = createHashRouter([
     element: <LobbyTeamsPage />,
   },
   {
+    path: ROUTES.lobbyRating,
+    element: <LobbyRatingPage />,
+  },
+  {
     path: '*',
     element: <Navigate to={ROUTES.notFound} replace />,
   },

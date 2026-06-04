@@ -18,3 +18,4 @@ export { FinishQuiz } from './FinishQuiz/FinishQuiz'
 export { HeaderCreateQuiz } from './HeaderCreateQuiz/HeaderCreateQuiz'
 
 export { LobbyTeams } from './LobbyTeams/LobbyTeams'
+export { LobbyRating } from './LobbyRating/LobbyRating'
