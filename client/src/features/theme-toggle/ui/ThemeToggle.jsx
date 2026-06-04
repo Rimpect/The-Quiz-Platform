@@ -4,10 +4,11 @@ import { Button } from '@shared'
 import { Moon, Sparkles, Sun } from 'lucide-react'
 import { toast } from 'sonner'
 
+import useTheme from '../hooks/useTheme'
 import styles from './ThemeToggle.module.scss'
 
 export function ThemeToggle() {
-  const [isDarkTheme, setIsDarkTheme] = useState(false)
+  const { isDarkTheme, toggleTheme } = useTheme()
   const [isAnimating, setIsAnimating] = useState(false)
   const [showSparkles, setShowSparkles] = useState(false)
 
@@ -16,14 +17,12 @@ export function ThemeToggle() {
     setShowSparkles(true)
 
     setTimeout(() => {
-      const nextTheme = !isDarkTheme
+      toggleTheme()
 
-      setIsDarkTheme(nextTheme)
-
-      toast.success(nextTheme ? '🌙 Темная тема' : '☀️ Светлая тема', {
-        description: nextTheme
-          ? 'Темная тема активирована'
-          : 'Светлая тема активирована',
+      toast.success(isDarkTheme ? '☀️ Светлая тема' : '🌙 Темная тема', {
+        description: isDarkTheme
+          ? 'Светлая тема активирована'
+          : 'Темная тема активирована',
         duration: 1500,
       })
 

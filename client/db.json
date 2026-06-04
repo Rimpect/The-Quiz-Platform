@@ -72,7 +72,8 @@
       "questionCount": 12,
       "author": "QuizLab",
       "language": "Русский",
-      "lastUpdated": "2026-05-10"
+      "lastUpdated": "2026-05-10",
+      "type": "rating"
     },
     {
       "id": "2",
@@ -88,7 +89,8 @@
       "questionCount": 15,
       "author": "GeoQuiz Team",
       "language": "Русский",
-      "lastUpdated": "2026-05-22"
+      "lastUpdated": "2026-05-22",
+      "type": "solo"
     },
     {
       "id": "3",
@@ -104,7 +106,8 @@
       "questionCount": 18,
       "author": "DevSkills",
       "language": "Русский",
-      "lastUpdated": "2026-05-15"
+      "lastUpdated": "2026-05-15",
+      "type": "teams"
     },
     {
       "id": "4",
@@ -120,7 +123,8 @@
       "questionCount": 14,
       "author": "HistoryPro",
       "language": "Русский",
-      "lastUpdated": "2026-05-18"
+      "lastUpdated": "2026-05-18",
+      "type": "solo"
     },
     {
       "id": "5",
@@ -136,7 +140,8 @@
       "questionCount": 16,
       "author": "CinemaQuiz",
       "language": "Русский",
-      "lastUpdated": "2026-05-21"
+      "lastUpdated": "2026-05-21",
+      "type": "solo"
     },
     {
       "id": "6",
@@ -152,7 +157,8 @@
       "questionCount": 10,
       "author": "SoundMind",
       "language": "Русский",
-      "lastUpdated": "2026-05-24"
+      "lastUpdated": "2026-05-24",
+      "type": "solo"
     },
     {
       "id": "7",
@@ -168,7 +174,8 @@
       "questionCount": 15,
       "author": "SportBrain",
       "language": "Русский",
-      "lastUpdated": "2026-05-12"
+      "lastUpdated": "2026-05-12",
+      "type": "solo"
     },
     {
       "id": "8",
@@ -184,7 +191,8 @@
       "questionCount": 12,
       "author": "EcoQuiz",
       "language": "Русский",
-      "lastUpdated": "2026-05-14"
+      "lastUpdated": "2026-05-14",
+      "type": "solo"
     },
     {
       "id": "9",
@@ -200,7 +208,8 @@
       "questionCount": 14,
       "author": "Foodies",
       "language": "Русский",
-      "lastUpdated": "2026-05-16"
+      "lastUpdated": "2026-05-16",
+      "type": "solo"
     },
     {
       "id": "10",
@@ -216,7 +225,8 @@
       "questionCount": 18,
       "author": "TechInsight",
       "language": "Русский",
-      "lastUpdated": "2026-05-20"
+      "lastUpdated": "2026-05-20",
+      "type": "solo"
     },
     {
       "id": "11",
@@ -232,7 +242,8 @@
       "questionCount": 16,
       "author": "LogicLab",
       "language": "Русский",
-      "lastUpdated": "2026-05-19"
+      "lastUpdated": "2026-05-19",
+      "type": "solo"
     },
     {
       "id": "12",
@@ -248,7 +259,8 @@
       "questionCount": 13,
       "author": "CultureQuest",
       "language": "Русский",
-      "lastUpdated": "2026-05-23"
+      "lastUpdated": "2026-05-23",
+      "type": "solo"
     },
     {
       "id": "13",
@@ -264,7 +276,8 @@
       "questionCount": 14,
       "author": "LinguaLab",
       "language": "Русский",
-      "lastUpdated": "2026-05-17"
+      "lastUpdated": "2026-05-17",
+      "type": "solo"
     },
     {
       "id": "14",
@@ -280,7 +293,8 @@
       "questionCount": 17,
       "author": "StarQuest",
       "language": "Русский",
-      "lastUpdated": "2026-05-25"
+      "lastUpdated": "2026-05-25",
+      "type": "solo"
     },
     {
       "id": "15",
@@ -296,7 +310,8 @@
       "questionCount": 18,
       "author": "AIQuiz",
       "language": "Русский",
-      "lastUpdated": "2026-05-26"
+      "lastUpdated": "2026-05-26",
+      "type": "solo"
     },
     {
       "id": "16",
@@ -312,7 +327,8 @@
       "questionCount": 15,
       "author": "LitMasters",
       "language": "Русский",
-      "lastUpdated": "2026-05-27"
+      "lastUpdated": "2026-05-27",
+      "type": "solo"
     }
   ],
   "questions": [

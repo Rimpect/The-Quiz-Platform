@@ -10,6 +10,10 @@ import {
   RegistrationPage,
   CreateQuizPage,
   NotFoundPage,
+  LobbyRatingPage,
+  LobbyTeamsPage,
+  LeaderboardRatingPage,
+  LeaderboardTeamsPage,
 } from '@pages'
 import { ROUTES } from '@shared'
 import { createHashRouter, Navigate } from 'react-router-dom'

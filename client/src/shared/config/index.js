@@ -4,4 +4,8 @@ export {
   getQuizRoute,
   getQuizDescriptionRoute,
   getFinishQuizRoute,
+  getLobbyRatingRoute,
+  getLobbyTeamsRoute,
+  getLeaderboardRatingRoute,
+  getLeaderboardTeamsRoute,
 } from './routes/paths.js'
