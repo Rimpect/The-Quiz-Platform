@@ -16,7 +16,7 @@ def start_quiz(
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
 ) :
-    """Начало прохождения квиза"""
+    """Сохранение игры квиза"""
     # Проверяем существование квиза
     if not crud_quiz.get_quiz(db, quiz_id) :
         raise HTTPException(status_code=404, detail="Quiz not found")
@@ -42,34 +42,11 @@ def get_quiz_result(
 ) :
     """Получение результата по ID"""
     result = crud_quiz_results.get_quiz_result(db, result_id)
-    if not result or result.user_id != current_user.id :
+    if not result or result.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Result not found")
+    if current_user.role != "admin":
+        raise HTTPException(status_code=400, detail="No admin rules")
     return result
-
-
-@router.post("/{result_id}/answer")
-def submit_answer(
-        result_id: int,
-        answer_data: schemas.UserAnswerCreate,
-        db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
-) :
-    """Сохранение ответа пользователя"""
-    result = crud_quiz_results.get_quiz_result(db, result_id)
-    if not result or result.user_id != current_user.id :
-        raise HTTPException(status_code=404, detail="Result not found")
-
-    if result.is_completed :
-        raise HTTPException(status_code=400, detail="Quiz already completed")
-
-    return crud_quiz_results.save_user_answer(
-        db,
-        result_id,
-        answer_data.question_id,
-        answer_data.answer_text,
-        answer_data.answer_id,
-        answer_data.time_spent_seconds
-    )
 
 
 @router.post("/{result_id}/complete", response_model=schemas.QuizResult)
@@ -89,13 +66,13 @@ def complete_quiz(
     return crud_quiz_results.complete_quiz_result(db, result_id)
 
 
-@router.get("/quiz/{quiz_id}/leaderboard")
-def get_quiz_leaderboard(
-        quiz_id: int,
-        limit: int = 10,
-        db: Session = Depends(get_db)
-) :
-    """Таблица лидеров для квиза"""
-    if not crud_quiz.get_quiz(db, quiz_id) :
-        raise HTTPException(status_code=404, detail="Quiz not found")
-    return crud_quiz_results.get_quiz_leaderboard(db, quiz_id, limit)
+# "@router.get(")/quiz/{quiz_id}/leaderboard")
+# def get_quiz_leaderboard(
+#         quiz_id: int,
+#         limit: int = 10,
+#         db: Session = Depends(get_db)
+# ) :
+#     """Таблица лидеров для квиза"""
+#     if not crud_quiz.get_quiz(db, quiz_id) :
+#         raise HTTPException(status_code=404, detail="Quiz not found")
+#     return crud_quiz_results.get_quiz_leaderboard(db, quiz_id, limit)

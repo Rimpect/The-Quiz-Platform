@@ -14,6 +14,7 @@ class UserRole(str, enum.Enum):
     USER = "user"
     ADMIN = "admin"
     AUTHOR = "author"
+    GUEST = "guest"
 
 
 class ThemeMode(str, enum.Enum):
@@ -30,7 +31,7 @@ class User(Base):
     nickname = Column(String(50), nullable=False)  # Никнейм
     theme_site = Column(SQLEnum(ThemeMode), default=ThemeMode.LIGHT, nullable=False)  # Тема сайта
     photo_profile = Column(String(500), nullable=True)  # Фото профиля (путь к файлу)
-    login = Column(String(50), unique=True, nullable=False, index=True)  # Логин
+    #login = Column(String(50), unique=True, nullable=False, index=True)  # Логин
     email = Column(String(100), unique=True, nullable=False, index=True)  # Почта
     password_hash = Column(String(255), nullable=False)  # Пароль (хеш)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата регистрации
@@ -41,16 +42,6 @@ class User(Base):
     jwt_tokens = relationship("JWTToken", back_populates="user", cascade="all, delete-orphan")
     quiz_results = relationship("QuizResult", back_populates="user", cascade="all, delete-orphan")
     quiz = relationship("Quiz", back_populates="user_author", cascade="all, delete-orphan")
-
-    @property
-    def profile_images(self) :
-        """Получение всех изображений профиля пользователя"""
-        from ..crud import media as media_crud
-        from ..database.database import SessionLocal
-        db = SessionLocal()
-        return media_crud.get_entity_media(
-            db, MediaEntity.PROFILE, self.id, MediaType.IMAGE
-        )
 
     @property
     def profile_image_url(self) -> Optional[str]:

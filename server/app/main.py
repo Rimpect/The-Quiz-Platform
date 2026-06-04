@@ -100,7 +100,7 @@ async def get_info() :
     """Информация о приложении"""
     return {
         "name" : "Quiz API",
-        "version" : "0.1.0",
+        "version" : "0.0.9",
         "environment" : os.getenv("ENVIRONMENT", "development"),
         "docs_url" : "/api/docs",
         "features" : ["JWT auth", "Media upload", "Quiz system", "Statistics"]

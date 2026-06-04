@@ -6,22 +6,19 @@ from datetime import datetime
 from ..database.database import Base
 
 
-
 class JWTToken(Base):
     """
-    Таблица для хранения JWT токенов (access и refresh)
+    Таблица для хранения JWT токенов
 
     Особенности:
-    - Хранятся ТОЛЬКО хеши токенов, никогда сами токены
-    - Access токены имеют короткое время жизни (15-30 минут)
-    - Refresh токены имеют длительное время жизни (7-30 дней)
+    - Хранение хэш токенов
     - Поддерживается отзыв (revoke) отдельных токенов
     """
     __tablename__ = "jwt_tokens"
 
     # ========== Обязательные поля ==========
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False, index=True)
 
     # Хеши токенов (никогда не храним сами токены!)
     access_token_hash = Column(String(255), nullable=False, index=True)  # Хеш access токена
@@ -43,7 +40,7 @@ class JWTToken(Base):
 
     # ========== Метаданные для безопасности ==========
     user_agent = Column(String(500), nullable=True)  # Информация об устройстве/браузере
-    ip_address = Column(String(45), nullable=True)  # IP адрес (поддерживает IPv6)
+    #ip_address = Column(String(45), nullable=True)  # IP адрес (поддерживает IPv6)
     last_used_at = Column(DateTime(timezone=True), nullable=True)  # Время последнего использования
 
     # ========== Связи ==========
@@ -100,7 +97,7 @@ class JWTToken(Base):
         self.is_access_revoked = True
         self.is_refresh_revoked = True
         self.revoked_at = datetime.utcnow()
-        self.revoked_reason = reason
+        self.revoked_reason: str = reason
 
     def update_last_used(self) -> None :
         """Обновление времени последнего использования"""

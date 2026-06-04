@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, Query
+from fastapi import APIRouter, Depends, status, Query, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
@@ -94,102 +94,6 @@ def get_leaderboard(
         raise HTTPException(status_code=404, detail="Quiz not found")
     return crud_quiz.get_quiz_leaderboard(db, quiz_id, limit)
 """
-
-
-@router.post("/bulk", response_model=schemas.QuizBulkResponse, status_code=status.HTTP_201_CREATED)
-def create_quiz_bulk(
-        quiz_data: schemas.QuizBulkCreate,
-        db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
-):
-    result = crud.quiz.create_quiz_bulk(db, quiz_data)
-    return result
-
-
-@router.put("/{quiz_id}/bulk", response_model=schemas.QuizBulkResponse)
-def update_quiz_bulk(
-        quiz_id: int,
-        quiz_data: schemas.QuizUpdateBulk,
-        db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
-) :
-    """
-    Массовое обновление квиза
-
-    Пример:
-    {
-        "title": "Updated Quiz Title",
-        "questions_to_add": [
-            {
-                "answer_type": "single",
-                "points": 15,
-                "question_text": "New question?",
-                "answers": [
-                    {"answer_text": "Yes", "is_correct": true},
-                    {"answer_text": "No", "is_correct": false}
-                ]
-            }
-        ],
-        "questions_to_update": [
-            {
-                "question_id": 123,
-                "points": 25,
-                "question_text": "Updated question text"
-            }
-        ],
-        "question_ids_to_delete": [456, 789]
-    }
-    """
-    result = crud.quiz.update_quiz_bulk(db, quiz_id, quiz_data)
-    if not result :
-        raise HTTPException(status_code=404, detail="Quiz not found")
-    return result
-
-
-@router.get("/{quiz_id}/export")
-def export_quiz(
-        quiz_id: int,
-        db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
-) :
-    """
-    Экспорт квиза в формате JSON (для импорта/резервного копирования)
-    """
-    quiz = crud.quiz.get_quiz_with_details(db, quiz_id)
-    if not quiz :
-        raise HTTPException(status_code=404, detail="Quiz not found")
-
-    # Формируем структуру для экспорта
-    export_data = {
-        "title" : quiz.title,
-        "category" : quiz.category,
-        "description" : quiz.description,
-        "cover_url" : quiz.cover_url,
-        "is_public" : quiz.is_public,
-        "quiz_mode" : quiz.quiz_mode,
-        "questions" : []
-    }
-
-    for question in quiz.questions :
-        q_data = {
-            "answer_type" : question.answer_type,
-            "points" : question.points,
-            "question_text" : question.question_text,
-            "media_url" : question.media_url,
-            "time_limit_seconds" : question.time_limit_seconds,
-            "answers" : []
-        }
-
-        for answer in question.answers :
-            q_data["answers"].append({
-                "answer_text" : answer.answer_text,
-                "is_correct" : answer.is_correct,
-                "order_number" : answer.order_number
-            })
-
-        export_data["questions"].append(q_data)
-
-    return export_data
 
 
 @router.post("/bulk", response_model=schemas.QuizBulkResponse, status_code=status.HTTP_201_CREATED)

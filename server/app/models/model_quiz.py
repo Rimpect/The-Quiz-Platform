@@ -28,8 +28,9 @@ class Quiz(Base) :
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(200), nullable=False)  # Название
     category = Column(String(100), nullable=False)  # Категория
-    description = Column(Text, nullable=False)  # Описание
-    cover_url = Column(String(500), nullable=True)  # Обложка (путь к файлу)
+    description = Column(Text, nullable=True)  # Описание
+    quiz_photo_url = Column(String(500), nullable=True)  # Обложка (путь к файлу)
+    description_photo_url = Column(String(500), nullable=True)  # Картинка карточки (путь к файлу)
     is_public = Column(Boolean, default=True, nullable=False)  # Публичность квиза
     quiz_mode = Column(SQLEnum(QuizMode), default=QuizMode.SINGLE, nullable=False)  # Режим команды
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата создания
@@ -94,3 +95,7 @@ class Quiz(Base) :
 
     def __repr__(self) :
         return f"<Quiz {self.title}>"
+
+    @total_questions.setter
+    def total_questions(self, value) :
+        self._total_questions = value

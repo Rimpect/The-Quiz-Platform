@@ -28,10 +28,10 @@ async def upload_media(
     """
     Загрузка медиафайла для сущности
 
-    entity_type: profile, question, quiz, answer
+    entity_type: profile, question, quiz, quiz_description
     """
     # Проверяем валидность entity_type
-    if entity_type not in ["profile", "question", "quiz", "answer"] :
+    if entity_type not in ["profile", "question", "quiz", "quiz_description"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid entity type"

@@ -3,32 +3,86 @@ from datetime import datetime
 from typing import Optional, List
 from enum import Enum
 
+from pydantic import BaseModel, Field
+from typing import Optional
+from datetime import datetime
+from enum import Enum
 
+
+class AccessStatus(str, Enum):
+    VALID = "valid"
+    EXPIRED = "expired"
+    INVALID = "invalid"
+    REVOKED = "revoked"
+    MISSING = "missing"
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class RefreshTokenRequest(BaseModel):
+    # Пустой! Refresh токен берется из cookie
+    pass
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    access_status: AccessStatus = AccessStatus.VALID
+    expires_in: int = 1800
+    user_id: int
+    login: str
+    nickname: str
+    role: str
+
+
+class RefreshTokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    access_status: AccessStatus = AccessStatus.VALID
+    expires_in: int = 1800
+    message: str
+
+
+class AccessTokenStatusResponse(BaseModel):
+    access_status: AccessStatus
+    error_message: Optional[str] = None
+    user_id: Optional[int] = None
+    expires_at: Optional[datetime] = None
 # ========== Enums ==========
-class ThemeMode(str, Enum) :
+class ThemeMode(str, Enum):
     LIGHT = "light"
     DARK = "dark"
     SYSTEM = "system"
 
 
-class QuizMode(str, Enum) :
+class QuizMode(str, Enum):
     SINGLE = "single"
     TEAM = "team"
 
 
-class AnswerType(str, Enum) :
+class AnswerType(str, Enum):
     SINGLE = "single"
     MULTIPLE = "multiple"
     TEXT = "text"
     NUMERIC = "numeric"
 
 
+class UserRole(str, Enum):
+    USER = "user"
+    AUTHOR = "author"
+    ADMIN = "admin"
+
+
 # ========== User Schemas ==========
-class UserBase(BaseModel) :
+class UserBase(BaseModel):
     nickname: str = Field(..., min_length=1, max_length=50)
     theme_site: ThemeMode = ThemeMode.LIGHT
     login: str = Field(..., min_length=3, max_length=50)
     email: str = Field(..., email=True)
+    role: Enum = Field(..., default=UserRole.USER)
 
 
 class UserCreate(UserBase) :
@@ -125,6 +179,7 @@ class QuizBulkResponse(BaseModel) :
     questions_created: int
     answers_created: int
     total_time_limit_minutes: int
+
 
 # ========== Question Schemas ==========
 class QuestionBase(BaseModel) :
@@ -243,8 +298,8 @@ class Token(BaseModel) :
     token_type: str = "bearer"
 
 
-class LoginRequest(BaseModel) :
-    login: str
+class EmailRequest(BaseModel) :
+    email: str
     password: str
 
 

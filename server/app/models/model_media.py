@@ -5,7 +5,7 @@ from ..database.database import Base
 import enum
 
 
-class MediaType(str, enum.Enum) :
+class MediaType(str, enum.Enum):
     """Тип медиафайла"""
     IMAGE = "image"
     AUDIO = "audio"
@@ -17,7 +17,7 @@ class MediaEntity(str, enum.Enum) :
     PROFILE = "profile"
     QUESTION = "question"
     QUIZ = "quiz"
-    ANSWER = "answer"
+    QUIZ_OPTION = "quiz_option"
 
 
 class MediaFile(Base) :
@@ -36,10 +36,6 @@ class MediaFile(Base) :
     file_name = Column(String(255), nullable=False)  # Оригинальное имя файла
     file_size = Column(Integer, nullable=False)  # Размер в байтах
     mime_type = Column(String(100), nullable=False)  # MIME тип (image/jpeg, etc.)
-
-    # Опционально
-    alt_text = Column(String(500), nullable=True)  # Альтернативный текст
-    order_number = Column(Integer, default=0)  # Порядок отображения (для множества файлов)
 
     # Временные метки
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)

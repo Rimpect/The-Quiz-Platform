@@ -3,12 +3,9 @@ from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-
 from .model_media import MediaEntity, MediaType
 from ..database.database import Base
 import enum
-
-
 
 
 class AnswerType(str, enum.Enum) :
@@ -18,8 +15,6 @@ class AnswerType(str, enum.Enum) :
     NUMERIC = "numeric"  # Числовой ответ
 
 
-
-
 class Question(Base) :
     __tablename__ = "questions"
 
@@ -27,17 +22,18 @@ class Question(Base) :
     id = Column(Integer, primary_key=True, index=True)
     answer_type = Column(SQLEnum(AnswerType), nullable=False)  # Тип внесения ответа
     points = Column(Integer, default=1, nullable=False)  # Количество баллов
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата создания
     question_text = Column(Text, nullable=False)  # Содержание вопроса
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)  # Дата изменения
-    media_url = Column(String(500), nullable=True)  # Медиа (путь к файлу)
+    question_media_url = Column(String(500), nullable=True)  # Медиа (путь к файлу)
     quiz_id = Column(Integer, ForeignKey("quizzes.id", ondelete="CASCADE"), nullable=False, index=True)  # ID квиза
     time_limit_seconds = Column(Integer, nullable=True)  # Время ожидания ответа (в секундах)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата создания
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)  # Дата изменения
 
     # Связи
     quiz = relationship("Quiz", back_populates="questions")
     answers = relationship("Answer", back_populates="question", cascade="all, delete-orphan")
-    #user_answers = relationship("UserAnswer", back_populates="questions", cascade="all, delete-orphan")
+
+    # user_answers = relationship("UserAnswer", back_populates="questions", cascade="all, delete-orphan")
 
     @property
     def images(self) :
@@ -58,6 +54,14 @@ class Question(Base) :
         return media_crud.get_entity_media(
             db, MediaEntity.QUESTION, self.id, MediaType.AUDIO
         )
+
+    @property
+    def video(self):
+        """Видеофайлы вопроса"""
+        from ..crud import media as media_crud
+        from ..database.database import  SessionLocal
+        db = SessionLocal()
+        return media_crud.get_entity_primary_media()
 
     def __repr__(self) :
         return f"<Question {self.id}: {self.question_text[:50]}>"

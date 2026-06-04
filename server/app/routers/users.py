@@ -14,8 +14,6 @@ router = APIRouter(prefix="/users", tags=["users"])
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)) :
     """Создание нового пользователя"""
     # Проверка уникальности логина и email
-    if crud_user.get_user_by_login(db, user.login) :
-        raise HTTPException(status_code=400, detail="Login already registered")
     if crud_user.get_user_by_email(db, user.email) :
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud_user.create_user(db=db, user=user)
@@ -28,9 +26,11 @@ def read_users(
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
 ) :
-    """Получение списка пользователей (только для админов)"""
-    # Здесь можно добавить проверку на роль admin
-    return crud_user.get_users(db, skip=skip, limit=limit)
+    """Получение списка пользователей"""
+    if current_user.role == "admin":
+        return crud_user.get_users(db, skip=skip, limit=limit)
+    else:
+        raise HTTPException(status_code=400, detail="No admin rules")
 
 
 @router.get("/me", response_model=schemas.User)
