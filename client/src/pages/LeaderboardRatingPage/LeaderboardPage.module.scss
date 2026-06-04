@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  margin: auto;
+  max-width: 1280px;
+  margin-top: 20px;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+.title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 32px;
+}
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}

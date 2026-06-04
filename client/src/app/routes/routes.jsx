@@ -82,6 +82,11 @@ export const router = createHashRouter([
     element: <NotFoundPage />,
   },
   {
+    path: ROUTES.leaderboardRating,
+    element: <LeaderboardRatingPage />,
+  },
+  {},
+  {
     path: '*',
     element: <Navigate to={ROUTES.notFound} replace />,
   },
