@@ -1,8 +1,10 @@
 import { LeaderboardList } from '@entities'
-import { Trophy } from 'lucide-react'
 import { ROUTES, Button, Badge } from '@shared'
+import { Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
+
 import styles from './LeaderboardPage.module.scss'
+
 const mockData = [
   {
     place: 1,

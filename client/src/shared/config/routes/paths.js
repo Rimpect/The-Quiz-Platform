@@ -11,7 +11,6 @@ const ROUTES = {
   createQuiz: '/CreateQuizPage',
   notFound: '/NotFoundPage',
   leaderboardRating: '/LeaderboardRatingPage',
-  leaderboardTeams: '/LeaderboardTeamsPage',
   lobbyRating: '/LobbyRatingPage',
   lobbyTeams: '/LobbyTeamsPage',
 }
@@ -24,7 +23,4 @@ export const getLobbyRatingRoute = (id) => `${ROUTES.lobbyRating}/${id}`
 export const getLobbyTeamsRoute = (id) => `${ROUTES.lobbyTeams}/${id}`
 export const getLeaderboardRatingRoute = (id) =>
   `${ROUTES.leaderboardRating}/${id}`
-export const getLeaderboardTeamsRoute = (id) =>
-  `${ROUTES.leaderboardTeams}/${id}`
-
 export { ROUTES }

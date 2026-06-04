@@ -1,10 +1,12 @@
 import './App.scss'
 import { useEffect } from 'react'
+
 import { RouterProvider } from 'react-router-dom'
 import { Toaster } from 'sonner'
 
-import { router } from './routes/routes.jsx'
 import useTheme from '../features/theme-toggle/hooks/useTheme'
+
+import { router } from './routes/routes.jsx'
 
 function App() {
   const { isDarkTheme } = useTheme()

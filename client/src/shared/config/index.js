@@ -7,5 +7,4 @@ export {
   getLobbyRatingRoute,
   getLobbyTeamsRoute,
   getLeaderboardRatingRoute,
-  getLeaderboardTeamsRoute,
 } from './routes/paths.js'

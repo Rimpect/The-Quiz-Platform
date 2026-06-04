@@ -16,3 +16,5 @@ export { Quiz } from './Quiz/Quiz'
 export { FinishQuiz } from './FinishQuiz/FinishQuiz'
 // компоненты для страницы CreateQuizPage
 export { HeaderCreateQuiz } from './HeaderCreateQuiz/HeaderCreateQuiz'
+
+export { LobbyTeams } from './LobbyTeams/LobbyTeams'

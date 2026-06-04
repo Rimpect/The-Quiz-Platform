@@ -1,5 +1,6 @@
 import { LeaderboardItem } from './LeaderboardItem'
-import styles from './LeaderboardList.module.css'
+import styles from './LeaderboardList.module.scss'
+
 export function LeaderboardList({ items }) {
   return (
     <div className={styles.list}>

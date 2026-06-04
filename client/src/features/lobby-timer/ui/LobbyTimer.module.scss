@@ -1,0 +1,44 @@
+.timerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.timer {
+  font-size: 24px;
+  font-weight: 600;
+  font-family: monospace;
+  color: #1f2937;
+}
+.timerText {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b7280;
+  white-space: nowrap;
+
+  svg {
+    flex-shrink: 0;
+    display: block;
+  }
+
+  span {
+    display: inline-block;
+  }
+}
+.progressBar {
+  width: 200px;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border-radius: 10px;
+  transition: width 0.3s linear;
+}

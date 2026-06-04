@@ -5,6 +5,7 @@ import { Moon, Sparkles, Sun } from 'lucide-react'
 import { toast } from 'sonner'
 
 import useTheme from '../hooks/useTheme'
+
 import styles from './ThemeToggle.module.scss'
 
 export function ThemeToggle() {

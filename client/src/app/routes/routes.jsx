@@ -13,7 +13,6 @@ import {
   LobbyRatingPage,
   LobbyTeamsPage,
   LeaderboardRatingPage,
-  LeaderboardTeamsPage,
 } from '@pages'
 import { ROUTES } from '@shared'
 import { createHashRouter, Navigate } from 'react-router-dom'
@@ -85,7 +84,10 @@ export const router = createHashRouter([
     path: ROUTES.leaderboardRating,
     element: <LeaderboardRatingPage />,
   },
-  {},
+  {
+    path: ROUTES.lobbyTeams,
+    element: <LobbyTeamsPage />,
+  },
   {
     path: '*',
     element: <Navigate to={ROUTES.notFound} replace />,
