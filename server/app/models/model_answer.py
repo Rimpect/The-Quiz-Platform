@@ -18,10 +18,6 @@ class Answer(Base) :
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата создания
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)  # Дата изменения
 
-    # Связи
-    question = relationship("Question", back_populates="answers")
-    #user_selected_answers = relationship("UserAnswer", back_populates="selected_answer")
-
 
     def __repr__(self) :
         return f"<Answer {self.id}: {self.answer_text[:30]}>"

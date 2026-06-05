@@ -5,8 +5,8 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 
-from ..crud import jwt_token as crud_jwt
-from ..crud import user as crud_user
+from ..crud import crud_jwt_token as crud_jwt
+from ..crud import crud_user as crud_user
 from ..database.database import get_db
 from ..utils.security import (
     verify_password,

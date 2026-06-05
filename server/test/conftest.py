@@ -62,7 +62,7 @@ def client() -> Generator :
 @pytest.fixture
 def test_user(db: Session) :
     """Фикстура для создания тестового пользователя"""
-    from ..app.crud import user as crud_user
+    from ..app.crud import crud_user as crud_user
     from ..app.schemas import UserCreate
 
     user_data = UserCreate(
@@ -85,7 +85,7 @@ def test_user(db: Session) :
 @pytest.fixture
 def test_admin_user(db: Session) :
     """Фикстура для создания тестового администратора"""
-    from ..app.crud import user as crud_user
+    from ..app.crud import crud_user as crud_user
     from ..app.schemas import UserCreate
 
     user_data = UserCreate(
@@ -137,7 +137,7 @@ def auth_headers(test_token) :
 @pytest.fixture
 def test_quiz(db: Session, test_user) :
     """Фикстура для создания тестового квиза"""
-    from ..app.crud import quiz as crud_quiz
+    from ..app.crud import crud_quiz as crud_quiz
     from ..app.schemas import QuizCreate
 
     quiz_data = QuizCreate(
@@ -155,7 +155,7 @@ def test_quiz(db: Session, test_user) :
 @pytest.fixture
 def test_question(db: Session, test_quiz) :
     """Фикстура для создания тестового вопроса"""
-    from ..app.crud import question as crud_question
+    from ..app.crud import crud_question as crud_question
     from ..app.schemas import QuestionCreate
 
     question_data = QuestionCreate(
@@ -176,7 +176,7 @@ def test_question(db: Session, test_quiz) :
 @pytest.fixture
 def test_answers(db: Session, test_question) :
     """Фикстура для создания тестовых ответов"""
-    from ..app.crud import answer as crud_answer
+    from ..app.crud import crud_answer as crud_answer
     from ..app.schemas import AnswerCreate
 
     answers_data = [

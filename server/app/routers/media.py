@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from .. import schemas
-from ..crud import media as media_crud
+from ..crud import crud_media as media_crud
 from ..database.database import get_db
 from ..models.model_media import MediaEntity, MediaType
 from ..utils import media_utils

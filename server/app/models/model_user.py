@@ -46,7 +46,7 @@ class User(Base):
     @property
     def profile_image_url(self) -> Optional[str]:
         """URL основного изображения профиля"""
-        from ..crud import media as media_crud
+        from ..crud import crud_media as media_crud
         from ..database.database import SessionLocal
         db = SessionLocal()
         media = media_crud.get_entity_primary_media(

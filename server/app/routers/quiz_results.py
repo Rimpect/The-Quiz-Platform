@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from ..crud import quiz as crud_quiz, quiz_result as crud_quiz_results
+from ..crud import crud_quiz as crud_quiz, crud_quiz_result as crud_quiz_results
 from .. import schemas
 from ..database.database import get_db
 from ..utils.security import get_current_user

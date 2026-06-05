@@ -30,7 +30,6 @@ class Question(Base) :
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)  # Дата изменения
 
     # Связи
-    quiz = relationship("Quiz", back_populates="questions")
     answers = relationship("Answer", back_populates="question", cascade="all, delete-orphan")
 
     # user_answers = relationship("UserAnswer", back_populates="questions", cascade="all, delete-orphan")
@@ -38,7 +37,7 @@ class Question(Base) :
     @property
     def images(self) :
         """Изображения вопроса"""
-        from ..crud import media as media_crud
+        from ..crud import crud_media as media_crud
         from ..database.database import SessionLocal
         db = SessionLocal()
         return media_crud.get_entity_media(
@@ -48,7 +47,7 @@ class Question(Base) :
     @property
     def audio_files(self) :
         """Аудиофайлы вопроса"""
-        from ..crud import media as media_crud
+        from ..crud import crud_media as media_crud
         from ..database.database import SessionLocal
         db = SessionLocal()
         return media_crud.get_entity_media(
@@ -58,7 +57,7 @@ class Question(Base) :
     @property
     def video(self):
         """Видеофайлы вопроса"""
-        from ..crud import media as media_crud
+        from ..crud import crud_media as media_crud
         from ..database.database import  SessionLocal
         db = SessionLocal()
         return media_crud.get_entity_primary_media()
