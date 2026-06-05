@@ -6,7 +6,7 @@ from sqlalchemy.sql import func
 from ..database.database import Base
 
 
-class QuizResult(Base) :
+class QuizResult(Base):
     __tablename__ = "quiz_results"
 
     # Сохраняемые поля
@@ -28,19 +28,19 @@ class QuizResult(Base) :
 
     # Вычисляемые свойства
     @property
-    def duration_seconds(self) -> int :
+    def duration_seconds(self) -> int:
         """Время прохождения в секундах (вычисляемое)"""
-        if self.completed_at and self.started_at :
+        if self.completed_at and self.started_at:
             delta = self.completed_at - self.started_at
             return int(delta.total_seconds())
         return 0
 
     @property
-    def percentage(self) -> float :
+    def percentage(self) -> float:
         """Процент правильных ответов"""
-        if self.max_score > 0 :
+        if self.max_score > 0:
             return (self.score / self.max_score) * 100
         return 0.0
 
-    def __repr__(self) :
+    def __repr__(self):
         return f"<QuizResult user={self.user_id}, quiz={self.quiz_id}, score={self.score}>"

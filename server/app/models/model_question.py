@@ -11,8 +11,8 @@ import enum
 class AnswerType(str, enum.Enum) :
     SINGLE = "single"  # Одиночный выбор
     MULTIPLE = "multiple"  # Множественный выбор
-    TEXT = "text"  # Текстовый ответ
-    NUMERIC = "numeric"  # Числовой ответ
+    #TEXT = "text"  # Текстовый ответ
+    #NUMERIC = "numeric"  # Числовой ответ
 
 
 class Question(Base) :
@@ -21,7 +21,7 @@ class Question(Base) :
     # Обязательные поля
     id = Column(Integer, primary_key=True, index=True)
     answer_type = Column(SQLEnum(AnswerType), nullable=False)  # Тип внесения ответа
-    points = Column(Integer, default=1, nullable=False)  # Количество баллов
+    points = Column(Integer, default=0, nullable=False)  # Количество баллов
     question_text = Column(Text, nullable=False)  # Содержание вопроса
     question_media_url = Column(String(500), nullable=True)  # Медиа (путь к файлу)
     quiz_id = Column(Integer, ForeignKey("quizzes.id", ondelete="CASCADE"), nullable=False, index=True)  # ID квиза
@@ -33,7 +33,7 @@ class Question(Base) :
     answers = relationship("Answer", back_populates="question", cascade="all, delete-orphan")
 
     @property
-    def images(self) :
+    def images(self):
         """Изображения вопроса"""
         from ..crud import crud_media as media_crud
         from ..database.database import SessionLocal

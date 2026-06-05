@@ -2,7 +2,7 @@
 import enum
 from typing import Optional
 
-from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, ForeignKey, Enum as SQLEnum
+from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, Enum as SQLEnum, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -15,23 +15,22 @@ class QuizMode(str, enum.Enum):
     TEAM = "team"  # Командный режим
     COMPETITIVE = "competitive"  # соревновательный
 
+
 class Quiz(Base):
     __tablename__ = "quizzes"
 
     # Обязательные поля
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(200), nullable=False)  # Название
-    category_id = Column(Integer, ForeignKey("categories.id"),
-                         ondelete="SET NULL",
-                         nullable=True, index=True)   # Ссылка на категории
+    category_id = Column(Integer, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True, index=True)  # Ссылка на категории
     description = Column(Text, nullable=True)  # Описание
-    quiz_photo_url = Column(String(500), nullable=True)  # Обложка (путь к файлу)
-    description_photo_url = Column(String(500), nullable=True)  # Картинка карточки (путь к файлу)
     is_public = Column(Boolean, default=True, nullable=False)  # Публичность квиза
     quiz_mode = Column(SQLEnum(QuizMode), default=QuizMode.SINGLE, nullable=False)  # Режим команды
+    author = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата создания
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)  # Дата изменения
-    author = Column(Text, nullable=True)
+    quiz_photo_url = Column(String(500), nullable=True)  # Обложка (путь к файлу)
+    description_photo_url = Column(String(500), nullable=True)  # Картинка карточки (путь к файлу)
 
     # Вычисляемые поля без сохранения 
     # duration_minutes - вычисляется из вопросов
@@ -47,12 +46,12 @@ class Quiz(Base):
 
     # Вычисляемые свойства (property)
     @property
-    def total_questions(self) -> int :
+    def total_questions(self) -> int:
         """Количество вопросов в квизе"""
         return len(self.questions) if self.questions else 0
 
     @property
-    def duration_minutes(self) -> int :
+    def duration_minutes(self) -> int:
         """Длительность квиза в минутах (сумма времени ожидания ответа на все вопросы)"""
         if not self.questions:
             return 0
@@ -60,17 +59,17 @@ class Quiz(Base):
         return total_seconds // 60  # Переводим в минуты
 
     @property
-    def difficulty(self) -> str :
+    def difficulty(self) -> str:
         """Сложность квиза (среднее арифметическое сложности вопросов)"""
-        if not self.questions :
+        if not self.questions:
             return "easy"
         # Пока возвращаем среднее значение на основе баллов
         avg_points = sum(q.points for q in self.questions) / len(self.questions)
-        if avg_points <= 2 :
+        if avg_points <= 2:
             return "easy"
-        elif avg_points <= 5 :
+        elif avg_points <= 5:
             return "medium"
-        else :
+        else:
             return "hard"
 
     @property
@@ -79,7 +78,7 @@ class Quiz(Base):
         return len(self.quiz_results) if self.quiz_results else 0
 
     @property
-    def cover_image_url(self) -> Optional[str] :
+    def cover_image_url(self) -> Optional[str]:
         """URL обложки квиза"""
         from ..crud import crud_media as media_crud
         from ..database.database import SessionLocal
@@ -89,9 +88,9 @@ class Quiz(Base):
         )
         return media.url if media else None
 
-    def __repr__(self) :
+    def __repr__(self):
         return f"<Quiz {self.title}>"
 
     @total_questions.setter
-    def total_questions(self, value) :
+    def total_questions(self, value):
         self._total_questions = value

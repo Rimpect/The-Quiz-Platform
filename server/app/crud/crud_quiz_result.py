@@ -84,78 +84,78 @@ def delete_quiz_result(db: Session, result_id: int) -> bool:
     return False
 
 
-def get_quiz_leaderboard(db: Session, quiz_id: int, limit: int = 10) -> List[dict]:
-    """Получение таблицы лидеров для квиза"""
-    results = db.query(
-        QuizResult,
-        User.nickname,
-        User.photo_profile
-    ).join(
-        User, QuizResult.user_id == User.id
-    ).filter(
-        QuizResult.quiz_id == quiz_id,
-        QuizResult.is_completed == True
-    ).order_by(
-        QuizResult.score.desc(),
-        QuizResult.completed_at.asc()
-    ).limit(limit).all()
+# def get_quiz_leaderboard(db: Session, quiz_id: int, limit: int = 10) -> List[dict]:
+#     """Получение таблицы лидеров для квиза"""
+#     results = db.query(
+#         QuizResult,
+#         User.nickname,
+#         User.photo_profile
+#     ).join(
+#         User, QuizResult.user_id == User.id
+#     ).filter(
+#         QuizResult.quiz_id == quiz_id,
+#         QuizResult.is_completed == True
+#     ).order_by(
+#         QuizResult.score.desc(),
+#         QuizResult.completed_at.asc()
+#     ).limit(limit).all()
+#
+#     leaderboard = []
+#     for result, nickname, photo in results:
+#         leaderboard.append({
+#             "user_id": result.user_id,
+#             "nickname": nickname,
+#             "photo_profile": photo,
+#             "score": result.score,
+#             "percentage": result.percentage,
+#             "completed_at": result.completed_at
+#         })
+#     return leaderboard
 
-    leaderboard = []
-    for result, nickname, photo in results:
-        leaderboard.append({
-            "user_id": result.user_id,
-            "nickname": nickname,
-            "photo_profile": photo,
-            "score": result.score,
-            "percentage": result.percentage,
-            "completed_at": result.completed_at
-        })
-    return leaderboard
 
-
-def save_user_answer(
-        db: Session,
-        quiz_result_id: int,
-        question_id: int,
-        answer_text: Optional[str] = None,
-        answer_id: Optional[int] = None,
-        time_spent_seconds: Optional[int] = None
-) -> UserAnswer:
-    """Сохранение ответа пользователя на вопрос"""
-    # Получаем вопрос и проверяем правильность
-    question = db.query(Question).filter(Question.id == question_id).first()
-    is_correct = False
-    points_earned = 0
-
-    if question.answer_type == schemas.AnswerType.TEXT:
-        # Для текстовых ответов нужно отдельное сравнение
-        # Здесь упрощенно - проверяем по answer_id если передан
-        if answer_id:
-            answer = db.query(Answer).filter(
-                Answer.id == answer_id,
-                Answer.is_correct == True
-            ).first()
-            is_correct = answer is not None
-    else:
-        # Для выбора вариантов
-        if answer_id:
-            answer = db.query(Answer).filter(Answer.id == answer_id).first()
-            if answer:
-                is_correct = answer.is_correct
-
-    if is_correct:
-        points_earned = question.points
-
-    db_answer = UserAnswer(
-        quiz_result_id=quiz_result_id,
-        question_id=question_id,
-        answer_text=answer_text,
-        answer_id=answer_id,
-        is_correct=is_correct,
-        points_earned=points_earned,
-        time_spent_seconds=time_spent_seconds
-    )
-    db.add(db_answer)
-    db.commit()
-    db.refresh(db_answer)
-    return db_answer
+# def save_user_answer(
+#         db: Session,
+#         quiz_result_id: int,
+#         question_id: int,
+#         answer_text: Optional[str] = None,
+#         answer_id: Optional[int] = None,
+#         time_spent_seconds: Optional[int] = None
+# ) -> UserAnswer:
+#     """Сохранение ответа пользователя на вопрос"""
+#     # Получаем вопрос и проверяем правильность
+#     question = db.query(Question).filter(Question.id == question_id).first()
+#     is_correct = False
+#     points_earned = 0
+#
+#     if question.answer_type == schemas.AnswerType.TEXT:
+#         # Для текстовых ответов нужно отдельное сравнение
+#         # Здесь упрощенно - проверяем по answer_id если передан
+#         if answer_id:
+#             answer = db.query(Answer).filter(
+#                 Answer.id == answer_id,
+#                 Answer.is_correct == True
+#             ).first()
+#             is_correct = answer is not None
+#     else:
+#         # Для выбора вариантов
+#         if answer_id:
+#             answer = db.query(Answer).filter(Answer.id == answer_id).first()
+#             if answer:
+#                 is_correct = answer.is_correct
+#
+#     if is_correct:
+#         points_earned = question.points
+#
+#     db_answer = UserAnswer(
+#         quiz_result_id=quiz_result_id,
+#         question_id=question_id,
+#         answer_text=answer_text,
+#         answer_id=answer_id,
+#         is_correct=is_correct,
+#         points_earned=points_earned,
+#         time_spent_seconds=time_spent_seconds
+#     )
+#     db.add(db_answer)
+#     db.commit()
+#     db.refresh(db_answer)
+#     return db_answer

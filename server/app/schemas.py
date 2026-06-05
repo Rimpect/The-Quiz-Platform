@@ -82,7 +82,7 @@ class UserBase(BaseModel):
     theme_site: ThemeMode = ThemeMode.LIGHT
     login: str = Field(..., min_length=3, max_length=50)
     email: str = Field(..., email=True)
-    role: Enum = Field(..., default=UserRole.USER)
+    role: str = Field(..., role=UserRole.USER)
 
 
 class UserCreate(UserBase) :

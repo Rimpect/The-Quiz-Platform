@@ -4,7 +4,6 @@ from typing import Optional, List, Type, Any, Dict
 from sqlalchemy.orm import Session, joinedload
 
 from .. import schemas
-from ..models import Quiz
 from ..models.model_question import Question as Quest
 from ..models.model_quiz import Quiz
 from ..models.model_answer import Answer
@@ -88,10 +87,10 @@ def get_quiz_categories(db: Session) -> List[str]:
     return [cat[0] for cat in categories]
 
 
-def create_quiz_bulk(
+def create_quiz_full(
         db: Session,
         quiz_data: schemas.QuizBulkCreate
-) -> Dict[str, Any] :
+) -> Dict[str, Any]:
     """
     Массовое создание квиза с вопросами и ответами
 
@@ -120,7 +119,7 @@ def create_quiz_bulk(
     answers_created = 0
 
     # 2. Создаем вопросы и ответы
-    for idx, q_data in enumerate(quiz_data.questions) :
+    for idx, q_data in enumerate(quiz_data.questions):
         # Создаем вопрос
         db_question = Quest(
             quiz_id=db_quiz.id,
@@ -136,7 +135,7 @@ def create_quiz_bulk(
         questions_created += 1
 
         # Создаем ответы для вопроса
-        for ans_idx, a_data in enumerate(q_data.answers) :
+        for ans_idx, a_data in enumerate(q_data.answers):
             db_answer = Answer(
                 question_id=db_question.id,
                 answer_text=a_data.answer_text,
@@ -158,8 +157,8 @@ def create_quiz_bulk(
     db.commit()
 
     return {
-        "quiz" : result,
-        "questions_created" : questions_created,
-        "answers_created" : answers_created,
-        "total_time_limit_minutes" : db_quiz.duration_minutes
+        "quiz": result,
+        "questions_created": questions_created,
+        "answers_created": answers_created,
+        "total_time_limit_minutes": db_quiz.duration_minutes
     }

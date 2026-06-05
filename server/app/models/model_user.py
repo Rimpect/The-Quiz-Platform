@@ -31,12 +31,14 @@ class User(Base):
     nickname = Column(String(50), nullable=False)  # Никнейм
     theme_site = Column(SQLEnum(ThemeMode), default=ThemeMode.LIGHT, nullable=False)  # Тема сайта
     photo_profile = Column(String(500), nullable=True)  # Фото профиля (путь к файлу)
-    #login = Column(String(50), unique=True, nullable=False, index=True)  # Логин
     email = Column(String(100), unique=True, nullable=False, index=True)  # Почта
     password_hash = Column(String(255), nullable=False)  # Пароль (хеш)
+
+    # Даты
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата регистрации
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)  # Дата изменения
-    role = Column(SQLEnum(UserRole), default=UserRole.USER, nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    role = Column(SQLEnum(UserRole), default=UserRole.USER, nullable=False) # Роль пользователя
 
     # Связи
     jwt_tokens = relationship("JWTToken", back_populates="user", cascade="all, delete-orphan")

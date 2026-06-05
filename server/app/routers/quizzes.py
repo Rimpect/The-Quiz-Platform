@@ -139,7 +139,7 @@ def create_quiz_bulk(
         ]
     }
     """
-    result = crud.quiz.create_quiz_bulk(db, quiz_data)
+    result = crud_quiz.create_quiz_full(db, quiz_data)
     return result
 
 

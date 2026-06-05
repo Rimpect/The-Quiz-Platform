@@ -16,11 +16,10 @@ class JWTToken(Base):
     """
     __tablename__ = "jwt_tokens"
 
-    # ========== Обязательные поля ==========
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("user.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
 
-    # Хеши токенов (никогда не храним сами токены!)
+    # Хеши токенов
     access_token_hash = Column(String(255), nullable=False, index=True)  # Хеш access токена
     refresh_token_hash = Column(String(255), nullable=False, unique=True, index=True)  # Хеш refresh токена
 
@@ -28,7 +27,7 @@ class JWTToken(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
-    # ========== Управление жизненным циклом ==========
+    # Время жизни токенов
     access_expires_at = Column(DateTime(timezone=True), nullable=False)  # Когда истекает access токен
     refresh_expires_at = Column(DateTime(timezone=True), nullable=False)  # Когда истекает refresh токен
 
@@ -38,20 +37,17 @@ class JWTToken(Base):
     revoked_at = Column(DateTime(timezone=True), nullable=True)  # Дата отзыва (общая для пары)
     revoked_reason = Column(String(200), nullable=True)  # Причина отзыва
 
-    # ========== Метаданные для безопасности ==========
-    user_agent = Column(String(500), nullable=True)  # Информация об устройстве/браузере
-    #ip_address = Column(String(45), nullable=True)  # IP адрес (поддерживает IPv6)
     last_used_at = Column(DateTime(timezone=True), nullable=True)  # Время последнего использования
 
     # ========== Связи ==========
     user = relationship("User", back_populates="jwt_tokens")
 
-    def __repr__(self) :
+    def __repr__(self):
         return f"<JWTToken id={self.id}, user_id={self.user_id}>"
 
     # ========== Свойства для удобства ==========
     @property
-    def is_access_valid(self) -> bool :
+    def is_access_valid(self) -> bool:
         """Проверка, действителен ли access токен"""
         now = datetime.now(self.access_expires_at.tzinfo) if self.access_expires_at else datetime.utcnow()
         return (
@@ -61,7 +57,7 @@ class JWTToken(Base):
         )
 
     @property
-    def is_refresh_valid(self) -> bool :
+    def is_refresh_valid(self) -> bool:
         """Проверка, действителен ли refresh токен"""
         now = datetime.now(self.refresh_expires_at.tzinfo) if self.refresh_expires_at else datetime.utcnow()
         return (
@@ -71,34 +67,34 @@ class JWTToken(Base):
         )
 
     @property
-    def is_fully_valid(self) -> bool :
+    def is_fully_valid(self) -> bool:
         """Проверка, действительны ли оба токена"""
         return self.is_access_valid and self.is_refresh_valid
 
     @property
-    def is_fully_revoked(self) -> bool :
+    def is_fully_revoked(self) -> bool:
         """Проверка, отозваны ли оба токена"""
         return self.is_access_revoked and self.is_refresh_revoked
 
-    def revoke_access(self, reason: str = "Revoked") -> None :
+    def revoke_access(self, reason: str = "Revoked") -> None:
         """Отзыв access токена"""
         self.is_access_revoked = True
         self.revoked_at = datetime.utcnow()
         self.revoked_reason = reason
 
-    def revoke_refresh(self, reason: str = "Revoked") -> None :
+    def revoke_refresh(self, reason: str = "Revoked") -> None:
         """Отзыв refresh токена"""
         self.is_refresh_revoked = True
         self.revoked_at = datetime.utcnow()
         self.revoked_reason = reason
 
-    def revoke_both(self, reason: str = "Both tokens revoked") -> None :
+    def revoke_both(self, reason: str = "Both tokens revoked") -> None:
         """Отзыв обоих токенов"""
         self.is_access_revoked = True
         self.is_refresh_revoked = True
         self.revoked_at = datetime.utcnow()
         self.revoked_reason: str = reason
 
-    def update_last_used(self) -> None :
+    def update_last_used(self) -> None:
         """Обновление времени последнего использования"""
         self.last_used_at = datetime.utcnow()
