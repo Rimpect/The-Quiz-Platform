@@ -90,7 +90,7 @@ export function LobbyTeams({ quiz }) {
       <div className={styles.header}>
         <h1>{quiz.title}</h1>
         <LobbyTimer
-          initialTime={180}
+          initialTime={30}
           onTimeEnd={() => alert('Время вышло! Да начнутся игры!')}
         />
       </div>

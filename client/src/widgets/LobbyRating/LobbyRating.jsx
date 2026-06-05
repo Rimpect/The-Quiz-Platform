@@ -60,8 +60,9 @@ export function LobbyRating({ quiz }) {
         <div>{quiz.title}</div>
         <div>Cоревновательный режим</div>
         <LobbyTimer
-          initialTime={120}
-          onTimeEnd={() => alert('Время вышло! Да начнутся игры!')}
+          initialTime={60}
+          onTimeEnd={() => console.log('Time ended!')}
+          variant="centered"
         />
       </div>
       <div className={styles.playersInfo}>
