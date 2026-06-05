@@ -1,13 +1,13 @@
 # ========== Таблица 2: Квиз ==========
+import enum
 from typing import Optional
 
-from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, ForeignKey, Float, Enum as SQLEnum
+from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, ForeignKey, Enum as SQLEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from .model_media import MediaEntity, MediaType
 from ..database.database import Base
-import enum
 
 
 class QuizMode(str, enum.Enum):
@@ -15,7 +15,7 @@ class QuizMode(str, enum.Enum):
     TEAM = "team"  # Командный режим
     COMPETITIVE = "competitive"  # соревновательный
 
-class Quiz(Base) :
+class Quiz(Base):
     __tablename__ = "quizzes"
 
     # Обязательные поля

@@ -32,8 +32,6 @@ class Question(Base) :
     # Связи
     answers = relationship("Answer", back_populates="question", cascade="all, delete-orphan")
 
-    # user_answers = relationship("UserAnswer", back_populates="questions", cascade="all, delete-orphan")
-
     @property
     def images(self) :
         """Изображения вопроса"""

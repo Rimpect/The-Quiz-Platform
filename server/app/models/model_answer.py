@@ -1,12 +1,10 @@
 # ==========  Таблица 5: Ответы ==========
-from sqlalchemy import Column, Integer, Text, Boolean, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, Text, Boolean, ForeignKey, func, DateTime
 from sqlalchemy.orm import relationship
-
-from .model_media import MediaEntity, MediaType
 from ..database.database import Base
 
 
-class Answer(Base) :
+class Answer(Base):
     __tablename__ = "answers"
 
     # Обязательные поля
@@ -18,6 +16,8 @@ class Answer(Base) :
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата создания
     updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)  # Дата изменения
 
+    # Связи
+    question = relationship("Question", back_populates="answers")
 
-    def __repr__(self) :
+    def __repr__(self):
         return f"<Answer {self.id}: {self.answer_text[:30]}>"
