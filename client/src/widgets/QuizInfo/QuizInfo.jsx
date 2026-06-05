@@ -39,7 +39,7 @@ export function QuizInfo({ quiz, onApprove, onReject, onView }) {
             </span>
             <Dot />
             <span className={styles.metaItem}>
-              Сложность:{' '}
+              Сложность:
               <Badge
                 variant={difficultyMap[quiz.difficulty] || 'medium'}
                 size="sm"

@@ -15,7 +15,6 @@ const ROUTES = {
   lobbyTeams: '/LobbyTeamsPage',
 }
 
-// Функции для путей с ID
 export const getQuizRoute = (id) => `${ROUTES.quiz}/${id}`
 export const getQuizDescriptionRoute = (id) => `${ROUTES.quizDescription}/${id}`
 export const getFinishQuizRoute = (id) => `${ROUTES.finishQuiz}/${id}`

@@ -9,7 +9,7 @@ export function AppGuard() {
   if (loading) return <div>Loading...</div>
 
   if (!isAuth) {
-    return <Navigate to={ROUTES.auth} replace />
+    return <Navigate to={ROUTES.notFound} replace />
   }
 
   return <Outlet />

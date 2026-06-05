@@ -1,5 +1,5 @@
 import { z } from 'zod'
-// Добавляем схему для пользователя (из базы данных)
+
 export const userSchema = z.object({
   id: z.union([z.number(), z.string()]),
   name: z.string().min(2, 'Минимум 2 символа'),
@@ -9,7 +9,6 @@ export const userSchema = z.object({
   createdAt: z.string().optional(),
 })
 
-// Вспомогательная функция для валидации пользователя
 export const validateUser = (data) => {
   const result = userSchema.safeParse(data)
   if (!result.success) {
