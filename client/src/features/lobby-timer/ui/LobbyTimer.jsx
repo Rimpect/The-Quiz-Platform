@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
+
 import { Clock } from 'lucide-react'
+
 import styles from './LobbyTimer.module.scss'
 
 export function LobbyTimer({ initialTime, onTimeEnd, variant = 'default' }) {
@@ -62,6 +64,8 @@ export function LobbyTimer({ initialTime, onTimeEnd, variant = 'default' }) {
     return (
       <div className={styles.timerCenteredContainer}>
         <div className={styles.timerCentered}>
+          {/* <Clock size={18} /> */}
+
           <div className={styles.timerTextCentered}>Начало через</div>
           <div
             className={styles.timerValueCentered}

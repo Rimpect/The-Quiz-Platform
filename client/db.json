@@ -60,7 +60,7 @@
   "quizzes": [
     {
       "id": "1",
-      "img": "/img/QuizCardTest/1.webp",
+      "img": "https://avatars.mds.yandex.net/i?id=37b0b6152e7d71a95da72d8612d20e33_l-8242815-images-thumbs&n=13",
       "title": "Основы JavaScript",
       "description": "Проверьте свои знания основ JavaScript: переменные, функции, циклы и основы ООП.",
       "difficulty": "Легкий",
@@ -77,7 +77,7 @@
     },
     {
       "id": "2",
-      "img": "/img/QuizCardTest/i2.webp",
+      "img": "https://travel-mania.org/uploads/Blog/tours-2.jpg",
       "title": "Путешествия по Европе",
       "description": "Проверьте свои знания географии: страны, столицы, достопримечательности и маршруты по Европе.",
       "difficulty": "Средний",
@@ -94,7 +94,7 @@
     },
     {
       "id": "3",
-      "img": "/img/QuizCardTest/1.webp",
+      "img": "https://images-cdn.onlinetestpad.net/bb/b3/fbdb6bcb47f3ac241b8fe114482b.jpg",
       "title": "Алгоритмы и структуры данных",
       "description": "Проверьте свои знания алгоритмов: сортировки, поисковые методы, структуры данных и оптимизация.",
       "difficulty": "Сложный",
@@ -111,7 +111,7 @@
     },
     {
       "id": "4",
-      "img": "/img/QuizCardTest/i2.webp",
+      "img": "https://static.tildacdn.com/tild6639-6239-4535-b964-663333363964/yFljTSEdkr4_.jpeg",
       "title": "Мировая история",
       "description": "Тест на знания ключевых событий мировой истории от древности до современности.",
       "difficulty": "Средний",
@@ -128,7 +128,7 @@
     },
     {
       "id": "5",
-      "img": "/img/QuizCardTest/1.webp",
+      "img": "https://avatars.mds.yandex.net/get-kinopoisk-image/10893610/22505d13-1885-443e-8b1e-c97b1298b247/384x384",
       "title": "Кино: золотой и современный",
       "description": "Тест на знания фильмов, режиссеров и культовых сцен из мировой кинематографии.",
       "difficulty": "Средний",
@@ -145,7 +145,7 @@
     },
     {
       "id": "6",
-      "img": "/img/QuizCardTest/i2.webp",
+      "img": "https://cf4.ppt-online.org/files4/slide/h/HcxkVUOelJ3E8KRv7fmQuba0jYqB61SXCDL2s4/slide-0.jpg",
       "title": "Музыкальный калейдоскоп",
       "description": "Определите жанры, исполнителей и хиты из разных эпох мировой музыки.",
       "difficulty": "Легкий",
@@ -162,7 +162,7 @@
     },
     {
       "id": "7",
-      "img": "/img/QuizCardTest/1.webp",
+      "img": "https://img.olympics.com/images/image/private/t_social_share_thumb/f_auto/primary/zbucnfm22b3atj9gghoc",
       "title": "Спорт: чемпионы и рекорды",
       "description": "Узнайте свои знания о победителях, рекордах и легендах мирового спорта.",
       "difficulty": "Средний",
@@ -179,7 +179,7 @@
     },
     {
       "id": "8",
-      "img": "/img/QuizCardTest/i2.webp",
+      "img": "https://avatars.mds.yandex.net/i?id=ee6601fb987baef6963038498b65c25b_l-5235433-images-thumbs&n=13",
       "title": "Загадки природы",
       "description": "Проверьте знания о растениях, животных, экосистемах и природных явлениях.",
       "difficulty": "Легкий",
@@ -196,7 +196,7 @@
     },
     {
       "id": "9",
-      "img": "/img/QuizCardTest/1.webp",
+      "img": "https://images.gastronom.ru/unwCV1JQ6M-Mr07cno6GAklDAd_1w10_uiBpdoREEsc/pr:article-cover-image/g:ce/rs:auto:0:0:0/L2Ntcy9hbGwtaW1hZ2VzLzUyN2JhZWIwLTY1YTUtNDljZC1hMzQxLTBkZDljN2U2NmMwMi5qcGc.webp",
       "title": "Еда и кулинария",
       "description": "Узнайте интересные факты о блюдах, ингредиентах и гастрономических традициях.",
       "difficulty": "Средний",
@@ -213,7 +213,7 @@
     },
     {
       "id": "10",
-      "img": "/img/QuizCardTest/i2.webp",
+      "img": "https://avatars.mds.yandex.net/get-sprav-products/17712810/2a0000019d09f509fbbceefc6a55befead17/M_height",
       "title": "Современные технологии",
       "description": "Тест о новых технологиях, стартапах и трендах цифровой индустрии.",
       "difficulty": "Сложный",
@@ -230,7 +230,7 @@
     },
     {
       "id": "11",
-      "img": "/img/QuizCardTest/1.webp",
+      "img": "https://trikky.ru/wp-content/blogs.dir/1/files/2018/03/Logika-dnk9vh5.jpg",
       "title": "Логические задачи",
       "description": "Проверьте способности логического мышления, решения головоломок и нестандартных задач.",
       "difficulty": "Сложный",
@@ -247,7 +247,7 @@
     },
     {
       "id": "12",
-      "img": "/img/QuizCardTest/i2.webp",
+      "img": "https://spbcult.ru/upload/iblock/dcf/huupof6d6xdo7xhi2zde1wzylh074p1v.jpg",
       "title": "Культурное наследие",
       "description": "Вопросы о традициях, музеях, литературе и художественных шедеврах мира.",
       "difficulty": "Средний",
@@ -264,7 +264,7 @@
     },
     {
       "id": "13",
-      "img": "/img/QuizCardTest/1.webp",
+      "img": "https://cf4.ppt-online.org/files4/slide/p/peQbXNrc9A4ZDLBkOCjqdTio2utg5WUmHhG7Pw/slide-0.jpg",
       "title": "История русского языка",
       "description": "Тест на знание развития русского языка, заимствований и литературных традиций.",
       "difficulty": "Средний",
@@ -281,7 +281,7 @@
     },
     {
       "id": "14",
-      "img": "/img/QuizCardTest/i2.webp",
+      "img": "https://dot.vtk-portal.ru/pluginfile.php/30233/course/overviewfiles/%D0%90%D1%81%D1%82%D1%80%D0%BE%D0%BD%D0%BE%D0%BC%D0%B8%D1%8F.jpg",
       "title": "Астрономия и космос",
       "description": "Проверка знаний о планетах, звездах, космических миссиях и физических законах.",
       "difficulty": "Сложный",
@@ -298,7 +298,7 @@
     },
     {
       "id": "15",
-      "img": "/img/QuizCardTest/1.webp",
+      "img": "https://www.hse.ru/data/2024/05/23/2126095409/1686de8d-4511-4ea4-abd1-8e215b20cc2f.jpg.(1000x1000x1).jpg",
       "title": "Искусственный интеллект",
       "description": "Вопросы о машинном обучении, нейросетях и применении ИИ в современных системах.",
       "difficulty": "Сложный",
@@ -315,7 +315,7 @@
     },
     {
       "id": "16",
-      "img": "/img/QuizCardTest/i2.webp",
+      "img": "https://api.rbsmi.ru/attachments/63874f86058a8646627f4aedcb6b9018c6083d2e/store/crop/0/0/1024/713/1600/0/0/fd2d3d761d664382281c44c069599777b186150aeeddb04c3d81fe55e69e/29c485e1491b790550ecde69785549c0.jpeg",
       "title": "Классическая литература",
       "description": "Тест на знания классических произведений, авторов и литературных эпох.",
       "difficulty": "Средний",
