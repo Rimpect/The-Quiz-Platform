@@ -46,3 +46,11 @@ export { JoinTeamButton } from './join-team'
 export { CreateTeamModal } from './create-team-modal'
 export { LeaveTeamButton } from './leave-team'
 export { LobbyTimer } from './lobby-timer'
+
+// фичи для Quiz
+export {
+  AntiCheatProvider,
+  useAntiCheatContext,
+  WarningModal,
+} from './anti-cheating'
+export { RulesModal } from './rules'

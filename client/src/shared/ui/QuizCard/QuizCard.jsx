@@ -1,5 +1,6 @@
 import { Badge } from '@shared'
 import { Users, Clock, Trophy } from 'lucide-react'
+
 import styles from './QuizCard.module.scss'
 
 export function QuizCard(props) {

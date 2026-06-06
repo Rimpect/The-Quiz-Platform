@@ -1,177 +1,28 @@
-// Quiz.jsx
-import React, { useState, useEffect } from 'react'
-
-import { useQuestions, useQuestionStore } from '@entities'
-import {
-  QuizTimer,
-  AnswerList,
-  QuizProgress,
-  QuizActions,
-  QuestionSection,
-  AnswerResult,
-  calculatePartialScore,
-  useAnswerSelection,
-  checkAnswer,
-} from '@features'
-import { ROUTES, getFinishQuizRoute } from '@shared'
-import { Link, useParams, useNavigate } from 'react-router-dom'
-
-import styles from './Quiz.module.scss'
+import React from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { AntiCheatProvider } from '@features/anti-cheating'
+import { QuizContent } from './QuizContent'
 
 export function Quiz() {
   const { id } = useParams()
-  const [currentQuestion, setCurrentQuestion] = useState(0)
-  const [isAnswered, setIsAnswered] = useState(false)
-  const [totalScore, setTotalScore] = useState(0)
-  const [correctCount, setCorrectCount] = useState(0)
-  const [isFinished, setIsFinished] = useState(false)
   const navigate = useNavigate()
-  const questions = useQuestions()
 
-  const fetchQuestions = useQuestionStore((state) => state.fetchQuestions)
-  const loading = useQuestionStore((state) => state.loading)
-  const error = useQuestionStore((state) => state.error)
-
-  const totalQuestions = questions.length
-
-  const currentQ = questions[currentQuestion]
-  const { selectedAnswers, toggleAnswer, resetAnswers } = useAnswerSelection(
-    currentQ?.questionType || 'single', // добавьте опциональный оператор
-  )
-  const currentScore = calculatePartialScore(
-    selectedAnswers,
-    currentQ?.correctAnswers || [],
-    currentQ?.points || 0,
-  )
-  const maxPossibleScore = questions.reduce((sum, q) => sum + q.points, 0)
-
-  useEffect(() => {
-    if (id) {
-      fetchQuestions(id)
-    }
-  }, [fetchQuestions, id])
-
-  if (loading) {
-    return <div>Загрузка...</div>
-  }
-
-  if (error) {
-    return <div>{error}</div>
-  }
-
-  if (!questions.length) {
-    return <div>Вопросы не найдены</div>
-  }
-
-  const handleTimeEnd = () => {
-    if (!isAnswered) {
-      handleSubmitAnswer()
-
-      setTimeout(() => {
-        handleNext()
-      }, 1000)
-
-      return
-    }
-
-    handleNext()
-  }
-  const handleSubmitAnswer = () => {
-    setIsAnswered(true)
-
-    const earnedPoints = currentScore
-    setTotalScore((prev) => prev + earnedPoints)
-    const isFullyCorrect = checkAnswer(selectedAnswers, currentQ.correctAnswers)
-    if (isFullyCorrect) {
-      setCorrectCount((prev) => prev + 1)
-    }
-  }
-
-  const handleNext = () => {
-    if (currentQuestion + 1 < totalQuestions) {
-      setCurrentQuestion((prev) => prev + 1)
-      resetAnswers()
-      setIsAnswered(false)
-    } else {
-      setIsFinished(true)
-    }
-  }
-
-  if (isFinished) {
-    const percentScore = Math.round((totalScore / maxPossibleScore) * 100)
-    // ✅ ПРАВИЛЬНО
-    navigate(getFinishQuizRoute(id), {
-      state: {
-        quizTitle: currentQ.category,
-        maxPossibleScore,
-        percentScore,
-        correctCount,
-        totalQuestions,
-      },
-    })
-    return null
+  const handleDecline = () => {
+    navigate(-1)
   }
 
   return (
-    <div className={styles.quizContainer}>
-      <div className={styles.quizHeader}>
-        <div className={styles.quizInfo}>
-          <Link to={ROUTES.main} className={styles.quizId}>
-            Выход
-          </Link>
-
-          <div className={styles.quizCategory}>
-            {currentQ.category || 'Общий'}
-          </div>
-        </div>
-
-        <QuizTimer
-          key={currentQuestion}
-          duration={10}
-          // warningSound={warningSound}
-          onTimeEnd={handleTimeEnd}
-        />
-      </div>
-      <QuizProgress
-        currentQuestion={currentQuestion}
-        totalQuestions={totalQuestions}
-        totalScore={totalScore}
-        maxPossibleScore={maxPossibleScore}
-      />
-
-      <div className={styles.questionContainer}>
-        <QuestionSection question={currentQ} />
-
-        <AnswerList
-          options={currentQ.options}
-          selectedAnswers={selectedAnswers}
-          correctAnswers={currentQ.correctAnswers}
-          questionType={currentQ.questionType}
-          isAnswered={isAnswered}
-          onSelect={toggleAnswer}
-        />
-        <AnswerResult
-          isAnswered={isAnswered}
-          score={currentScore}
-          points={currentQ.points}
-        />
-      </div>
-
-      <QuizActions
-        isAnswered={isAnswered}
-        selectedAnswers={selectedAnswers}
-        isLastQuestion={currentQuestion + 1 === totalQuestions}
-        onSubmit={handleSubmitAnswer}
-        onNext={handleNext}
-      />
-
-      <div className={styles.leaderboardPreview}>
-        <h3>Таблица лидеров</h3>
-        <p>Места участников в данный момент</p>
-        <div className={styles.leaderboardPlaceholder}>
-          {/* Здесь будет таблица лидеров */}
-        </div>
-      </div>
-    </div>
+    <AntiCheatProvider
+      quizId={id}
+      onDecline={handleDecline}
+      config={{
+        maxWarnings: 3,
+        autoSubmitOnViolation: false,
+        blockCopyPaste: true,
+        blockDevTools: true,
+      }}
+    >
+      <QuizContent quizId={id} />
+    </AntiCheatProvider>
   )
 }
