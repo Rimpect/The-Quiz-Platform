@@ -10,7 +10,7 @@ from ..utils.security import get_current_user
 router = APIRouter(prefix="/quizzes", tags=["quizzes"])
 
 
-@router.post("/", response_model=schemas.Quiz, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=schemas.QuizBase, status_code=status.HTTP_201_CREATED)
 def create_quiz(
         quiz: schemas.QuizCreate,
         db: Session = Depends(get_db),
@@ -20,7 +20,7 @@ def create_quiz(
     return crud_quiz.create_quiz(db=db, quiz=quiz)
 
 
-@router.get("/", response_model=List[schemas.Quiz])
+@router.get("/", response_model=List[schemas.QuizBase])
 def read_quizzes(
         skip: int = 0,
         limit: int = 100,
@@ -39,7 +39,7 @@ def get_categories(db: Session = Depends(get_db)) :
     return {"categories" : crud_quiz.get_quiz_categories(db)}
 
 
-@router.get("/{quiz_id}", response_model=schemas.Quiz)
+@router.get("/{quiz_id}", response_model=schemas.QuizBase)
 def read_quiz(quiz_id: int, db: Session = Depends(get_db)) :
     """Получение квиза по ID"""
     db_quiz = crud_quiz.get_quiz(db, quiz_id)
@@ -57,7 +57,7 @@ def read_quiz_full(quiz_id: int, db: Session = Depends(get_db)) :
     return db_quiz
 
 
-@router.put("/{quiz_id}", response_model=schemas.Quiz)
+@router.put("/{quiz_id}", response_model=schemas.QuizBase)
 def update_quiz(
         quiz_id: int,
         quiz_update: schemas.QuizUpdate,

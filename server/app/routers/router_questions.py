@@ -10,7 +10,7 @@ from ..utils.security import get_current_user
 router = APIRouter(prefix="/quizzes/{quiz_id}/questions", tags=["questions"])
 
 
-@router.post("/", response_model=schemas.Question, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=schemas.QuestionBase, status_code=status.HTTP_201_CREATED)
 def create_question(
         quiz_id: int,
         question: schemas.QuestionCreate,
@@ -24,7 +24,7 @@ def create_question(
     return crud_question.create_question(db, question, quiz_id)
 
 
-@router.get("/", response_model=List[schemas.Question])
+@router.get("/", response_model=List[schemas.QuestionBase])
 def read_questions(
         quiz_id: int,
         skip: int = 0,
@@ -35,7 +35,7 @@ def read_questions(
     return crud_question.get_questions_by_quiz(db, quiz_id, skip, limit)
 
 
-@router.get("/{question_id}", response_model=schemas.Question)
+@router.get("/{question_id}", response_model=schemas.QuestionBase)
 def read_question(
         quiz_id: int,
         question_id: int,
@@ -48,7 +48,7 @@ def read_question(
     return question
 
 
-@router.put("/{question_id}", response_model=schemas.Question)
+@router.put("/{question_id}", response_model=schemas.QuestionBase)
 def update_question(
         quiz_id: int,
         question_id: int,

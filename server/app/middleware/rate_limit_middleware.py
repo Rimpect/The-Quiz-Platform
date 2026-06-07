@@ -1,4 +1,6 @@
-import time
+"""
+Middleware для ограничения частоты запросов (Rate Limiting)
+"""
 from fastapi import Request, HTTPException, status
 from starlette.middleware.base import BaseHTTPMiddleware
 from collections import defaultdict
@@ -6,13 +8,14 @@ from datetime import datetime, timedelta
 import os
 
 # Настройки из .env
-RATE_LIMIT_REQUESTS = int(os.getenv("RATE_LIMIT_REQUESTS", 100))
-RATE_LIMIT_PERIOD = int(os.getenv("RATE_LIMIT_PERIOD", 60))
+RATE_LIMIT_REQUESTS = int(os.getenv("RATE_LIMIT_REQUESTS"))
+RATE_LIMIT_PERIOD = int(os.getenv("RATE_LIMIT_PERIOD"))
 
 
 class RateLimitMiddleware(BaseHTTPMiddleware) :
     """
-    Простой middleware для ограничения количества запросов
+    Middleware для ограничения количества запросов
+    Простая реализация с хранением в памяти
     Для production рекомендуется использовать Redis
     """
 
@@ -41,25 +44,5 @@ class RateLimitMiddleware(BaseHTTPMiddleware) :
         # Добавляем текущий запрос
         self.requests[client_ip].append(now)
 
-        response = await call_next(request)
-        return response
-
-
-class SlowAPIRateLimitMiddleware(BaseHTTPMiddleware) :
-    """
-    Более продвинутый middleware с использованием SlowAPI
-    Требует установки: pip install slowapi
-    """
-
-    def __init__(self, app) :
-        super().__init__(app)
-        from slowapi import Limiter, _rate_limit_exceeded_handler
-        from slowapi.util import get_remote_address
-
-        self.limiter = Limiter(key_func=get_remote_address)
-        app.state.limiter = self.limiter
-        app.add_exception_handler(429, _rate_limit_exceeded_handler)
-
-    async def dispatch(self, request: Request, call_next) :
         response = await call_next(request)
         return response

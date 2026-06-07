@@ -78,3 +78,6 @@ def get_my_statistics(
 ) :
     """Получение статистики текущего пользователя"""
     return crud_user.get_user_statistics(db, current_user.id)
+
+
+

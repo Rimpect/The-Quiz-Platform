@@ -1,33 +1,59 @@
+"""
+Middleware для глобальной обработки ошибок
+"""
 import traceback
 import logging
-from fastapi import Request, HTTPException, status
+from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from typing import Union
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
 
-class ErrorHandlerMiddleware(BaseHTTPMiddleware) :
+class ErrorHandlerMiddleware(BaseHTTPMiddleware):
     """Middleware для глобальной обработки ошибок"""
 
-    async def dispatch(self, request: Request, call_next) :
-        try :
+    async def dispatch(self, request: Request, call_next):
+        try:
             response = await call_next(request)
             return response
 
-        except HTTPException as http_exc :
+        except HTTPException as http_exc:
             # HTTP исключения (400, 401, 403, 404 и т.д.)
             logger.warning(
                 f"HTTP Exception: {http_exc.status_code} - {http_exc.detail} "
                 f"Path: {request.url.path}"
             )
+
+            # Форматируем ответ
+            if http_exc.status_code == 401:
+                status = "unauthorized"
+                access_status = "missing"
+            elif http_exc.status_code == 403:
+                status = "forbidden"
+                access_status = "denied"
+            elif http_exc.status_code == 404:
+                status = "not_found"
+                access_status = "granted"
+            else:
+                status = "error"
+                access_status = "denied"
+
             return JSONResponse(
                 status_code=http_exc.status_code,
-                content={"detail" : http_exc.detail}
+                content={
+                    "status_code": http_exc.status_code,
+                    "status": status,
+                    "access_status": access_status,
+                    "message": str(http_exc.detail),
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "data": None,
+                    "errors": None
+                }
             )
 
-        except Exception as exc :
+        except Exception as exc:
             # Необработанные исключения (500)
             error_id = str(hash(request))[:8]
             logger.error(
@@ -36,27 +62,18 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware) :
             )
 
             return JSONResponse(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status_code=500,
                 content={
-                    "detail" : "Internal server error",
-                    "error_id" : error_id
+                    "status_code": 500,
+                    "status": "error",
+                    "access_status": "denied",
+                    "message": "Internal server error",
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "data": None,
+                    "errors": {
+                        "error_id": error_id,
+                        "detail": str(exc) if logger.level == logging.DEBUG else None
+                    }
                 }
             )
-
-
-class ValidationErrorMiddleware(BaseHTTPMiddleware) :
-    """Middleware для обработки ошибок валидации Pydantic"""
-
-    async def dispatch(self, request: Request, call_next) :
-        from pydantic import ValidationError
-
-        try :
-            response = await call_next(request)
-            return response
-
-        except ValidationError as exc :
-            logger.warning(f"Validation error: {exc.errors()}")
-            return JSONResponse(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                content={"detail" : exc.errors()}
-            )
+        

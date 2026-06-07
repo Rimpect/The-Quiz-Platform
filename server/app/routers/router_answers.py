@@ -10,7 +10,7 @@ from ..utils.security import get_current_user
 router = APIRouter(prefix="/questions/{question_id}/answers", tags=["answers"])
 
 
-@router.post("/", response_model=schemas.Answer, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=schemas.AnswerBase, status_code=status.HTTP_201_CREATED)
 def create_answer(
         question_id: int,
         answer: schemas.AnswerCreate,
@@ -23,7 +23,7 @@ def create_answer(
     return answer.create_answer(db, answer, question_id)
 
 
-@router.post("/bulk", response_model=List[schemas.Answer], status_code=status.HTTP_201_CREATED)
+@router.post("/bulk", response_model=List[schemas.AnswerBase], status_code=status.HTTP_201_CREATED)
 def create_answers_bulk(
         question_id: int,
         answers: List[schemas.AnswerCreate],
@@ -36,7 +36,7 @@ def create_answers_bulk(
     return crud_answer.create_answers_bulk(db, answers, question_id)
 
 
-@router.get("/", response_model=List[schemas.Answer])
+@router.get("/", response_model=List[schemas.AnswerBase])
 def read_answers(
         question_id: int,
         db: Session = Depends(get_db)
@@ -45,7 +45,7 @@ def read_answers(
     return crud_answer.get_answers_by_question(db, question_id)
 
 
-@router.get("/{answer_id}", response_model=schemas.Answer)
+@router.get("/{answer_id}", response_model=schemas.AnswerBase)
 def read_answer(
         question_id: int,
         answer_id: int,
@@ -58,7 +58,7 @@ def read_answer(
     return answer_id
 
 
-@router.put("/{answer_id}", response_model=schemas.Answer)
+@router.put("/{answer_id}", response_model=schemas.AnswerBase)
 def update_answer(
         question_id: int,
         answer_id: int,

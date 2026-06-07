@@ -1,28 +1,30 @@
-import os
+"""
+Модуль безопасности: JWT токены, хеширование паролей, аутентификация
+"""
+from passlib.context import CryptContext
+from jose import JWTError, jwt
 from datetime import datetime, timedelta
+from fastapi import Depends, HTTPException, status, Request
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
 from typing import Optional, Dict, Any
 
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jose import JWTError, jwt
-from passlib.context import CryptContext
-from sqlalchemy.orm import Session
-
-from ..crud import crud_user as crud_user
 from ..database.database import get_db
+from ..crud import crud_user as user_crud
+from ..crud import crud_guest as guest_crud
 from .. import schemas
 
-# Конфигурация
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES: Optional[str] = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
-REFRESH_TOKEN_EXPIRE_DAYS = os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")
-
-pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
-security = HTTPBearer()
-
+# ========== Конфигурация ==========
+SECRET_KEY = "your-secret-key-change-in-production"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 # ========== Хеширование паролей ==========
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+security = HTTPBearer(auto_error=False)
+
+
 def verify_password(plain_password: str, hashed_password: str) -> bool :
     """Проверка пароля"""
     return pwd_context.verify(plain_password, hashed_password)
@@ -35,84 +37,96 @@ def get_password_hash(password: str) -> str :
 
 # ========== Создание токенов ==========
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str :
-    """
-    Создание access токена
-
-    Args:
-        data: Данные для включения в токен (обычно {"sub": user_id})
-        expires_delta: Время жизни токена (по умолчанию ACCESS_TOKEN_EXPIRE_MINUTES)
-
-    Returns:
-        JWT токен
-    """
+    """Создание access токена"""
     to_encode = data.copy()
-
     if expires_delta :
         expire = datetime.utcnow() + expires_delta
     else :
         expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-
-    to_encode.update({
-        "exp" : expire,
-        "type" : "access",
-        "iat" : datetime.utcnow()  # issued at - время создания
-    })
-
+    to_encode.update({"exp" : expire, "type" : "access"})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
 def create_refresh_token(data: dict) -> str :
-    """
-    Создание refresh токена
-
-    Args:
-        data: Данные для включения в токен (обычно {"sub": user_id})
-
-    Returns:
-        JWT токен
-    """
+    """Создание refresh токена"""
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+    to_encode.update({"exp" : expire, "type" : "refresh"})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-    to_encode.update({
-        "exp" : expire,
-        "type" : "refresh",
-        "iat" : datetime.utcnow()
-    })
 
+def create_guest_access_token(session_id: str, expires_hours: int = 24) -> str :
+    """Создание access токена для гостя"""
+    to_encode = {
+        "sub" : session_id,
+        "type" : "access",
+        "is_guest" : True,
+        "exp" : datetime.utcnow() + timedelta(hours=expires_hours)
+    }
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
 # ========== Проверка токенов ==========
-def verify_access_token(token: str) -> Optional[Dict[str, Any]] :
+def verify_access_token(token: str, db: Session = None) -> Dict[str, Any] :
     """
-    Проверка access токена
+    Проверка access токена с детальным статусом
+    """
+    result = {
+        "status" : "invalid",
+        "error_message" : None,
+        "user_id" : None,
+        "is_guest" : False,
+        "guest_id" : None,
+        "payload" : None,
+        "expires_at" : None
+    }
 
-    Returns:
-        payload если токен валиден, иначе None
-    """
+    if not token :
+        result["error_message"] = "Token is missing"
+        return result
+
     try :
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
-        # Проверяем тип токена
         if payload.get("type") != "access" :
-            return None
+            result["error_message"] = "Invalid token type"
+            return result
 
-        # Проверяем, не отозван ли токен (blacklist)
-        if is_token_blacklisted(token) :
-            return None
+        exp = payload.get("exp")
+        if exp :
+            result["expires_at"] = datetime.fromtimestamp(exp)
+            if datetime.utcnow() > result["expires_at"] :
+                result["status"] = "expired"
+                result["error_message"] = "Token has expired"
+                return result
 
-        return payload
-    except JWTError :
-        return None
+        result["status"] = "valid"
+        result["payload"] = payload
+        result["is_guest"] = payload.get("is_guest", False)
+
+        if result["is_guest"] :
+            result["guest_id"] = payload.get("sub")
+        else :
+            result["user_id"] = int(payload.get("sub"))
+
+    except jwt.ExpiredSignatureError :
+        result["status"] = "expired"
+        result["error_message"] = "Token has expired"
+    except jwt.JWTError as e :
+        result["error_message"] = f"Invalid token: {str(e)}"
+
+    return result
 
 
 def verify_refresh_token(token: str) -> Optional[Dict[str, Any]] :
     """
     Проверка refresh токена
 
+    Args:
+        token: Refresh JWT токен
+
     Returns:
-        payload если токен валиден, иначе None
+        Dict с payload если токен валиден, иначе None
     """
     try :
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -121,163 +135,115 @@ def verify_refresh_token(token: str) -> Optional[Dict[str, Any]] :
         if payload.get("type") != "refresh" :
             return None
 
+        # Проверяем срок действия
+        exp = payload.get("exp")
+        if exp and datetime.utcnow() > datetime.fromtimestamp(exp) :
+            return None
+
         return payload
-    except JWTError :
+
+    except jwt.ExpiredSignatureError :
+        return None
+    except jwt.JWTError :
         return None
 
 
-# ========== Blacklist для access токенов ==========
-def add_token_to_blacklist(token: str, expires_in: int) -> bool :
-    """
-    Добавление access токена в черный список
-
-    Args:
-        token: JWT токен
-        expires_in: Время жизни токена в секундах (до автоматического удаления)
-
-    Returns:
-        True если успешно добавлен
-    """
-    try :
-        # Вариант 1: Использование Redis (рекомендуется для production)
-        # redis_client.setex(f"blacklist:{token}", expires_in, "revoked")
-
-        # Вариант 2: Использование БД (создайте таблицу TokenBlacklist)
-        # db_token_blacklist = TokenBlacklist(token=token, expires_at=datetime.utcnow() + timedelta(seconds=expires_in))
-        # db.add(db_token_blacklist)
-        # db.commit()
-
-        # Вариант 3: Временное решение - сохраняем в словаре (только для разработки, не для production!)
-        # В production используйте Redis или БД
-        return True
-    except Exception :
-        return False
-
-
-def is_token_blacklisted(token: str) -> bool :
-    """
-    Проверка, находится ли токен в черном списке
-    """
-    # Вариант 1: Redis
-    # return redis_client.exists(f"blacklist:{token}") > 0
-
-    # Вариант 2: БД
-    # return db.query(TokenBlacklist).filter(TokenBlacklist.token == token).first() is not None
-
-    # Вариант 3: Словарь (только для разработки)
-    return False
-
-
 # ========== Получение текущего пользователя ==========
-async def get_current_user(
+def get_current_user(
         credentials: HTTPAuthorizationCredentials = Depends(security),
         db: Session = Depends(get_db)
-) -> schemas.User :
-    """
-    Получение текущего пользователя из access токена
+) -> schemas.UserResponse :
+    """Получение текущего пользователя (только зарегистрированные)"""
+    if not credentials :
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated"
+        )
 
-    Используется для защиты эндпоинтов: 
-    current_user: User = Depends(get_current_user)
-    """
     token = credentials.credentials
+    verification = verify_access_token(token, db)
 
-    # Проверяем токен
-    payload = verify_access_token(token)
-    if not payload :
+    if verification["status"] != "valid" :
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired access token",
-            headers={"WWW-Authenticate" : "Bearer"},
+            detail=verification["error_message"]
         )
 
-    # Получаем user_id из токена
-    user_id: str = payload.get("sub")
-    if not user_id :
+    if verification["is_guest"] :
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token payload",
-            headers={"WWW-Authenticate" : "Bearer"},
+            detail="Guest users cannot access this resource"
         )
 
-    # Получаем пользователя из БД
-    user = crud_user.get_user(db, int(user_id))
+    user = user_crud.get_user(db, verification["user_id"])
     if not user :
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="User not found",
-            headers={"WWW-Authenticate" : "Bearer"},
-        )
-
-    # Проверяем активность пользователя
-    if not user.is_active :
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User account is disabled"
+            detail="User not found"
         )
 
     return user
 
 
-async def get_current_active_user(
-        current_user: schemas.User = Depends(get_current_user)
-) -> schemas.User :
-    """
-    Получение активного пользователя (проверяет is_active)
-    """
-    if not current_user.is_active :
+def get_current_guest(
+        credentials: HTTPAuthorizationCredentials = Depends(security),
+        db: Session = Depends(get_db)
+) :
+    """Получение текущего гостя"""
+    if not credentials :
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User account is disabled"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated"
         )
-    return current_user
 
+    token = credentials.credentials
+    verification = verify_access_token(token, db)
 
-async def get_current_admin_user(
-        current_user: schemas.User = Depends(get_current_user)
-) -> schemas.User :
-    """
-    Получение администратора (проверяет роль admin)
-    """
-    if current_user.role != "admin" :
+    if verification["status"] != "valid" :
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Admin privileges required"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=verification["error_message"]
         )
-    return current_user
+
+    if not verification["is_guest"] :
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="This endpoint is for guests only"
+        )
+
+    guest = guest_crud.get_guest_by_session(db, verification["guest_id"])
+    if not guest :
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Guest session not found"
+        )
+
+    if guest.expires_at < datetime.utcnow() :
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Guest session has expired"
+        )
+
+    return guest
 
 
-# ========== Проверка прав доступа ==========
-def require_roles(*allowed_roles: str) :
-    """
-    Декоратор для проверки ролей пользователя
+def get_current_user_or_guest_optional(
+        request: Request,
+        db: Session = Depends(get_db)
+) :
+    """Получение текущего пользователя или гостя (опционально)"""
+    auth_header = request.headers.get("Authorization")
 
-    Использование:
-    @router.get("/admin-only")
-    @require_roles("admin")
-    def admin_endpoint(current_user: User = Depends(get_current_user)):
-        ...
-    """
+    if not auth_header or not auth_header.startswith("Bearer ") :
+        return None
 
-    def role_checker(current_user: schemas.User = Depends(get_current_user)) :
-        if current_user.role not in allowed_roles :
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Role {current_user.role} not allowed. Required: {allowed_roles}"
-            )
-        return current_user
+    token = auth_header.split(" ")[1]
+    verification = verify_access_token(token, db)
 
-    return role_checker
+    if verification["status"] != "valid" :
+        return None
 
-
-def check_resource_ownership(resource_user_id: int, current_user: schemas.User) -> bool :
-    """
-    Проверка, является ли пользователь владельцем ресурса
-
-    Args:
-        resource_user_id: ID пользователя, которому принадлежит ресурс
-        current_user: Текущий пользователь
-
-    Returns:
-        True если пользователь владелец или администратор
-    """
-    return current_user.id == resource_user_id or current_user.role == "admin"
+    if verification["is_guest"] :
+        return guest_crud.get_guest_by_session(db, verification["guest_id"])
+    else :
+        return user_crud.get_user(db, verification["user_id"])

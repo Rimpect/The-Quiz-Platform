@@ -10,7 +10,7 @@ from ..utils.security import get_current_user
 router = APIRouter(prefix="/quiz-results", tags=["quiz_results"])
 
 
-@router.post("/", response_model=schemas.QuizResult, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=schemas.QuizResultBase, status_code=status.HTTP_201_CREATED)
 def start_quiz(
         quiz_id: int,
         db: Session = Depends(get_db),
@@ -23,7 +23,7 @@ def start_quiz(
     return crud_quiz_results.create_quiz_result(db, current_user.id, quiz_id)
 
 
-@router.get("/me", response_model=List[schemas.QuizResult])
+@router.get("/me", response_model=List[schemas.QuizResultBase])
 def get_my_results(
         skip: int = 0,
         limit: int = 100,
@@ -34,7 +34,7 @@ def get_my_results(
     return crud_quiz_results.get_user_quiz_results(db, current_user.id, skip, limit)
 
 
-@router.get("/{result_id}", response_model=schemas.QuizResult)
+@router.get("/{result_id}", response_model=schemas.QuizResultBase)
 def get_quiz_result(
         result_id: int,
         db: Session = Depends(get_db),
@@ -49,7 +49,7 @@ def get_quiz_result(
     return result
 
 
-@router.post("/{result_id}/complete", response_model=schemas.QuizResult)
+@router.post("/{result_id}/complete", response_model=schemas.QuizResultBase)
 def complete_quiz(
         result_id: int,
         db: Session = Depends(get_db),

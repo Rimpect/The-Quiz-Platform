@@ -1,24 +1,50 @@
+"""
+Главный файл приложения FastAPI
+Содержит настройки CORS, middleware, lifespan, роутеры
+"""
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import os
 import logging
+import asyncio
 
-from .database.database import engine, Base
-from .routers import (auth_router, users_router, quizzes_router,
-                      questions_router, answers_router, quiz_results_router, media_router)
+# База данных
+from .database.database import engine, Base, close_db_connections, get_db
+from .config_redis.redis_config import get_redis, redis_pool
 
+# Сервисы
+from .config_redis.redis_service import cleanup_expired_sessions
 
-from .middleware.logging_middleware import LoggingMiddleware, RequestIDMiddleware
+# CRUD
+from .crud import crud_guest as guest_crud
+
+# Middleware
+from .middleware.logging_middleware import LoggingMiddleware
 from .middleware.rate_limit_middleware import RateLimitMiddleware
-from .middleware.error_handler_middleware import ErrorHandlerMiddleware, ValidationErrorMiddleware
-from .middleware.cors_middleware import setup_cors_middleware
+from .middleware.response_middleware import ResponseFormatterMiddleware
+from .middleware.error_handler_middleware import ErrorHandlerMiddleware
+
+# Роутеры
+from .routers import (
+    auth_router,
+    users_router,
+    guest_router,
+    quizzes_router,
+    categories_router,
+    questions_router,
+    answers_router,
+    quiz_results_router,
+    quiz_session_router,
+    lobby_router,
+    media_router
+)
 
 # Настройка логирования
 logging.basicConfig(
     level=logging.INFO,
-    format='%(pastime)s - %(name)s - %(levelness)s - %(message)s',
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler("logs/app.log"),
         logging.StreamHandler()
@@ -28,89 +54,238 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# ========== LIFESPAN (управление жизненным циклом) ==========
 @asynccontextmanager
-async def lifespan(app: FastAPI) :
-    """Управление жизненным циклом приложения"""
-    # Startup
-    logger.info("Starting up...")
+async def lifespan(app: FastAPI):
+    """
+    Управление жизненным циклом приложения
+    Startup: инициализация БД, Redis, создание таблиц
+    Shutdown: закрытие соединений
+    """
+    # ========== STARTUP ==========
+    logger.info("=" * 50)
+    logger.info("STARTING UP APPLICATION")
+    logger.info("=" * 50)
 
-    # Создаем таблицы в БД
-    Base.metadata.create_all(bind=engine)
-    logger.info("Database tables created")
+    try:
+        # 1. Создание таблиц PostgreSQL
+        logger.info("Creating database tables...")
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables created")
 
-    # Создаем директории для медиа
-    os.makedirs("media_files", exist_ok=True)
-    os.makedirs("logs", exist_ok=True)
-    logger.info("Media and logs directories created")
+        # 2. Проверка подключения к PostgreSQL
+        try:
+            with engine.connect() as conn:
+                conn.execute("SELECT 1")
+            logger.info("PostgreSQL connection established")
+        except Exception as e:
+            logger.error(f"PostgreSQL connection failed: {e}")
 
-    yield
+        # 3. Проверка подключения к Redis
+        try:
+            redis_client = get_redis()
+            redis_client.ping()
+            logger.info("Redis connection established")
+        except Exception as e:
+            logger.error(f"Redis connection failed: {e}")
 
-    # Shutdown
-    logger.info("Shutting down...")
+        # 4. Создание директорий
+        os.makedirs("media_files", exist_ok=True)
+        os.makedirs("logs", exist_ok=True)
+        logger.info("Media and logs directories created")
+
+        # 5. Фоновая задача для очистки устаревших данных
+        async def background_cleanup():
+            """Периодическая очистка устаревших данных"""
+            while True:
+                await asyncio.sleep(3600)  # Каждый час
+                try:
+                    # Очистка истекших гостей
+                    db = next(get_db())
+                    try:
+                        deleted_guests = guest_crud.delete_expired_guests(db)
+                        if deleted_guests:
+                            logger.info(f"Cleaned up {deleted_guests} expired guests")
+                    finally:
+                        db.close()
+
+                    # Очистка истекших сессий в Redis
+                    deleted_redis = cleanup_expired_sessions()
+                    if deleted_redis:
+                        logger.info(f"Cleaned up {deleted_redis} expired Redis sessions")
+
+                except Exception as e:
+                    logger.error(f"Background cleanup error: {e}")
+
+        # Запуск фоновой задачи
+        asyncio.create_task(background_cleanup())
+        logger.info("Background cleanup task started")
+
+    except Exception as e:
+        logger.error(f"Startup failed: {e}")
+        raise
+
+    logger.info("=" * 50)
+    logger.info("APPLICATION STARTED SUCCESSFULLY")
+    logger.info("=" * 50)
+
+    yield  # Приложение работает
+
+    # ========== SHUTDOWN ==========
+    logger.info("=" * 50)
+    logger.info("SHUTTING DOWN APPLICATION")
+    logger.info("=" * 50)
+
+    try:
+        # 1. Закрытие PostgreSQL соединений
+        close_db_connections()
+        logger.info("PostgreSQL connections closed")
+
+        # 2. Закрытие Redis соединений
+        redis_pool.disconnect()
+        logger.info("Redis connections closed")
+
+    except Exception as e:
+        logger.error(f"Shutdown error: {e}")
+
+    logger.info("Application shutdown complete")
+    logger.info("=" * 50)
 
 
-# Создаем приложение
+# ========== СОЗДАНИЕ ПРИЛОЖЕНИЯ ==========
 app = FastAPI(
     title="Quiz API",
-    description="API для системы квизов с полной поддержкой медиа",
-    version="0.1.0",
+    description="API для системы квизов с поддержкой Redis, гостей и приватных лобби",
+    version="3.0.0",
     lifespan=lifespan,
     docs_url="/api/docs",
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json"
 )
 
+# ========== CORS НАСТРОЙКИ (должны быть первыми) ==========
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5173",
+        "*"  # Для разработки, в production заменить на конкретные домены
+    ],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allow_headers=[
+        "Authorization",
+        "Content-Type",
+        "Accept",
+        "Origin",
+        "X-Requested-With"
+    ],
+    expose_headers=["X-Request-ID", "X-Process-Time"],
+    max_age=3600  # Кэширование preflight запросов на 1 час
+)
 
-#setup_cors_middleware(app)
+# ========== ПОДКЛЮЧЕНИЕ MIDDLEWARE (порядок важен!) ==========
 
-#pp.add_middleware(RequestIDMiddleware)
+# 1. Response Formatter (форматирует все ответы в единый шаблон)
+app.add_middleware(ResponseFormatterMiddleware)
 
-#app.add_middleware(LoggingMiddleware)
+# 2. Logging (логирует все запросы)
+app.add_middleware(LoggingMiddleware)
 
-#app.add_middleware(RateLimitMiddleware)
+# 3. Rate Limit (ограничивает количество запросов)
+app.add_middleware(RateLimitMiddleware)
 
-#app.add_middleware(ErrorHandlerMiddleware)
+# 4. Error Handler (должен быть последним, перехватывает все ошибки)
+app.add_middleware(ErrorHandlerMiddleware)
 
-#app.add_middleware(ValidationErrorMiddleware)
-
-# ========== Статические файлы ==========
-if not os.path.exists("media_files"):
-    os.makedirs("media_files")
+# ========== СТАТИЧЕСКИЕ ФАЙЛЫ ==========
 app.mount("/media", StaticFiles(directory="media_files"), name="media")
 
-# ========== Роутеры ==========
+# ========== ПОДКЛЮЧЕНИЕ РОУТЕРОВ ==========
 app.include_router(auth_router, prefix="/api")
 app.include_router(users_router, prefix="/api")
+app.include_router(guest_router, prefix="/api")
 app.include_router(quizzes_router, prefix="/api")
+app.include_router(categories_router, prefix="/api")
 app.include_router(questions_router, prefix="/api")
 app.include_router(answers_router, prefix="/api")
 app.include_router(quiz_results_router, prefix="/api")
+app.include_router(quiz_session_router, prefix="/api")
+app.include_router(lobby_router, prefix="/api")
 app.include_router(media_router, prefix="/api")
 
 
-# ========== Эндпоинты мониторинга ==========
-@app.get("/health")
-async def health_check() :
-    """Проверка здоровья приложения"""
-    return {"status" : "healthy", "service" : "quiz-api"}
-
-
-@app.get("/info")
-async def get_info() :
-    """Информация о приложении"""
+# ========== СИСТЕМНЫЕ ЭНДПОИНТЫ ==========
+@app.get("/")
+async def root():
+    """Корневой эндпоинт"""
     return {
-        "name" : "Quiz API",
-        "version" : "0.0.9",
-        "environment" : os.getenv("ENVIRONMENT", "development"),
-        "docs_url" : "/api/docs",
-        "features" : ["JWT auth", "Media upload", "Quiz system", "Statistics"]
+        "name": "Quiz API",
+        "version": "3.0.0",
+        "status": "running",
+        "docs": "/api/docs"
     }
 
 
-# ========== Обработчик 404 ==========
-@app.exception_handler(404)
-async def custom_404_handler(request: Request, exc) :
-    return JSONResponse(
-        status_code=404,
-        content={"detail" : f"Endpoint {request.url.path} not found"}
+@app.get("/health")
+async def health_check():
+    """Проверка здоровья всех компонентов"""
+    health = {
+        "status": "healthy",
+        "components": {}
+    }
+
+    # Проверка PostgreSQL
+    try:
+        with engine.connect() as conn:
+            conn.execute("SELECT 1")
+        health["components"]["postgresql"] = "healthy"
+    except Exception as e:
+        health["components"]["postgresql"] = f"unhealthy: {str(e)}"
+        health["status"] = "unhealthy"
+
+    # Проверка Redis
+    try:
+        redis_client = get_redis()
+        redis_client.ping()
+        health["components"]["redis"] = "healthy"
+    except Exception as e:
+        health["components"]["redis"] = f"unhealthy: {str(e)}"
+        health["status"] = "unhealthy"
+
+    return health
+
+
+@app.get("/info")
+async def get_info():
+    """Информация о приложении"""
+    return {
+        "name": "Quiz API",
+        "version": "3.0.0",
+        "features": [
+            "JWT authentication",
+            "Guest users",
+            "Redis sessions for quiz taking",
+            "Private lobbies",
+            "Real-time leaderboards",
+            "Media upload",
+            "Bulk quiz creation",
+            "Categories reference"
+        ]
+    }
+
+
+# ========== ЗАПУСК (для прямого выполнения) ==========
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        log_level="info",
+        timeout_graceful_shutdown=30
     )

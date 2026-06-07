@@ -1,7 +1,6 @@
 import os
 
 from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
-from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 
@@ -13,7 +12,8 @@ from ..utils.security import (
     create_access_token,
     create_refresh_token,
     verify_access_token,
-    get_current_user, verify_refresh_token
+    get_current_user,
+    verify_refresh_token
 )
 from .. import schemas
 
@@ -22,7 +22,7 @@ router = APIRouter(prefix="/auth", tags=["authentication"])
 # Конфигурация cookie
 COOKIE_SECURE = False  # True для HTTPS
 COOKIE_HTTP_ONLY = True
-COOKIE_SAMESITE = "lax"
+COOKIE_SAMESITE: str = "lax"
 REFRESH_TOKEN_EXPIRE_DAYS = os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")
 
 
@@ -40,7 +40,7 @@ def set_refresh_token_cookie(response: Response, refresh_token: str, expires_day
     )
 
 
-def clear_refresh_token_cookie(response: Response) :
+def clear_refresh_token_cookie(response: Response):
     """Очистка refresh токена из cookie"""
     response.delete_cookie(
         key="refresh_token",
@@ -48,7 +48,7 @@ def clear_refresh_token_cookie(response: Response) :
     )
 
 
-@router.post("/login", response_model=schemas.LoginResponse)
+@router.post("/login", response_model=schemas.EmailResponse)
 def login(
         request: Request,
         response: Response,
@@ -82,7 +82,7 @@ def login(
     # Очищаем старые отработанные токены
     crud_jwt.cleanup_expired_tokens(db)
 
-    return schemas.LoginResponse(
+    return schemas.EmailResponse(
         access_token=access_token,
         token_type="bearer",
         access_status="valid",

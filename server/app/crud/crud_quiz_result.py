@@ -1,14 +1,12 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
-from ..models.model_answer import Answer
 from ..models.model_quiz_result import QuizResult
 from ..models.model_question import Question
-from ..models.model_user import User
-from ..models.model_user_answer import UserAnswer
+
 from .. import schemas
 from datetime import datetime
-from typing import Optional, List, Type
+from typing import Optional, Type
 
 
 def get_quiz_result(db: Session, result_id: int) -> Optional[QuizResult]:
