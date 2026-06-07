@@ -23,6 +23,7 @@ from .middleware.error_handler_middleware import ErrorHandlerMiddleware
 from .middleware.logging_middleware import LoggingMiddleware
 from .middleware.rate_limit_middleware import RateLimitMiddleware
 from .middleware.response_middleware import ResponseFormatterMiddleware
+from .utils.logger import get_logger
 # Роутеры
 from .routers import (
     auth_router,
@@ -48,7 +49,7 @@ logging.basicConfig(
     ]
 )
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 # ========== LIFESPAN (управление жизненным циклом) ==========

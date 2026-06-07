@@ -7,7 +7,8 @@ from datetime import datetime, timedelta
 from ..crud import crud_jwt_token as crud_jwt
 from ..crud import crud_user as crud_user
 from ..database.database import get_db
-from ..main import logger
+from ..utils.logger import logger
+
 from ..models import model_user
 from ..schemas import ResponseFactory
 from ..utils.security import (
@@ -18,6 +19,7 @@ from ..utils.security import (
     get_current_user,
     verify_refresh_token
 )
+
 from .. import schemas
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
@@ -25,7 +27,6 @@ router = APIRouter(prefix="/auth", tags=["authentication"])
 # Конфигурация cookie
 COOKIE_SECURE = False  # True для HTTPS
 COOKIE_HTTP_ONLY = True
-COOKIE_SAMESITE: str = "lax"
 REFRESH_TOKEN_EXPIRE_DAYS = os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")
 
 
@@ -38,7 +39,7 @@ def set_refresh_token_cookie(response: Response, refresh_token: str, expires_day
         expires=int(expires.timestamp()),
         httponly=COOKIE_HTTP_ONLY,
         secure=COOKIE_SECURE,
-        samesite=COOKIE_SAMESITE,
+        samesite="lax",
         path="/api/auth"  # Только для auth эндпоинтов
     )
 
@@ -53,7 +54,6 @@ def clear_refresh_token_cookie(response: Response):
 
 @router.post("/login", response_model=schemas.EmailResponse)
 def login(
-        request: Request,
         response: Response,
         email_data: schemas.EmailRequest,
         db: Session = Depends(get_db)

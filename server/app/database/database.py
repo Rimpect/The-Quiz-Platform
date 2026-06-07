@@ -14,14 +14,14 @@ POSTGRES_DB = os.getenv("DB_NAME")
 
 DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
-# Настройка engine с пулом соединений
+# Create engine with connection pool
 engine = create_engine(
     DATABASE_URL,
-    pool_pre_ping=True,      # Проверка соединения перед использованием
-    pool_recycle=3600,       # Переподключение через час
-    pool_size=10,            # Размер пула
-    max_overflow=20,         # Максимальное дополнительных соединений
-    echo=False               # SQL логирование (True для отладки)
+    pool_pre_ping=True,
+    pool_recycle=3600,
+    pool_size=10,
+    max_overflow=20,
+    echo=False
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -30,7 +30,7 @@ Base = declarative_base()
 
 
 def get_db():
-    """Генератор сессий базы данных"""
+    """Get database session"""
     db = SessionLocal()
     try:
         yield db
@@ -39,16 +39,13 @@ def get_db():
 
 
 def close_db_connections():
-    """
-    Закрытие всех соединений с БД
-    Вызывается при завершении работы приложения
-    """
+    """Close all database connections"""
     engine.dispose()
     print("Database connections closed")
 
 
 def test_connection():
-    """Тест подключения к БД"""
+    """Test database connection"""
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))

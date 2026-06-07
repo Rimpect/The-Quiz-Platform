@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from .. import schemas
 from ..crud import crud_guest as guest_crud
 from ..database.database import get_db
-from ..models import model_guest as guest
+from ..models.model_guest import Guest as guest
 from ..utils.security import create_guest_access_token, get_current_guest
 from ..utils.security import get_current_user
 

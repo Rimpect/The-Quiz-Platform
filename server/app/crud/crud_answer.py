@@ -69,10 +69,5 @@ def delete_answers_by_question(db: Session, question_id: int) -> int:
 
 
 def get_correct_answers(db, question_id) -> List[Answer]:
-    """
-    :param db: Сесия БД
-    :param question_id: ID вопроса
-    :return: Список правильных ответов
-    """
     return db.query(Answer).filter(Answer.question_id == question_id,
                                    Answer.is_correct == True).all()
