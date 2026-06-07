@@ -4,7 +4,7 @@
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 
-from fastapi import Depends, HTTPException, status, Request
+from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt
 from passlib.context import CryptContext
@@ -226,25 +226,3 @@ def get_current_guest(
         )
 
     return guest
-
-
-def get_current_user_or_guest_optional(
-        request: Request,
-        db: Session = Depends(get_db)
-):
-    """Получение текущего пользователя или гостя (опционально)"""
-    auth_header = request.headers.get("Authorization")
-
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return None
-
-    token = auth_header.split(" ")[1]
-    verification = verify_access_token(token, db)
-
-    if verification["status"] != "valid":
-        return None
-
-    if verification["is_guest"]:
-        return guest_crud.get_guest_by_session(db, verification["guest_id"])
-    else:
-        return user_crud.get_user(db, verification["user_id"])

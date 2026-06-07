@@ -4,7 +4,7 @@ from typing import Optional, Type
 from sqlalchemy.orm import Session
 
 from .. import schemas
-from ..models.model_question import Question
+# from ..models.model_question import Question
 from ..models.model_quiz_result import QuizResult
 
 
@@ -24,23 +24,28 @@ def get_quiz_results_by_quiz(db: Session, quiz_id: int, skip: int = 0, limit: in
     ).order_by(QuizResult.started_at.desc()).offset(skip).limit(limit).all()
 
 
-def create_quiz_result(db: Session, user_id: int, quiz_id: int) -> QuizResult:
-    # Создание нового результата при старте квиза
-    # Получаем максимально возможные баллы
-    questions = db.query(Question).filter(Question.quiz_id == quiz_id).all()
-    max_score = sum(q.points for q in questions)
-
+# В crud_quiz_result.py
+def create_quiz_result(
+        db: Session,
+        user_id: int,
+        quiz_id: int,
+        score: int = 0,
+        max_score: int = 0
+) -> QuizResult:
+    """Создание и сохранение результата в БД"""
     db_result = QuizResult(
         user_id=user_id,
         quiz_id=quiz_id,
-        score=0,
+        score=score,
         max_score=max_score,
-        is_completed=False,
-        started_at=datetime.utcnow()
+        is_completed=True,  # Сразу завершён
+        started_at=datetime.utcnow(),
+        completed_at=datetime.utcnow()
     )
-    db.add(db_result)
-    db.commit()
-    db.refresh(db_result)
+    db.add(db_result)  # Добавляем в сессию
+    db.commit()  # Сохраняем в БД
+    db.refresh(db_result)  # Обновляем объект (получаем id)
+
     return db_result
 
 
@@ -57,8 +62,8 @@ def update_quiz_result(db: Session, result_id: int, result_update: schemas.QuizR
 
 def complete_quiz_result(
         db: Session,
-        session_id: str,
-        result_id: int
+        result_id: int,
+        session_id: Optional[str] = None
 ) -> Optional[QuizResult]:
     """
     Завершение квиза с использованием Redis для подсчета

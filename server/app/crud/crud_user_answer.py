@@ -28,7 +28,7 @@ class UserAnswerService:
             question_id: int,
             answer_data: schemas.UserAnswerCreate,
             db: Session  # Добавляем параметр db
-    ) -> Dict[str, Any] :
+    ) -> Dict[str, Any]:
         """
         Сохранение ответа пользователя в Redis
         """
@@ -41,18 +41,18 @@ class UserAnswerService:
         answer_key = RedisKeys.user_answer(session_id, question_id)
 
         answer_dict = {
-            "session_id" : session_id,
-            "user_id" : str(user_id),
-            "quiz_id" : str(quiz_id),
-            "question_id" : str(question_id),
-            "answer_text" : answer_data.answer_text or "",
-            "answer_ids" : json.dumps(answer_data.answer_ids) if answer_data.answer_ids else "",
-            "answer_id" : str(answer_data.answer_id) if answer_data.answer_id else "",
-            "is_correct" : "true" if is_correct else "false",
-            "points_earned" : str(points_earned),
-            "time_spent_seconds" : str(answer_data.time_spent_seconds or 0),
-            "question_order" : str(answer_data.question_order or 0),
-            "answered_at" : datetime.utcnow().isoformat()
+            "session_id": session_id,
+            "user_id": str(user_id),
+            "quiz_id": str(quiz_id),
+            "question_id": str(question_id),
+            "answer_text": answer_data.answer_text or "",
+            "answer_ids": json.dumps(answer_data.answer_ids) if answer_data.answer_ids else "",
+            "answer_id": str(answer_data.answer_id) if answer_data.answer_id else "",
+            "is_correct": "true" if is_correct else "false",
+            "points_earned": str(points_earned),
+            "time_spent_seconds": str(answer_data.time_spent_seconds or 0),
+            "question_order": str(answer_data.question_order or 0),
+            "answered_at": datetime.utcnow().isoformat()
         }
 
         # Сохраняем в Redis
@@ -65,9 +65,9 @@ class UserAnswerService:
         self.redis.expire(session_answers_key, ANSWER_TTL)
 
         return {
-            "saved" : True,
-            "is_correct" : is_correct,
-            "points_earned" : points_earned
+            "saved": True,
+            "is_correct": is_correct,
+            "points_earned": points_earned
         }
 
     def _check_answer(

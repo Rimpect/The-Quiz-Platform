@@ -15,9 +15,11 @@ def create_quiz(
         quiz: schemas.QuizCreate,
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
-) :
+):
     """Создание нового квиза"""
-    return crud_quiz.create_quiz(db=db, quiz=quiz)
+    if current_user.role in ("admin", "author"):
+        return crud_quiz.create_quiz(db=db, quiz=quiz)
+    raise HTTPException(status_code=404, detail="Quiz not found")
 
 
 @router.get("/", response_model=List[schemas.QuizBase])
@@ -27,32 +29,32 @@ def read_quizzes(
         category: Optional[str] = Query(None, description="Фильтр по категории"),
         public_only: bool = Query(True, description="Только публичные квизы"),
         db: Session = Depends(get_db)
-) :
+):
     """Получение списка квизов"""
     is_public = True if public_only else None
     return crud_quiz.get_quizzes(db, skip=skip, limit=limit, category=category, is_public=is_public)
 
 
 @router.get("/categories")
-def get_categories(db: Session = Depends(get_db)) :
+def get_categories(db: Session = Depends(get_db)):
     """Получение всех категорий квизов"""
-    return {"categories" : crud_quiz.get_quiz_categories(db)}
+    return {"categories": crud_quiz.get_quiz_categories(db)}
 
 
 @router.get("/{quiz_id}", response_model=schemas.QuizBase)
-def read_quiz(quiz_id: int, db: Session = Depends(get_db)) :
+def read_quiz(quiz_id: int, db: Session = Depends(get_db)):
     """Получение квиза по ID"""
     db_quiz = crud_quiz.get_quiz(db, quiz_id)
-    if db_quiz is None :
+    if db_quiz is None:
         raise HTTPException(status_code=404, detail="Quiz not found")
     return db_quiz
 
 
 @router.get("/{quiz_id}/full")
-def read_quiz_full(quiz_id: int, db: Session = Depends(get_db)) :
+def read_quiz_full(quiz_id: int, db: Session = Depends(get_db)):
     """Получение полного квиза со всеми вопросами и ответами"""
     db_quiz = crud_quiz.get_quiz_with_details(db, quiz_id)
-    if db_quiz is None :
+    if db_quiz is None:
         raise HTTPException(status_code=404, detail="Quiz not found")
     return db_quiz
 
@@ -63,12 +65,16 @@ def update_quiz(
         quiz_update: schemas.QuizUpdate,
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
-) :
+):
     """Обновление квиза"""
-    db_quiz = crud_quiz.update_quiz(db, quiz_id, quiz_update)
-    if db_quiz is None :
-        raise HTTPException(status_code=404, detail="Quiz not found")
-    return db_quiz
+    if current_user.role in ("admin", "author"):
+        db_quiz = crud_quiz.update_quiz(db, quiz_id, quiz_update)
+
+        if db_quiz is None:
+            raise HTTPException(status_code=404, detail="Quiz not found")
+        return db_quiz
+
+    raise HTTPException(status_code=404, detail="No admin or author rules")
 
 
 @router.delete("/{quiz_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -76,10 +82,12 @@ def delete_quiz(
         quiz_id: int,
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
-) :
+):
     """Удаление квиза"""
-    if not crud_quiz.delete_quiz(db, quiz_id) :
-        raise HTTPException(status_code=404, detail="Quiz not found")
+    if current_user.role in ("admin", "author"):
+        if not crud_quiz.delete_quiz(db, quiz_id):
+            raise HTTPException(status_code=404, detail="Quiz not found")
+    raise HTTPException(status_code=404, detail="No admin or author rules")
 
 
 """@router.get("/{quiz_id}/leaderboard")
@@ -87,10 +95,10 @@ def get_leaderboard(
         quiz_id: int,
         limit: int = Query(10, ge=1, le=100),
         db: Session = Depends(get_db)
-) :
+):
     "Получение таблицы лидеров для квиза"
     # Проверяем существование квиза
-    if not crud_quiz.get_quiz(db, quiz_id) :
+    if not crud_quiz.get_quiz(db, quiz_id):
         raise HTTPException(status_code=404, detail="Quiz not found")
     return crud_quiz.get_quiz_leaderboard(db, quiz_id, limit)
 """
@@ -101,7 +109,7 @@ def create_quiz_bulk(
         quiz_data: schemas.QuizBulkCreate,
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
-) :
+):
     """
     Массовое создание квиза с вопросами и ответами за один запрос
 
@@ -139,7 +147,7 @@ def create_quiz_bulk(
         ]
     }
     """
-    result = crud_quiz.create_quiz_full(db, quiz_data)
-    return result
-
-
+    if current_user.role in ("admin", "author"):
+        result = crud_quiz.create_quiz_full(db, quiz_data)
+        return result
+    raise HTTPException(status_code=404, detail="No admin or author rules")
