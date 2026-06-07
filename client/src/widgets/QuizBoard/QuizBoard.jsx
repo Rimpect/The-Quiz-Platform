@@ -31,7 +31,6 @@ export function QuizBoard({ currentPage, onPageChange }) {
         {!loading &&
           !error &&
           paginatedQuizList.map((quiz) => (
-            // 👇 используем функцию getQuizDescriptionRoute
             <Link key={quiz.id} to={getQuizDescriptionRoute(quiz.id)}>
               <QuizCard {...quiz} />
             </Link>

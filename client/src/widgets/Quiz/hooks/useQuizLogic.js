@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+
 import { useQuestions, useQuestionStore } from '@entities'
 import {
   calculatePartialScore,
@@ -7,6 +7,7 @@ import {
   checkAnswer,
 } from '@features'
 import { getFinishQuizRoute } from '@shared'
+import { useNavigate } from 'react-router-dom'
 
 export const useQuizLogic = (quizId) => {
   const navigate = useNavigate()

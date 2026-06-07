@@ -1,4 +1,3 @@
-// src/features/anti-cheating/hooks/useKeyboardBlocker.js
 import { useEffect, useCallback } from 'react'
 
 export const useKeyboardBlocker = ({ enabled = true, onViolation } = {}) => {

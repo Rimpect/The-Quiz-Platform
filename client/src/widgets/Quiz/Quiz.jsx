@@ -1,6 +1,8 @@
 import React from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+
 import { AntiCheatProvider } from '@features/anti-cheating'
+import { useNavigate, useParams } from 'react-router-dom'
+
 import { QuizContent } from './QuizContent'
 
 export function Quiz() {

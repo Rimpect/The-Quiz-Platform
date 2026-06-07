@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useAntiCheatContext } from '@features/anti-cheating'
+
 import {
   AnswerList,
   QuizProgress,
@@ -7,17 +7,19 @@ import {
   QuestionSection,
   AnswerResult,
 } from '@features'
-import { useQuizLogic } from './hooks/useQuizLogic'
-import { QuizHeader } from './components/QuizHeader'
-import { QuizBlocked } from './components/QuizBlocked'
-import { QuizLoading } from './components/QuizLoading'
-import { QuizError } from './components/QuizError'
+import { useAntiCheatContext } from '@features/anti-cheating'
+
 import { AntiCheatWarning } from './components/AntiCheatWarning'
+import { QuizBlocked } from './components/QuizBlocked'
+import { QuizError } from './components/QuizError'
+import { QuizHeader } from './components/QuizHeader'
+import { QuizLoading } from './components/QuizLoading'
+import { useQuizLogic } from './hooks/useQuizLogic'
 import styles from './Quiz.module.scss'
 
 export const QuizContent = ({ quizId }) => {
   const [showBlockedMessage, setShowBlockedMessage] = useState(false)
-  const { isActive, violationsCount, isBlocked } = useAntiCheatContext()
+  const { violationsCount, isBlocked } = useAntiCheatContext()
 
   const {
     questions,
@@ -30,7 +32,6 @@ export const QuizContent = ({ quizId }) => {
     selectedAnswers,
     currentScore,
     totalScore,
-    correctCount,
     maxPossibleScore,
     toggleAnswer,
     handleTimeEnd,

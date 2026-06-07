@@ -1,7 +1,9 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+
 import { QuizTimer } from '@features'
 import { ROUTES } from '@shared'
+import { Link } from 'react-router-dom'
+
 import styles from '../Quiz.module.scss'
 
 export const QuizHeader = ({ title, category, onTimeEnd, timerKey }) => {

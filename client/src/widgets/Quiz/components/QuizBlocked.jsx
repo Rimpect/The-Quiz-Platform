@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom'
 import { ROUTES } from '@shared'
+import { Link } from 'react-router-dom'
+
 import styles from '../Quiz.module.scss'
 
 export const QuizBlocked = ({ violationsCount }) => {
