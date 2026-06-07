@@ -22,7 +22,8 @@ class Quiz(Base):
     # Обязательные поля
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(200), nullable=False)  # Название
-    category_id = Column(Integer, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True, index=True)  # Ссылка на категории
+    # Ссылка на категорию
+    category_id = Column(Integer, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True, index=True)
     description = Column(Text, nullable=True)  # Описание
     is_public = Column(Boolean, default=True, nullable=False)  # Публичность квиза
     quiz_mode = Column(SQLEnum(QuizMode), default=QuizMode.SINGLE, nullable=False)  # Режим команды

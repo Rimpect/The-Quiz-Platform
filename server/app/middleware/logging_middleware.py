@@ -1,11 +1,11 @@
 """
 Middleware для логирования запросов
 """
-import time
 import logging
+import time
+
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
-from datetime import datetime
 
 # Настройка логирования
 logging.basicConfig(
@@ -20,10 +20,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-class LoggingMiddleware(BaseHTTPMiddleware) :
+class LoggingMiddleware(BaseHTTPMiddleware):
     """Middleware для логирования всех запросов"""
 
-    async def dispatch(self, request: Request, call_next) :
+    async def dispatch(self, request: Request, call_next):
         # Начало обработки запроса
         start_time = time.time()
 
@@ -31,7 +31,7 @@ class LoggingMiddleware(BaseHTTPMiddleware) :
         logger.info(f"Incoming request: {request.method} {request.url.path}")
 
         # Логируем параметры запроса
-        if request.query_params :
+        if request.query_params:
             logger.debug(f"Query params: {dict(request.query_params)}")
 
         # Обрабатываем запрос

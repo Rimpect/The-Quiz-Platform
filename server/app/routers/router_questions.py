@@ -5,7 +5,7 @@ from typing import List
 from ..crud import crud_question as crud_question, crud_quiz as crud_quiz
 from .. import schemas
 from ..database.database import get_db
-from ..utils.security import get_current_user
+# from ..utils.security import get_current_user
 
 router = APIRouter(prefix="/quizzes/{quiz_id}/questions", tags=["questions"])
 
@@ -15,11 +15,11 @@ def create_question(
         quiz_id: int,
         question: schemas.QuestionCreate,
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
-) :
+        # current_user: schemas.User = Depends(get_current_user)
+):
     """Создание вопроса в квизе"""
     # Проверяем существование квиза
-    if not crud_quiz.get_quiz(db, quiz_id) :
+    if not crud_quiz.get_quiz(db, quiz_id):
         raise HTTPException(status_code=404, detail="Quiz not found")
     return crud_question.create_question(db, question, quiz_id)
 
@@ -30,7 +30,7 @@ def read_questions(
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(get_db)
-) :
+):
     """Получение всех вопросов квиза"""
     return crud_question.get_questions_by_quiz(db, quiz_id, skip, limit)
 
@@ -40,10 +40,10 @@ def read_question(
         quiz_id: int,
         question_id: int,
         db: Session = Depends(get_db)
-) :
+):
     """Получение вопроса по ID"""
     question = crud_question.get_question(db, question_id)
-    if not question or question.quiz_id != quiz_id :
+    if not question or question.quiz_id != quiz_id:
         raise HTTPException(status_code=404, detail="Question not found")
     return question
 
@@ -54,11 +54,11 @@ def update_question(
         question_id: int,
         question_update: schemas.QuestionUpdate,
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
-) :
+        # current_user: schemas.User = Depends(get_current_user)
+):
     """Обновление вопроса"""
     question = crud_question.get_question(db, question_id)
-    if not question or question.quiz_id != quiz_id :
+    if not question or question.quiz_id != quiz_id:
         raise HTTPException(status_code=404, detail="Question not found")
     return crud_question.update_question(db, question_id, question_update)
 
@@ -68,10 +68,10 @@ def delete_question(
         quiz_id: int,
         question_id: int,
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
-) :
+        # current_user: schemas.User = Depends(get_current_user)
+):
     """Удаление вопроса"""
     question = crud_question.get_question(db, question_id)
-    if not question or question.quiz_id != quiz_id :
+    if not question or question.quiz_id != quiz_id:
         raise HTTPException(status_code=404, detail="Question not found")
     crud_question.delete_question(db, question_id)

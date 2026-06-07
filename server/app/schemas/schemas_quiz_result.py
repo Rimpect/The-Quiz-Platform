@@ -6,24 +6,24 @@ from typing import Optional
 from datetime import datetime
 
 
-class QuizResultBase(BaseModel) :
+class QuizResultBase(BaseModel):
     score: float = Field(0, ge=0)
     is_completed: bool = False
     max_score: float = Field(0, ge=0)
 
 
-class QuizResultCreate(QuizResultBase) :
+class QuizResultCreate(QuizResultBase):
     user_id: int
     quiz_id: int
 
 
-class QuizResultUpdate(BaseModel) :
+class QuizResultUpdate(BaseModel):
     score: Optional[float] = Field(None, ge=0)
     is_completed: Optional[bool] = None
     completed_at: Optional[datetime] = None
 
 
-class QuizResultResponse(QuizResultBase) :
+class QuizResultResponse(QuizResultBase):
     id: int
     user_id: int
     quiz_id: int
@@ -32,5 +32,5 @@ class QuizResultResponse(QuizResultBase) :
     duration_seconds: int = 0
     percentage: float = 0
 
-    class Config :
+    class Config:
         from_attributes = True

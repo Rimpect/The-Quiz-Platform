@@ -5,12 +5,12 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File,
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
-from .. import schemas
+# from ..schemas import schemas_user
 from ..crud import crud_media as media_crud
 from ..database.database import get_db
 from ..models.model_media import MediaEntity, MediaType
 from ..utils import media_utils
-from ..utils.security import get_current_user
+# from ..utils.security import get_current_user
 
 router = APIRouter(prefix="/media", tags=["media"])
 
@@ -22,9 +22,9 @@ async def upload_media(
         entity_id: int,
         file: UploadFile = File(...),
         alt_text: Optional[str] = Form(None),
-        current_user: schemas.User = Depends(get_current_user),
+        # current_user: schemas_user = Depends(get_current_user),
         db: Session = Depends(get_db)
-) :
+):
     """
     Загрузка медиафайла для сущности
 
@@ -53,12 +53,12 @@ async def upload_media(
     )
 
     return {
-        "id" : db_media.id,
-        "url" : db_media.url,
-        "file_name" : db_media.file_name,
-        "file_size" : db_media.file_size,
-        "media_type" : db_media.media_type,
-        "alt_text" : db_media.alt_text
+        "id": db_media.id,
+        "url": db_media.url,
+        "file_name": db_media.file_name,
+        "file_size": db_media.file_size,
+        "media_type": db_media.media_type,
+        "alt_text": db_media.alt_text
     }
 
 
@@ -67,13 +67,13 @@ async def upload_multiple_media(
         entity_type: str,
         entity_id: int,
         files: List[UploadFile] = File(...),
-        current_user: schemas.User = Depends(get_current_user),
+        # current_user: schemas_user = Depends(get_current_user),
         db: Session = Depends(get_db)
-) :
+):
     """Загрузка нескольких медиафайлов"""
     uploaded_files = []
 
-    for order, file in enumerate(files) :
+    for order, file in enumerate(files):
         file_info = media_utils.save_media_file(file, entity_type, entity_id)
         db_media = media_crud.create_media_record(
             db=db,
@@ -83,22 +83,22 @@ async def upload_multiple_media(
             order_number=order
         )
         uploaded_files.append({
-            "id" : db_media.id,
-            "url" : db_media.url,
-            "file_name" : db_media.file_name,
-            "order" : order
+            "id": db_media.id,
+            "url": db_media.url,
+            "file_name": db_media.file_name,
+            "order": order
         })
 
-    return {"uploaded_files" : uploaded_files}
+    return {"uploaded_files": uploaded_files}
 
 
 # ========== Получение файлов ==========
 @router.get("/{file_path:path}")
-async def get_media(file_path: str) :
+async def get_media(file_path: str):
     """Получение медиафайла по пути"""
     full_path = Path(media_utils.BASE_MEDIA_DIR) / file_path
 
-    if not full_path.exists() or not full_path.is_file() :
+    if not full_path.exists() or not full_path.is_file():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="File not found"
@@ -117,7 +117,7 @@ async def get_entity_media(
         entity_id: int,
         media_type: Optional[str] = None,
         db: Session = Depends(get_db)
-) :
+):
     """Получение всех медиафайлов сущности"""
     media_files = media_crud.get_entity_media(
         db=db,
@@ -128,13 +128,13 @@ async def get_entity_media(
 
     return [
         {
-            "id" : m.id,
-            "url" : m.url,
-            "file_name" : m.file_name,
-            "file_size" : m.file_size,
-            "media_type" : m.media_type,
-            "alt_text" : m.alt_text,
-            "order_number" : m.order_number
+            "id": m.id,
+            "url": m.url,
+            "file_name": m.file_name,
+            "file_size": m.file_size,
+            "media_type": m.media_type,
+            "alt_text": m.alt_text,
+            "order_number": m.order_number
         }
         for m in media_files
     ]
@@ -146,9 +146,9 @@ async def update_media(
         media_id: int,
         alt_text: Optional[str] = None,
         order_number: Optional[int] = None,
-        current_user: schemas.User = Depends(get_current_user),
+        # current_user: schemas_user = Depends(get_current_user),
         db: Session = Depends(get_db)
-) :
+):
     """Обновление метаданных медиафайла"""
     db_media = media_crud.update_media_record(
         db=db,
@@ -157,25 +157,25 @@ async def update_media(
         order_number=order_number
     )
 
-    if not db_media :
+    if not db_media:
         raise HTTPException(status_code=404, detail="Media not found")
 
     return {
-        "id" : db_media.id,
-        "url" : db_media.url,
-        "alt_text" : db_media.alt_text,
-        "order_number" : db_media.order_number
+        "id": db_media.id,
+        "url": db_media.url,
+        "alt_text": db_media.alt_text,
+        "order_number": db_media.order_number
     }
 
 
 @router.delete("/{media_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_media(
         media_id: int,
-        current_user: schemas.User = Depends(get_current_user),
+        # current_user: schemas_user = Depends(get_current_user),
         db: Session = Depends(get_db)
-) :
+):
     """Удаление медиафайла"""
-    if not media_crud.delete_media_record(db, media_id) :
+    if not media_crud.delete_media_record(db, media_id):
         raise HTTPException(status_code=404, detail="Media not found")
 
 
@@ -183,9 +183,9 @@ async def delete_media(
 async def delete_entity_media(
         entity_type: str,
         entity_id: int,
-        current_user: schemas.User = Depends(get_current_user),
+        # current_user: schemas.User = Depends(get_current_user),
         db: Session = Depends(get_db)
-) :
+):
     """Удаление всех медиафайлов сущности"""
     media_crud.delete_entity_media(
         db=db,

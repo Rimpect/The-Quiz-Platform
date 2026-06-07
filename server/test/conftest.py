@@ -10,8 +10,6 @@ from sqlalchemy.pool import StaticPool
 
 
 from ..app.database.database import Base, get_db
-from ..app.utils.security import get_password_hash
-from ..app.models import User, Quiz, Question, Answer, JWTToken
 
 # Тестовая база данных SQLite (in-memory)
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db?check_same_thread=False"
@@ -63,7 +61,7 @@ def client() -> Generator :
 def test_user(db: Session) :
     """Фикстура для создания тестового пользователя"""
     from ..app.crud import crud_user as crud_user
-    from ..app.schemas import UserCreate
+    from server.app.schemas import UserCreate
 
     user_data = UserCreate(
         nickname="TestUser",
@@ -78,7 +76,7 @@ def test_user(db: Session) :
     if existing_user :
         return existing_user
 
-    user = crud_user.create_user(db=db, user=user_data)
+    user = crud_user.create_user(db=db, schema_user=user_data)
     return user
 
 
@@ -86,7 +84,7 @@ def test_user(db: Session) :
 def test_admin_user(db: Session) :
     """Фикстура для создания тестового администратора"""
     from ..app.crud import crud_user as crud_user
-    from ..app.schemas import UserCreate
+    from server.app.schemas import UserCreate
 
     user_data = UserCreate(
         nickname="AdminUser",
@@ -100,7 +98,7 @@ def test_admin_user(db: Session) :
     if existing_user :
         return existing_user
 
-    user = crud_user.create_user(db=db, user=user_data)
+    user = crud_user.create_user(db=db, schema_user=user_data)
     # Обновляем роль до администратора
     user.role = "admin"
     db.commit()
@@ -138,7 +136,7 @@ def auth_headers(test_token) :
 def test_quiz(db: Session, test_user) :
     """Фикстура для создания тестового квиза"""
     from ..app.crud import crud_quiz as crud_quiz
-    from ..app.schemas import QuizCreate
+    from server.app.schemas import QuizCreate
 
     quiz_data = QuizCreate(
         title="Test Quiz",
@@ -156,7 +154,7 @@ def test_quiz(db: Session, test_user) :
 def test_question(db: Session, test_quiz) :
     """Фикстура для создания тестового вопроса"""
     from ..app.crud import crud_question as crud_question
-    from ..app.schemas import QuestionCreate
+    from server.app.schemas import QuestionCreate
 
     question_data = QuestionCreate(
         answer_type="single",
@@ -177,7 +175,7 @@ def test_question(db: Session, test_quiz) :
 def test_answers(db: Session, test_question) :
     """Фикстура для создания тестовых ответов"""
     from ..app.crud import crud_answer as crud_answer
-    from ..app.schemas import AnswerCreate
+    from server.app.schemas import AnswerCreate
 
     answers_data = [
         AnswerCreate(answer_text="3", is_correct=False, order_number=1),

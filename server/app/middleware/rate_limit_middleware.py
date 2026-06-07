@@ -12,18 +12,18 @@ RATE_LIMIT_REQUESTS = int(os.getenv("RATE_LIMIT_REQUESTS"))
 RATE_LIMIT_PERIOD = int(os.getenv("RATE_LIMIT_PERIOD"))
 
 
-class RateLimitMiddleware(BaseHTTPMiddleware) :
+class RateLimitMiddleware(BaseHTTPMiddleware):
     """
     Middleware для ограничения количества запросов
     Простая реализация с хранением в памяти
     Для production рекомендуется использовать Redis
     """
 
-    def __init__(self, app) :
+    def __init__(self, app):
         super().__init__(app)
         self.requests = defaultdict(list)
 
-    async def dispatch(self, request: Request, call_next) :
+    async def dispatch(self, request: Request, call_next):
         # Получаем IP клиента (учитывая прокси)
         client_ip = request.headers.get("X-Forwarded-For", request.client.host)
 
@@ -35,7 +35,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware) :
         ]
 
         # Проверяем лимит
-        if len(self.requests[client_ip]) >= RATE_LIMIT_REQUESTS :
+        if len(self.requests[client_ip]) >= RATE_LIMIT_REQUESTS:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail=f"Rate limit exceeded. Max {RATE_LIMIT_REQUESTS} requests per {RATE_LIMIT_PERIOD} seconds."

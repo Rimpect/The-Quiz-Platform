@@ -1,12 +1,11 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import func
-
-from ..models.model_quiz_result import QuizResult
-from ..models.model_question import Question
-
-from .. import schemas
 from datetime import datetime
 from typing import Optional, Type
+
+from sqlalchemy.orm import Session
+
+from .. import schemas
+from ..models.model_question import Question
+from ..models.model_quiz_result import QuizResult
 
 
 def get_quiz_result(db: Session, result_id: int) -> Optional[QuizResult]:
@@ -56,20 +55,35 @@ def update_quiz_result(db: Session, result_id: int, result_update: schemas.QuizR
     return db_result
 
 
-def complete_quiz_result(db: Session, result_id: int) -> Optional[QuizResult]:
-    """Завершение квиза и подсчет итогов"""
-    db_result = get_quiz_result(db, result_id)
-    if db_result:
-        # Считаем сумму баллов из ответов пользователя
-        total_score = db.query(func.sum(UserAnswer.points_earned)).filter(
-            UserAnswer.quiz_result_id == result_id
-        ).scalar() or 0
+def complete_quiz_result(
+        db: Session,
+        session_id: str,
+        result_id: int
+) -> Optional[QuizResult]:
+    """
+    Завершение квиза с использованием Redis для подсчета
+    """
+    from ..config_redis.redis_service import QuizSessionService
 
-        db_result.score = total_score
-        db_result.is_completed = True
-        db_result.completed_at = datetime.utcnow()
-        db.commit()
-        db.refresh(db_result)
+    quiz_session_service = QuizSessionService()
+
+    # Получаем результат из Redis
+    redis_result = quiz_session_service.calculate_score(session_id)
+
+    db_result = get_quiz_result(db, result_id)
+    if not db_result:
+        return None
+
+    db_result.score = redis_result["total_points"]
+    db_result.is_completed = True
+    db_result.completed_at = datetime.utcnow()
+
+    db.commit()
+    db.refresh(db_result)
+
+    # Очищаем Redis сессию
+    quiz_session_service.delete_session(session_id)
+
     return db_result
 
 

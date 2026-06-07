@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 from ..database.database import Base
 
 
-class UserAnswer(Base) :
+class UserAnswer(Base):
     """
     Модель для бэкапа ответов в PostgreSQL (опционально)
     Основное хранение - в Redis
@@ -38,5 +38,5 @@ class UserAnswer(Base) :
     quiz = relationship("Quiz", foreign_keys=[quiz_id])
     question = relationship("Question", foreign_keys=[question_id])
 
-    def __repr__(self) :
+    def __repr__(self):
         return f"<UserAnswer session={self.session_id}, q={self.question_id}>"

@@ -7,6 +7,9 @@ from datetime import datetime, timedelta
 from ..crud import crud_jwt_token as crud_jwt
 from ..crud import crud_user as crud_user
 from ..database.database import get_db
+from ..main import logger
+from ..models import model_user
+from ..schemas import ResponseFactory
 from ..utils.security import (
     verify_password,
     create_access_token,
@@ -26,7 +29,7 @@ COOKIE_SAMESITE: str = "lax"
 REFRESH_TOKEN_EXPIRE_DAYS = os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")
 
 
-def set_refresh_token_cookie(response: Response, refresh_token: str, expires_days: int = 7) :
+def set_refresh_token_cookie(response: Response, refresh_token: str, expires_days: int = 7):
     """Установка refresh токена в HttpOnly cookie"""
     expires = datetime.utcnow() + timedelta(days=expires_days)
     response.set_cookie(
@@ -54,20 +57,25 @@ def login(
         response: Response,
         email_data: schemas.EmailRequest,
         db: Session = Depends(get_db)
-) :
+):
     """Вход пользователя - создание пары токенов"""
     # Ищем пользователя
     user = crud_user.get_user_by_email(db, email_data.email)
 
-    if not user or not verify_password(email_data.password, user.password_hash) :
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"access_status" : "invalid", "error_message" : "Invalid credentials"}
+    if not user or not verify_password(email_data.password, user.password_hash):
+        return ResponseFactory.unauthorized(
+            message="Invalid email or password",
+            access_status="denied"
+        )
+
+    if not user.is_active:
+        return ResponseFactory.forbidden(
+            message="User account is disabled"
         )
 
     # Создаем токены
-    access_token = create_access_token(data={"sub" : str(user.id)})
-    refresh_token = create_refresh_token(data={"sub" : str(user.id)})
+    access_token = create_access_token(data={"sub": str(user.id)})
+    refresh_token = create_refresh_token(data={"sub": str(user.id)})
 
     crud_jwt.create_token_pair(
         db=db,
@@ -77,20 +85,30 @@ def login(
     )
 
     # Устанавливаем refresh токен в HttpOnly cookie
-    set_refresh_token_cookie(response, refresh_token, REFRESH_TOKEN_EXPIRE_DAYS)
+    # Устанавливаем refresh_token в cookie
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=False,
+        samesite="lax",
+        max_age=7 * 24 * 60 * 60,
+        path="/api/auth"
+    )
 
-    # Очищаем старые отработанные токены
-    crud_jwt.cleanup_expired_tokens(db)
+    # Логируем вход (опционально)
+    logger.info(f"User {user.email} logged")
 
-    return schemas.EmailResponse(
-        access_token=access_token,
-        token_type="bearer",
-        access_status="valid",
-        expires_in=30 * 60,  # 30 минут
-        user_id=user.id,
-        login=user.login,
-        nickname=user.nickname,
-        role=user.role
+    return ResponseFactory.success(
+        data={
+            "access_token" : access_token,
+            "token_type" : "bearer",
+            "user_id" : user.id,
+            "nickname" : user.nickname,
+            "role" : user.role
+        },
+        message="Login successful",
+        access_status="granted"
     )
 
 
@@ -99,7 +117,7 @@ def refresh_token(
         request: Request,
         response: Response,
         db: Session = Depends(get_db)
-) :
+):
     """
     Обновление access токена
     Refresh токен берется из cookie, не нужно передавать в теле запроса
@@ -107,10 +125,10 @@ def refresh_token(
     # 1. Получаем refresh токен из cookie
     refresh_token = request.cookies.get("refresh_token")
 
-    if not refresh_token :
+    if not refresh_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"access_status" : "missing", "error_message" : "Refresh token not found in cookies"}
+            detail={"access_status": "missing", "error_message": "Refresh token not found in cookies"}
         )
 
     # 2. Проверяем refresh токен
@@ -118,37 +136,37 @@ def refresh_token(
     if not payload:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"access_status" : "invalid", "error_message" : "Invalid refresh token"}
+            detail={"access_status": "invalid", "error_message": "Invalid refresh token"}
         )
 
     user_id = int(payload.get("sub"))
 
     # 3. Проверяем пользователя
     user = crud_user.get_user(db, user_id)
-    if not user or not user.is_active :
+    if not user or not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"access_status" : "invalid", "error_message" : "User not found or inactive"}
+            detail={"access_status": "invalid", "error_message": "User not found or inactive"}
         )
 
     # 4. Находим старую пару токенов
     old_token = crud_jwt.get_token_by_refresh(db, refresh_token)
-    if not old_token or old_token.user_id != user_id :
+    if not old_token or old_token.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"access_status" : "invalid", "error_message" : "Refresh token not found"}
+            detail={"access_status": "invalid", "error_message": "Refresh token not found"}
         )
 
     # 5. Проверяем валидность refresh токена
-    if not old_token.is_refresh_valid :
+    if not old_token.is_refresh_valid:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"access_status" : "expired", "error_message" : "Refresh token is revoked or expired"}
+            detail={"access_status": "expired", "error_message": "Refresh token is revoked or expired"}
         )
 
     # 6. Создаем новые токены
-    new_access_token = create_access_token(data={"sub" : str(user.id)})
-    new_refresh_token = create_refresh_token(data={"sub" : str(user.id)})
+    new_access_token = create_access_token(data={"sub": str(user.id)})
+    new_refresh_token = create_refresh_token(data={"sub": str(user.id)})
 
     # 7. Отзываем старую пару
     crud_jwt.revoke_both_tokens(db, refresh_token, "Used for refresh")
@@ -181,56 +199,56 @@ def refresh_token(
     )
 
 
-@router.post("/logout", status_code=status.HTTP_200_OK)
+@router.post("/logout")
 def logout(
         request: Request,
         response: Response,
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
-) :
+        current_user: model_user.User = Depends(get_current_user)
+):
     """
-    Выход пользователя
-    Refresh токен берется из cookie, access токен из заголовка
+    Выход пользователя - удаление refresh токена из cookie и отзыв токенов в БД
     """
-    # Получаем refresh токен из cookie
+    # 1. Получаем refresh токен из cookie
     refresh_token = request.cookies.get("refresh_token")
 
-    # Получаем access токен из заголовка
-    auth_header = request.headers.get("Authorization")
-    access_token = None
-    if auth_header and auth_header.startswith("Bearer ") :
-        access_token = auth_header.split(" ")[1]
+    # 2. Если токен есть в cookie, отзываем его в БД
+    if refresh_token:
+        crud_jwt.revoke_both_tokens(
+            db=db,
+            refresh_token=refresh_token,
+            reason=f"User {current_user.id} logged out"
+        )
 
-    # Отзываем оба токена
-    if refresh_token :
-        crud_jwt.revoke_both_tokens(db, refresh_token, "User logged out")
+    # 3. Очищаем refresh токен из cookie
+    response.delete_cookie(
+        key="refresh_token",
+        path="/api/auth",
+        httponly=True,
+        secure=False,  # True для HTTPS
+        samesite="lax"
+    )
 
-    if access_token :
-        crud_jwt.revoke_access_token_by_value(db, access_token, "User logged out")
-
-    # Очищаем cookie
-    clear_refresh_token_cookie(response)
-
-    # Очищаем отработанные токены
-    crud_jwt.cleanup_expired_tokens(db)
-
-    return {
-        "access_status" : "valid",
-        "message" : "Successfully logged out"
-    }
+    # 4. Возвращаем успешный ответ
+    return ResponseFactory.success(
+        message="Successfully logged out",
+        data={
+            "user_id": current_user.id,
+            "nickname": current_user.nickname
+        }
+    )
 
 
 @router.get("/verify", response_model=schemas.AccessTokenStatusResponse)
 def verify_token(
         request: Request,
-        db: Session = Depends(get_db)
-) :
+):
     """
     Проверка статуса access токена
     """
     auth_header = request.headers.get("Authorization")
 
-    if not auth_header or not auth_header.startswith("Bearer ") :
+    if not auth_header or not auth_header.startswith("Bearer "):
         return schemas.AccessTokenStatusResponse(
             access_status="missing",
             error_message="Access token is missing"

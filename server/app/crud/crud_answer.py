@@ -1,21 +1,21 @@
 from sqlalchemy.orm import Session
-from ..models.model_answer import Answer as Ans
+from ..models.model_answer import Answer
 from .. import schemas
 from typing import Optional, List, Type
 
 
-def get_answer(db: Session, answer_id: int) -> Optional[Ans]:
-    return db.query(Ans).filter(Ans.id == answer_id).first()
+def get_answer(db: Session, answer_id: int) -> Optional[Answer]:
+    return db.query(Answer).filter(Answer.id == answer_id).first()
 
 
-def get_answers_by_question(db: Session, question_id: int) -> list[Type[Ans]]:
-    return db.query(Ans).filter(
-        Ans.question_id == question_id
-    ).order_by(Ans.order_number).all()
+def get_answers_by_question(db: Session, question_id: int) -> list[Type[Answer]]:
+    return db.query(Answer).filter(
+        Answer.question_id == question_id
+    ).order_by(Answer.order_number).all()
 
 
-def create_answer(db: Session, answer: schemas.AnswerCreate, question_id: int) -> Ans:
-    db_answer = Ans(
+def create_answer(db: Session, answer: schemas.AnswerCreate, question_id: int) -> Answer:
+    db_answer = Answer(
         **answer.model_dump(),
         question_id=question_id
     )
@@ -25,10 +25,10 @@ def create_answer(db: Session, answer: schemas.AnswerCreate, question_id: int) -
     return db_answer
 
 
-def create_answers_bulk(db: Session, answers: List[schemas.AnswerCreate], question_id: int) -> List[Ans]:
+def create_answers_bulk(db: Session, answers: List[schemas.AnswerCreate], question_id: int) -> List[Answer]:
     db_answers = []
     for answer in answers:
-        db_answer = Ans(
+        db_answer = Answer(
             **answer.model_dump(),
             question_id=question_id
         )
@@ -40,7 +40,7 @@ def create_answers_bulk(db: Session, answers: List[schemas.AnswerCreate], questi
     return db_answers
 
 
-def update_answer(db: Session, answer_id: int, answer_update: schemas.AnswerUpdate) -> Optional[Ans]:
+def update_answer(db: Session, answer_id: int, answer_update: schemas.AnswerUpdate) -> Optional[Answer]:
     db_answer = get_answer(db, answer_id)
     if db_answer:
         update_data = answer_update.model_dump(exclude_unset=True)
@@ -61,8 +61,18 @@ def delete_answer(db: Session, answer_id: int) -> bool:
 
 
 def delete_answers_by_question(db: Session, question_id: int) -> int:
-    result = db.query(Ans).filter(
-        Ans.question_id == question_id
+    result = db.query(Answer).filter(
+        Answer.question_id == question_id
     ).delete()
     db.commit()
     return result
+
+
+def get_correct_answers(db, question_id) -> List[Answer]:
+    """
+    :param db: Сесия БД
+    :param question_id: ID вопроса
+    :return: Список правильных ответов
+    """
+    return db.query(Answer).filter(Answer.question_id == question_id,
+                                   Answer.is_correct == True).all()

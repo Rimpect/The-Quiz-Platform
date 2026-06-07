@@ -16,9 +16,8 @@ def create_answer(
         answer: schemas.AnswerCreate,
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
-) :
-    """Создание варианта ответа для вопроса"""
-    if not crud_question.get_question(db, question_id) :
+):
+    if not crud_question.get_question(db, question_id):
         raise HTTPException(status_code=404, detail="Question not found")
     return answer.create_answer(db, answer, question_id)
 
@@ -29,9 +28,9 @@ def create_answers_bulk(
         answers: List[schemas.AnswerCreate],
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
-) :
+):
     """Массовое создание вариантов ответов"""
-    if not crud_question.get_question(db, question_id) :
+    if not crud_question.get_question(db, question_id):
         raise HTTPException(status_code=404, detail="Question not found")
     return crud_answer.create_answers_bulk(db, answers, question_id)
 
@@ -40,7 +39,7 @@ def create_answers_bulk(
 def read_answers(
         question_id: int,
         db: Session = Depends(get_db)
-) :
+):
     """Получение всех вариантов ответов для вопроса"""
     return crud_answer.get_answers_by_question(db, question_id)
 
@@ -50,7 +49,7 @@ def read_answer(
         question_id: int,
         answer_id: int,
         db: Session = Depends(get_db)
-) :
+):
     """Получение варианта ответа по ID"""
     answer_id = crud_answer.get_answer(db, answer_id)
     if not answer_id or answer_id.question_id != question_id:
@@ -65,10 +64,10 @@ def update_answer(
         answer_update: schemas.AnswerUpdate,
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
-) :
+):
     """Обновление варианта ответа"""
     answer = crud_answer.get_answer(db, answer_id)
-    if not answer or answer.question_id != question_id :
+    if not answer or answer.question_id != question_id:
         raise HTTPException(status_code=404, detail="Answer not found")
     return crud_answer.update_answer(db, answer_id, answer_update)
 
@@ -79,9 +78,9 @@ def delete_answer(
         answer_id: int,
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
-) :
+):
     """Удаление варианта ответа"""
     answer = crud_answer.get_answer(db, answer_id)
-    if not answer or answer.question_id != question_id :
+    if not answer or answer.question_id != question_id:
         raise HTTPException(status_code=404, detail="Answer not found")
     crud_answer.delete_answer(db, answer_id)

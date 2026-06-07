@@ -2,30 +2,27 @@
 Главный файл приложения FastAPI
 Содержит настройки CORS, middleware, lifespan, роутеры
 """
-from fastapi import FastAPI, Request
-from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-import os
-import logging
 import asyncio
+import logging
+import os
+from contextlib import asynccontextmanager
 
-# База данных
-from .database.database import engine, Base, close_db_connections, get_db
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
 from .config_redis.redis_config import get_redis, redis_pool
-
 # Сервисы
 from .config_redis.redis_service import cleanup_expired_sessions
-
 # CRUD
 from .crud import crud_guest as guest_crud
-
+# База данных
+from .database.database import engine, Base, close_db_connections, get_db
+from .middleware.error_handler_middleware import ErrorHandlerMiddleware
 # Middleware
 from .middleware.logging_middleware import LoggingMiddleware
 from .middleware.rate_limit_middleware import RateLimitMiddleware
 from .middleware.response_middleware import ResponseFormatterMiddleware
-from .middleware.error_handler_middleware import ErrorHandlerMiddleware
-
 # Роутеры
 from .routers import (
     auth_router,
@@ -114,11 +111,11 @@ async def lifespan(app: FastAPI):
                     if deleted_redis:
                         logger.info(f"Cleaned up {deleted_redis} expired Redis sessions")
 
-                except Exception as e:
-                    logger.error(f"Background cleanup error: {e}")
+                except Exception as exc:
+                    logger.error(f"Background cleanup error: {exc}")
 
         # Запуск фоновой задачи
-        asyncio.create_task(background_cleanup())
+        await asyncio.create_task(background_cleanup())
         logger.info("Background cleanup task started")
 
     except Exception as e:

@@ -8,35 +8,35 @@ from pydantic import BaseModel, Field
 
 
 # ========== Категории ==========
-class CategoryBase(BaseModel) :
+class CategoryBase(BaseModel):
     category_type: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = None
 
 
-class CategoryCreate(CategoryBase) :
+class CategoryCreate(CategoryBase):
     pass
 
 
-class CategoryUpdate(BaseModel) :
+class CategoryUpdate(BaseModel):
     category_type: Optional[str] = Field(None, min_length=1, max_length=100)
     description: Optional[str] = None
 
 
-class Category(CategoryBase) :
+class Category(CategoryBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
 
-    class Config :
+    class Config:
         from_attributes = True
 
 
-class CategoryWithStats(Category) :
+class CategoryWithStats(Category):
     quiz_count: int = 0
 
 
 # ========== Квизы ==========
-class QuizBase(BaseModel) :
+class QuizBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     category_id: Optional[int] = None
     description: str = Field(..., min_length=1)
@@ -44,11 +44,11 @@ class QuizBase(BaseModel) :
     quiz_mode: str = "single"
 
 
-class QuizCreate(QuizBase) :
+class QuizCreate(QuizBase):
     cover_url: Optional[str] = None
 
 
-class QuizUpdate(BaseModel) :
+class QuizUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=200)
     category_id: Optional[int] = None
     description: Optional[str] = None
@@ -57,7 +57,7 @@ class QuizUpdate(BaseModel) :
     quiz_mode: Optional[str] = None
 
 
-class QuizResponse(QuizBase) :
+class QuizResponse(QuizBase):
     id: int
     cover_url: Optional[str] = None
     created_at: datetime
@@ -68,18 +68,18 @@ class QuizResponse(QuizBase) :
     times_taken: int = 0
     category_obj: Optional[Category] = None
 
-    class Config :
+    class Config:
         from_attributes = True
 
 
 # ========== Массовое создание ==========
-class AnswerBulkCreate(BaseModel) :
+class AnswerBulkCreate(BaseModel):
     answer_text: str = Field(..., min_length=1)
     is_correct: bool = False
     order_number: int = 0
 
 
-class QuestionBulkCreate(BaseModel) :
+class QuestionBulkCreate(BaseModel):
     answer_type: str = Field(..., description="single/multiple/text/numeric")
     points: int = Field(1, ge=1, le=100)
     question_text: str = Field(..., min_length=1)
@@ -88,7 +88,7 @@ class QuestionBulkCreate(BaseModel) :
     answers: List[AnswerBulkCreate] = Field(default_factory=list)
 
 
-class QuizBulkCreate(BaseModel) :
+class QuizBulkCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
     category_id: Optional[int] = None
     description: str = Field(..., min_length=1)
@@ -98,7 +98,7 @@ class QuizBulkCreate(BaseModel) :
     questions: List[QuestionBulkCreate] = Field(default_factory=list)
 
 
-class QuizBulkResponse(BaseModel) :
+class QuizBulkResponse(BaseModel):
     quiz_id: int
     title: str
     questions_created: int

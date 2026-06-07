@@ -8,14 +8,14 @@ from ..database.database import Base
 import enum
 
 
-class AnswerType(str, enum.Enum) :
+class AnswerType(str, enum.Enum):
     SINGLE = "single"  # Одиночный выбор
     MULTIPLE = "multiple"  # Множественный выбор
-    #TEXT = "text"  # Текстовый ответ
-    #NUMERIC = "numeric"  # Числовой ответ
+    # TEXT = "text"  # Текстовый ответ
+    # NUMERIC = "numeric"  # Числовой ответ
 
 
-class Question(Base) :
+class Question(Base):
     __tablename__ = "questions"
 
     # Обязательные поля
@@ -43,7 +43,7 @@ class Question(Base) :
         )
 
     @property
-    def audio_files(self) :
+    def audio_files(self):
         """Аудиофайлы вопроса"""
         from ..crud import crud_media as media_crud
         from ..database.database import SessionLocal
@@ -56,9 +56,11 @@ class Question(Base) :
     def video(self):
         """Видеофайлы вопроса"""
         from ..crud import crud_media as media_crud
-        from ..database.database import  SessionLocal
+        from ..database.database import SessionLocal
         db = SessionLocal()
-        return media_crud.get_entity_primary_media()
+        return media_crud.get_entity_primary_media(
+            db, MediaEntity.QUESTION, self.id, MediaType.VIDEO
+        )
 
-    def __repr__(self) :
+    def __repr__(self):
         return f"<Question {self.id}: {self.question_text[:50]}>"

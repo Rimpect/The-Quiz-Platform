@@ -7,7 +7,7 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 
-class UserAnswerCreate(BaseModel) :
+class UserAnswerCreate(BaseModel):
     question_id: int
     answer_text: Optional[str] = None
     answer_id: Optional[int] = None
@@ -16,14 +16,14 @@ class UserAnswerCreate(BaseModel) :
     question_order: Optional[int] = 0
 
 
-class UserAnswerUpdate(BaseModel) :
+class UserAnswerUpdate(BaseModel):
     answer_text: Optional[str] = None
     answer_id: Optional[int] = None
     answer_ids: Optional[List[int]] = None
     time_spent_seconds: Optional[int] = None
 
 
-class UserAnswerResponse(BaseModel) :
+class UserAnswerResponse(BaseModel):
     id: int
     session_id: str
     question_id: int
@@ -34,11 +34,11 @@ class UserAnswerResponse(BaseModel) :
     time_spent_seconds: int
     created_at: datetime
 
-    class Config :
+    class Config:
         from_attributes = True
 
 
-class SessionScoreResponse(BaseModel) :
+class SessionScoreResponse(BaseModel):
     session_id: str
     total_points: int
     total_questions: int
@@ -47,7 +47,7 @@ class SessionScoreResponse(BaseModel) :
     percentage: float
 
 
-class StartSessionResponse(BaseModel) :
+class StartSessionResponse(BaseModel):
     session_id: str
     quiz_id: int
     total_questions: int

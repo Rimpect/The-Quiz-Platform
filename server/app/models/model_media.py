@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum as SQLEnum
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
-from ..database.database import Base
 import enum
+
+from sqlalchemy import Column, Integer, String, DateTime, Enum as SQLEnum
+from sqlalchemy.sql import func
+
+from ..database.database import Base
 
 
 class MediaType(str, enum.Enum):
@@ -12,15 +13,15 @@ class MediaType(str, enum.Enum):
     VIDEO = "video"
 
 
-class MediaEntity(str, enum.Enum) :
+class MediaEntity(str, enum.Enum):
     """Сущность, к которой привязан медиафайл"""
     PROFILE = "profile"
     QUESTION = "question"
     QUIZ = "quiz"
-    QUIZ_OPTION = "quiz_option"
+    QUIZ_DESCRIPTION = "quiz_description"
 
 
-class MediaFile(Base) :
+class MediaFile(Base):
     """Модель для хранения метаданных медиафайлов"""
     __tablename__ = "media_files"
 
@@ -41,15 +42,15 @@ class MediaFile(Base) :
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    def __repr__(self) :
+    def __repr__(self):
         return f"<MediaFile {self.entity_type}/{self.media_type}: {self.file_name}>"
 
     @property
-    def url(self) -> str :
+    def url(self) -> str:
         """Полный URL для доступа к файлу"""
         return f"/media/{self.file_path}"
 
     @property
-    def file_extension(self) -> str :
+    def file_extension(self) -> str:
         """Расширение файла"""
         return self.file_name.split('.')[-1].lower() if '.' in self.file_name else ''

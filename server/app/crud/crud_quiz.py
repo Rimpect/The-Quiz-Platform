@@ -9,7 +9,7 @@ from ..models.model_quiz import Quiz
 from ..models.model_answer import Answer
 
 
-def get_quiz(db: Session, quiz_id: int) -> Optional[Quiz] :
+def get_quiz(db: Session, quiz_id: int) -> Optional[Quiz]:
     return db.query(Quiz).filter(Quiz.id == quiz_id).first()
 
 
@@ -23,16 +23,16 @@ def get_quizzes(
         limit: int = 100,
         category: Optional[str] = None,
         is_public: Optional[bool] = None
-) -> list[Type[Quiz]] :
+) -> list[Type[Quiz]]:
     query = db.query(Quiz)
-    if category :
+    if category:
         query = query.filter(Quiz.category == category)
-    if is_public is not None :
+    if is_public is not None:
         query = query.filter(Quiz.is_public == is_public)
     return query.offset(skip).limit(limit).all()
 
 
-def create_quiz(db: Session, quiz: schemas.QuizCreate) -> Quiz :
+def create_quiz(db: Session, quiz: schemas.QuizCreate) -> Quiz:
     db_quiz = Quiz(
         title=quiz.title,
         category=quiz.category,
@@ -47,11 +47,11 @@ def create_quiz(db: Session, quiz: schemas.QuizCreate) -> Quiz :
     return db_quiz
 
 
-def update_quiz(db: Session, quiz_id: int, quiz_update: schemas.QuizUpdate) -> Optional[Quiz] :
+def update_quiz(db: Session, quiz_id: int, quiz_update: schemas.QuizUpdate) -> Optional[Quiz]:
     db_quiz = get_quiz(db, quiz_id)
-    if db_quiz :
+    if db_quiz:
         update_data = quiz_update.model_dump(exclude_unset=True)
-        for field, value in update_data.items() :
+        for field, value in update_data.items():
             setattr(db_quiz, field, value)
         db_quiz.updated_at = datetime.utcnow()
         db.commit()
@@ -59,9 +59,9 @@ def update_quiz(db: Session, quiz_id: int, quiz_update: schemas.QuizUpdate) -> O
     return db_quiz
 
 
-def update_quiz_cover(db: Session, quiz_id: int, cover_url: str) -> Optional[Quiz] :
+def update_quiz_cover(db: Session, quiz_id: int, cover_url: str) -> Optional[Quiz]:
     db_quiz = get_quiz(db, quiz_id)
-    if db_quiz :
+    if db_quiz:
         db_quiz.cover_url = cover_url
         db_quiz.updated_at = datetime.utcnow()
         db.commit()
@@ -69,23 +69,23 @@ def update_quiz_cover(db: Session, quiz_id: int, cover_url: str) -> Optional[Qui
     return db_quiz
 
 
-def delete_quiz(db: Session, quiz_id: int) -> bool :
+def delete_quiz(db: Session, quiz_id: int) -> bool:
     db_quiz = get_quiz(db, quiz_id)
-    if db_quiz :
+    if db_quiz:
         db.delete(db_quiz)
         db.commit()
         return True
     return False
 
 
-def get_quiz_with_details(db: Session, quiz_id: int) -> Optional[Quiz] :
+def get_quiz_with_details(db: Session, quiz_id: int) -> Optional[Quiz]:
     """Получение квиза со всеми вопросами и ответами"""
     return db.query(Quiz).options(
         joinedload(Quiz.questions).joinedload(Quest.answers)
     ).filter(Quiz.id == quiz_id).first()
 
 
-def get_quiz_categories(db: Session) -> List[str] :
+def get_quiz_categories(db: Session) -> List[str]:
     """Получение всех уникальных категорий"""
     categories = db.query(Quiz.category).distinct().all()
     return [cat[0] for cat in categories]
@@ -94,7 +94,7 @@ def get_quiz_categories(db: Session) -> List[str] :
 def create_quiz_full(
         db: Session,
         quiz_data: schemas.QuizBulkCreate
-) -> Dict[str, Any] :
+) -> Dict[str, Any]:
     """
     Массовое создание квиза с вопросами и ответами
 
@@ -123,7 +123,7 @@ def create_quiz_full(
     answers_created = 0
 
     # 2. Создаем вопросы и ответы
-    for idx, q_data in enumerate(quiz_data.questions) :
+    for idx, q_data in enumerate(quiz_data.questions):
         # Создаем вопрос
         db_question = Quest(
             quiz_id=db_quiz.id,
@@ -139,7 +139,7 @@ def create_quiz_full(
         questions_created += 1
 
         # Создаем ответы для вопроса
-        for ans_idx, a_data in enumerate(q_data.answers) :
+        for ans_idx, a_data in enumerate(q_data.answers):
             db_answer = Answer(
                 question_id=db_question.id,
                 answer_text=a_data.answer_text,
@@ -161,8 +161,8 @@ def create_quiz_full(
     db.commit()
 
     return {
-        "quiz" : result,
-        "questions_created" : questions_created,
-        "answers_created" : answers_created,
-        "total_time_limit_minutes" : db_quiz.duration_minutes
+        "quiz": result,
+        "questions_created": questions_created,
+        "answers_created": answers_created,
+        "total_time_limit_minutes": db_quiz.duration_minutes
     }

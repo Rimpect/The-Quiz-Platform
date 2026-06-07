@@ -15,10 +15,10 @@ def start_quiz(
         quiz_id: int,
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
-) :
+):
     """Сохранение игры квиза"""
     # Проверяем существование квиза
-    if not crud_quiz.get_quiz(db, quiz_id) :
+    if not crud_quiz.get_quiz(db, quiz_id):
         raise HTTPException(status_code=404, detail="Quiz not found")
     return crud_quiz_results.create_quiz_result(db, current_user.id, quiz_id)
 
@@ -29,7 +29,7 @@ def get_my_results(
         limit: int = 100,
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
-) :
+):
     """Получение всех результатов текущего пользователя"""
     return crud_quiz_results.get_user_quiz_results(db, current_user.id, skip, limit)
 
@@ -39,7 +39,7 @@ def get_quiz_result(
         result_id: int,
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
-) :
+):
     """Получение результата по ID"""
     result = crud_quiz_results.get_quiz_result(db, result_id)
     if not result or result.user_id != current_user.id:
@@ -54,13 +54,13 @@ def complete_quiz(
         result_id: int,
         db: Session = Depends(get_db),
         current_user: schemas.User = Depends(get_current_user)
-) :
+):
     """Завершение квиза"""
     result = crud_quiz_results.get_quiz_result(db, result_id)
-    if not result or result.user_id != current_user.id :
+    if not result or result.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="Result not found")
 
-    if result.is_completed :
+    if result.is_completed:
         raise HTTPException(status_code=400, detail="Quiz already completed")
 
     return crud_quiz_results.complete_quiz_result(db, result_id)
@@ -71,8 +71,8 @@ def complete_quiz(
 #         quiz_id: int,
 #         limit: int = 10,
 #         db: Session = Depends(get_db)
-# ) :
+# ):
 #     """Таблица лидеров для квиза"""
-#     if not crud_quiz.get_quiz(db, quiz_id) :
+#     if not crud_quiz.get_quiz(db, quiz_id):
 #         raise HTTPException(status_code=404, detail="Quiz not found")
 #     return crud_quiz_results.get_quiz_leaderboard(db, quiz_id, limit)

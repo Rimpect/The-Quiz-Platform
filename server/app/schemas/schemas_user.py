@@ -8,13 +8,13 @@ from typing import Optional
 from pydantic import BaseModel, Field, EmailStr
 
 
-class UserRole(str, Enum) :
+class UserRole(str, Enum):
     USER = "user"
     ADMIN = "admin"
     GUEST = "guest"
 
 
-class ThemeMode(str, Enum) :
+class ThemeMode(str, Enum):
     LIGHT = "light"
     DARK = "dark"
 
@@ -25,7 +25,7 @@ class User(BaseModel):
     password: str
 
 
-class UserBase(BaseModel) :
+class UserBase(BaseModel):
     nickname: str = Field(..., min_length=1, max_length=50)
     theme_site: ThemeMode = ThemeMode.LIGHT
     email: Optional[EmailStr] = None
@@ -36,14 +36,14 @@ class UserCreate(UserBase):
     password: str = Field(..., min_length=6)
 
 
-class UserUpdate(BaseModel) :
+class UserUpdate(BaseModel):
     nickname: Optional[str] = Field(None, min_length=1, max_length=50)
     theme_site: Optional[ThemeMode] = None
     photo_profile: Optional[str] = None
     email: Optional[EmailStr] = None
 
 
-class UserResponse(UserBase) :
+class UserResponse(UserBase):
     id: int
     photo_profile: Optional[str] = None
     role: UserRole
@@ -52,17 +52,17 @@ class UserResponse(UserBase) :
     created_at: datetime
     updated_at: datetime
 
-    class Config :
+    class Config:
         from_attributes = True
 
 
 # ========== Гости ==========
-class GuestCreate(BaseModel) :
+class GuestCreate(BaseModel):
     nickname: Optional[str] = Field(None, min_length=1, max_length=50)
     expires_hours: int = Field(24, ge=1, le=168)
 
 
-class GuestResponse(BaseModel) :
+class GuestResponse(BaseModel):
     id: int
     nickname: str
     role: UserRole
@@ -72,7 +72,7 @@ class GuestResponse(BaseModel) :
     token_type: str = "bearer"
 
 
-class PromoteGuestRequest(BaseModel) :
+class PromoteGuestRequest(BaseModel):
     guest_id: int
     login: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
@@ -80,7 +80,7 @@ class PromoteGuestRequest(BaseModel) :
 
 
 # ========== JWT и аутентификация ==========
-class Token(BaseModel) :
+class Token(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
@@ -91,7 +91,7 @@ class EmailRequest(BaseModel):
     password: str
 
 
-class RefreshTokenRequest(BaseModel) :
+class RefreshTokenRequest(BaseModel):
     refresh_token: str
 
 
@@ -110,7 +110,7 @@ class RefreshTokenResponse(BaseModel):
     expires_in: int = Field(1800, description="Время жизни access токена в секундах")
 
 
-class AccessTokenStatusResponse(BaseModel) :
+class AccessTokenStatusResponse(BaseModel):
     access_status: str
     error_message: Optional[str] = None
     user_id: Optional[int] = None

@@ -1,13 +1,14 @@
 """
 Базовые схемы для унифицированных ответов API
 """
-from pydantic import BaseModel, Field
-from typing import Optional, Any, Dict, List, TypeVar, Generic
 from datetime import datetime
 from enum import Enum
+from typing import Optional, Any, Dict, List, TypeVar
+
+from pydantic import BaseModel, Field
 
 
-class AccessStatus(str, Enum) :
+class AccessStatus(str, Enum):
     """Статус доступа"""
     GRANTED = "granted"
     DENIED = "denied"
@@ -16,7 +17,7 @@ class AccessStatus(str, Enum) :
     GUEST = "guest"
 
 
-class ResponseStatus(str, Enum) :
+class ResponseStatus(str, Enum):
     """HTTP статусы в читаемом виде"""
     SUCCESS = "success"
     CREATED = "created"
@@ -32,7 +33,7 @@ class ResponseStatus(str, Enum) :
 T = TypeVar('T')
 
 
-class BaseResponse(BaseModel) :
+class BaseResponse(BaseModel):
     """Базовый шаблон для всех ответов API"""
     status_code: int = Field(..., description="HTTP статус код")
     status: ResponseStatus = Field(..., description="Статус в читаемом виде")
@@ -42,59 +43,59 @@ class BaseResponse(BaseModel) :
     data: Optional[Any] = Field(None, description="Основные данные ответа")
     errors: Optional[Dict[str, Any]] = Field(None, description="Ошибки валидации")
 
-    class Config :
+    class Config:
         json_encoders = {
-            datetime : lambda v : v.isoformat()
+            datetime: lambda v: v.isoformat()
         }
 
 
-class PaginatedResponse(BaseResponse) :
+class PaginatedResponse(BaseResponse):
     """Ответ с пагинацией"""
     data: Optional[Dict[str, Any]] = Field(None, description="Данные с пагинацией")
 
-    class Config :
+    class Config:
         json_schema_extra = {
-            "example" : {
-                "status_code" : 200,
-                "status" : "success",
-                "access_status" : "granted",
-                "message" : "Список получен успешно",
-                "timestamp" : "2024-01-01T12:00:00",
-                "data" : {
-                    "items" : [],
-                    "total" : 100,
-                    "page" : 1,
-                    "size" : 10,
-                    "pages" : 10
+            "example": {
+                "status_code": 200,
+                "status": "success",
+                "access_status": "granted",
+                "message": "Список получен успешно",
+                "timestamp": "2024-01-01T12:00:00",
+                "data": {
+                    "items": [],
+                    "total": 100,
+                    "page": 1,
+                    "size": 10,
+                    "pages": 10
                 },
-                "errors" : None
+                "errors": None
             }
         }
 
 
-class ErrorResponse(BaseResponse) :
+class ErrorResponse(BaseResponse):
     """Ответ с ошибкой"""
     status_code: int = Field(400, description="HTTP статус код")
     status: ResponseStatus = Field(ResponseStatus.ERROR, description="Статус")
     message: str = Field(..., description="Сообщение об ошибке")
 
-    class Config :
+    class Config:
         json_schema_extra = {
-            "example" : {
-                "status_code" : 400,
-                "status" : "error",
-                "access_status" : "denied",
-                "message" : "Ошибка валидации",
-                "timestamp" : "2024-01-01T12:00:00",
-                "data" : None,
-                "errors" : {
-                    "email" : "Invalid email format"
+            "example": {
+                "status_code": 400,
+                "status": "error",
+                "access_status": "denied",
+                "message": "Ошибка валидации",
+                "timestamp": "2024-01-01T12:00:00",
+                "data": None,
+                "errors": {
+                    "email": "Invalid email format"
                 }
             }
         }
 
 
-class ResponseFactory :
+class ResponseFactory:
     """Фабрика для создания унифицированных ответов"""
 
     @staticmethod
@@ -102,7 +103,7 @@ class ResponseFactory :
             data: Any = None,
             message: str = "Operation completed successfully",
             access_status: AccessStatus = AccessStatus.GRANTED
-    ) -> BaseResponse :
+    ) -> BaseResponse:
         return BaseResponse(
             status_code=200,
             status=ResponseStatus.SUCCESS,
@@ -116,7 +117,7 @@ class ResponseFactory :
             data: Any = None,
             message: str = "Resource created successfully",
             access_status: AccessStatus = AccessStatus.GRANTED
-    ) -> BaseResponse :
+    ) -> BaseResponse:
         return BaseResponse(
             status_code=201,
             status=ResponseStatus.CREATED,
@@ -130,7 +131,7 @@ class ResponseFactory :
             message: str = "Bad request",
             errors: Dict[str, Any] = None,
             access_status: AccessStatus = AccessStatus.DENIED
-    ) -> BaseResponse :
+    ) -> BaseResponse:
         return BaseResponse(
             status_code=400,
             status=ResponseStatus.BAD_REQUEST,
@@ -143,7 +144,11 @@ class ResponseFactory :
     def unauthorized(
             message: str = "Authentication required",
             access_status: AccessStatus = AccessStatus.MISSING
-    ) -> BaseResponse :
+    ) -> BaseResponse:
+        """
+
+        :rtype: object
+        """
         return BaseResponse(
             status_code=401,
             status=ResponseStatus.UNAUTHORIZED,
@@ -155,7 +160,7 @@ class ResponseFactory :
     def forbidden(
             message: str = "Access forbidden",
             access_status: AccessStatus = AccessStatus.DENIED
-    ) -> BaseResponse :
+    ) -> BaseResponse:
         return BaseResponse(
             status_code=403,
             status=ResponseStatus.FORBIDDEN,
@@ -167,8 +172,8 @@ class ResponseFactory :
     def not_found(
             message: str = "Resource not found",
             resource: str = None
-    ) -> BaseResponse :
-        if resource :
+    ) -> BaseResponse:
+        if resource:
             message = f"{resource} not found"
         return BaseResponse(
             status_code=404,
@@ -181,7 +186,7 @@ class ResponseFactory :
     def conflict(
             message: str = "Resource already exists",
             errors: Dict[str, Any] = None
-    ) -> BaseResponse :
+    ) -> BaseResponse:
         return BaseResponse(
             status_code=409,
             status=ResponseStatus.CONFLICT,
@@ -195,7 +200,7 @@ class ResponseFactory :
             message: str = "Internal server error",
             errors: Dict[str, Any] = None,
             status_code: int = 500
-    ) -> BaseResponse :
+    ) -> BaseResponse:
         return BaseResponse(
             status_code=status_code,
             status=ResponseStatus.ERROR,
@@ -211,7 +216,7 @@ class ResponseFactory :
             page: int,
             size: int,
             message: str = "List retrieved successfully"
-    ) -> PaginatedResponse :
+    ) -> PaginatedResponse:
         pages = (total + size - 1) // size if size > 0 else 0
         return PaginatedResponse(
             status_code=200,
@@ -219,10 +224,10 @@ class ResponseFactory :
             access_status=AccessStatus.GRANTED,
             message=message,
             data={
-                "items" : items,
-                "total" : total,
-                "page" : page,
-                "size" : size,
-                "pages" : pages
+                "items": items,
+                "total": total,
+                "page": page,
+                "size": size,
+                "pages": pages
             }
         )

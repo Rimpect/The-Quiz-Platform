@@ -24,11 +24,11 @@ def start_session(
         quiz_id: int,
         db: Session = Depends(get_db),
         current_user: models.User = Depends(get_current_user)
-) :
+):
     """Начало новой сессии прохождения квиза"""
     # Проверяем существование квиза
     quiz = quiz_crud.get_quiz(db, quiz_id)
-    if not quiz :
+    if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found")
 
     # Получаем вопросы
@@ -54,13 +54,13 @@ def start_guest_session(
         quiz_id: int,
         db: Session = Depends(get_db),
         current_guest: models.Guest = Depends(get_current_guest)
-) :
+):
     """Начало сессии для гостя"""
     quiz = quiz_crud.get_quiz(db, quiz_id)
-    if not quiz :
+    if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found")
 
-    if not quiz.is_public :
+    if not quiz.is_public:
         raise HTTPException(status_code=403, detail="Guests can only play public quizzes")
 
     questions = question_crud.get_questions_by_quiz(db, quiz_id)
@@ -86,19 +86,19 @@ def save_answer(
         answer: schemas.UserAnswerCreate,
         db: Session = Depends(get_db),
         current_user: models.User = Depends(get_current_user)
-) :
+):
     """Сохранение ответа пользователя"""
     # Проверяем сессию
     session = quiz_session_service.get_session(session_id)
-    if not session :
+    if not session:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    if int(session.get("user_id")) != current_user.id :
+    if int(session.get("user_id")) != current_user.id:
         raise HTTPException(status_code=403, detail="Not your session")
 
     # Получаем вопрос
     question = question_crud.get_question(db, answer.question_id)
-    if not question :
+    if not question:
         raise HTTPException(status_code=404, detail="Question not found")
 
     # Сохраняем ответ
@@ -111,9 +111,9 @@ def save_answer(
     )
 
     return {
-        "message" : "Answer saved",
-        "is_correct" : result["is_correct"],
-        "points_earned" : result["points_earned"]
+        "message": "Answer saved",
+        "is_correct": result["is_correct"],
+        "points_earned": result["points_earned"]
     }
 
 
@@ -122,17 +122,17 @@ def get_session_answers(
         session_id: str,
         current_user: models.User = Depends(get_current_user),
         db: Session = Depends(get_db)
-) :
+):
     """Получение всех ответов сессии"""
     session = quiz_session_service.get_session(session_id)
-    if not session :
+    if not session:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    if int(session.get("user_id")) != current_user.id :
+    if int(session.get("user_id")) != current_user.id:
         raise HTTPException(status_code=403, detail="Not your session")
 
     answers = answer_service.UserAnswerService.get_all_answers(session_id)
-    return {"answers" : answers}
+    return {"answers": answers}
 
 
 @router.get("/score")
@@ -140,13 +140,13 @@ def get_session_score(
         session_id: str,
         db: Session = Depends(get_db),
         current_user: models.User = Depends(get_current_user)
-) :
+):
     """Подсчет результатов и завершение сессии"""
     session = quiz_session_service.get_session(session_id)
-    if not session :
+    if not session:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    if int(session.get("user_id")) != current_user.id :
+    if int(session.get("user_id")) != current_user.id:
         raise HTTPException(status_code=403, detail="Not your session")
 
     # Подсчитываем результат
@@ -173,11 +173,11 @@ def get_session_score(
 def cancel_session(
         session_id: str,
         current_user: models.User = Depends(get_current_user)
-) :
+):
     """Отмена сессии (удаление временных данных)"""
     session = quiz_session_service.get_session(session_id)
-    if session and int(session.get("user_id")) == current_user.id :
+    if session and int(session.get("user_id")) == current_user.id:
         quiz_session_service.delete_session(session_id)
         answer_service.UserAnswerService.delete_session_answers(session_id)
 
-    return {"message" : "Session cancelled"}
+    return {"message": "Session cancelled"}
