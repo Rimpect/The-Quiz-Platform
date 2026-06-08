@@ -2,7 +2,7 @@
 import enum
 from typing import Optional
 
-from sqlalchemy import Column, Integer, String, DateTime, Enum as SQLEnum
+from sqlalchemy import Column, Integer, String, DateTime, Enum as SQLEnum, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -32,7 +32,7 @@ class User(Base):
     photo_profile = Column(String(500), nullable=True)  # Фото профиля (путь к файлу)
     email = Column(String(100), unique=True, nullable=False, index=True)  # Почта
     password_hash = Column(String(255), nullable=False)  # Пароль (хеш)
-
+    is_active = Column(Boolean, default=True, nullable=False)
     # Даты
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=True)
@@ -42,7 +42,7 @@ class User(Base):
     # Связи
     jwt_tokens = relationship("JWTToken", back_populates="user", cascade="all, delete-orphan")
     quiz_results = relationship("QuizResult", back_populates="user", cascade="all, delete-orphan")
-    quizzes = relationship("Quiz", back_populates="author", cascade="all, delete-orphan")
+    quiz = relationship("Quiz", cascade="all, delete-orphan")
 
     @property
     def profile_image_url(self) -> Optional[str]:

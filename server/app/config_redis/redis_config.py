@@ -9,10 +9,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Настройки Redis
-REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
-REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
-REDIS_DB = int(os.getenv("REDIS_DB", 0))
-REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", None)
+REDIS_HOST = os.getenv("REDIS_HOST")
+REDIS_PORT = int(os.getenv("REDIS_PORT"))
+REDIS_DB = int(os.getenv("REDIS_DB"))
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
 
 # Создание пула соединений
 redis_pool = redis.ConnectionPool(

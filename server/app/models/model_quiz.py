@@ -42,7 +42,7 @@ class Quiz(Base):
     # Связи
     questions = relationship("Question", back_populates="quiz", cascade="all, delete-orphan")
     quiz_results = relationship("QuizResult", back_populates="quiz", cascade="all, delete-orphan")
-    user_author = relationship("User", back_populates="quiz", cascade="all, delete-orphan")
+    user_author = relationship("User", back_populates="quiz")
     category_ref = relationship("Category", back_populates="quizzes")
 
     # Вычисляемые свойства (property)

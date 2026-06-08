@@ -26,7 +26,6 @@ class User(BaseModel):
 
 
 class UserBase(BaseModel):
-    nickname: str = Field(..., min_length=1, max_length=50)
     theme_site: ThemeMode = ThemeMode.LIGHT
     email: Optional[EmailStr] = None
 

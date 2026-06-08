@@ -31,6 +31,7 @@ class Question(Base):
 
     # Связи
     answers = relationship("Answer", back_populates="question", cascade="all, delete-orphan")
+    quiz = relationship("Quiz", back_populates="questions")
 
     @property
     def images(self):

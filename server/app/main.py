@@ -17,7 +17,7 @@ from .config_redis.redis_service import cleanup_expired_sessions
 # CRUD
 from .crud import crud_guest as guest_crud
 # База данных
-from .database.database import engine, Base, close_db_connections, get_db
+from .database.database import engine, Base, close_db_connections, get_db, test_connection
 from .middleware.error_handler_middleware import ErrorHandlerMiddleware
 # Middleware
 from .middleware.logging_middleware import LoggingMiddleware
@@ -55,37 +55,42 @@ logger = get_logger(__name__)
 # ========== LIFESPAN (управление жизненным циклом) ==========
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Управление жизненным циклом приложения
-    Startup: инициализация БД, Redis, создание таблиц
-    Shutdown: закрытие соединений
-    """
-    # ========== STARTUP ==========
-    logger.info("=" * 50)
     logger.info("STARTING UP APPLICATION")
-    logger.info("=" * 50)
 
+    # 1. Создаём таблицы в отдельном потоке, чтобы не блокировать event-loop
+    logger.info("Creating database tables...")
+    await asyncio.to_thread(Base.metadata.create_all, bind=engine)
+    logger.info("Database tables created")
+
+    # 2. Проверяем подключение, также в отдельном потоке, с таймаутом
     try:
-        # 1. Создание таблиц PostgreSQL
-        logger.info("Creating database tables...")
-        Base.metadata.create_all(bind=engine)
-        logger.info("Database tables created")
-
-        # 2. Проверка подключения к PostgreSQL
-        try:
-            with engine.connect() as conn:
-                conn.execute("SELECT 1")
-            logger.info("PostgreSQL connection established")
-        except Exception as e:
-            logger.error(f"PostgreSQL connection failed: {e}")
-
+        # asyncio.to_thread позволяет выполнить синхронную функцию test_connection в потоке
+        is_connected = await asyncio.wait_for(
+            asyncio.to_thread(test_connection),
+            timeout=10.0 # Таймаут в 10 секунд
+        )
+        if is_connected:
+            logger.info("PostgresSQL connection established")
+        else:
+            logger.warning("PostgresSQL connection check returned False")
+    except asyncio.TimeoutError:
+        logger.error("PostgresSQL connection timed out after 10 seconds")
+    except Exception as e:
+        logger.error(f"PostgresSQL connection failed: {e}")
         # 3. Проверка подключения к Redis
         try:
-            redis_client = get_redis()
+
+            # Таймаут 5 секунд на подключение к Redis
+            redis_client = await asyncio.wait_for(
+                asyncio.to_thread(get_redis),
+                timeout=5.0
+            )
             redis_client.ping()
             logger.info("Redis connection established")
+        except asyncio.TimeoutError:
+            logger.warning("Redis connection timeout - continuing without Redis")
         except Exception as e:
-            logger.error(f"Redis connection failed: {e}")
+            logger.warning(f"Redis connection failed: {e}")
 
         # 4. Создание директорий
         os.makedirs("media_files", exist_ok=True)

@@ -1,18 +1,21 @@
 from datetime import datetime
+from typing import Optional, Type
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from ..models import model_user as user, model_quiz_result as quiz_result
-from ..schemas import schemas_user as schemas
+from ..models import User
+from ..models.model_user import User as user
+from ..models.model_quiz_result import QuizResult as quiz_result
+from ..schemas import schemas_user as schemas, UserCreate
 from ..utils.security import get_password_hash
 
 
-def get_user(db: Session, user_id: int) -> user:
+def get_user(db: Session, user_id: int) -> Optional[Type[user]]:
     return db.query(user).filter(user.id == user_id).first()
 
 
-def get_user_by_email(db: Session, email: str) -> user:
+def get_user_by_email(db: Session, email: str) -> Optional[Type[user]]:
     return db.query(user).filter(user.email == email).first()
 
 
@@ -20,18 +23,20 @@ def get_users(db: Session, skip: int = 0, limit: int = 100) -> [user]:
     return db.query(user).offset(skip).limit(limit).all()
 
 
-def create_user(db: Session, schema_user: schemas.UserCreate) -> user:
+def create_user(db: Session, user: schemas.UserCreate) -> User:
     """Создание обычного пользователя"""
-    hashed_password = get_password_hash(schema_user.password)
-    schema_user.password = hashed_password
-    db_user = schema_user
+    hashed_password = get_password_hash(user.password)
+    db_user = User (
+        email=user.email,
+        password_hash=hashed_password
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
 
-def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate) -> user:
+def update_user(db: Session, user_id: int, user_update: schemas.UserUpdate) -> Optional[Type[User]]:
     db_user = get_user(db, user_id)
     if db_user:
         update_data = user_update.model_dump(exclude_unset=True)

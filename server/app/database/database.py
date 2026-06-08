@@ -48,9 +48,13 @@ def test_connection():
     """Test database connection"""
     try:
         with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
-        print("Database connection successful")
-        return True
+            result = conn.execute(text("SELECT 1"))
+            if result.scalar() == 1:
+                print("Database connection successful")
+                return True
+            else:
+                print("Database query returned unexpected result")
+                return False
     except Exception as e:
         print(f"Database connection failed: {e}")
         return False

@@ -52,7 +52,7 @@ def clear_refresh_token_cookie(response: Response):
     )
 
 
-@router.post("/login", response_model=schemas.EmailResponse)
+@router.post("/login")
 def login(
         response: Response,
         email_data: schemas.EmailRequest,

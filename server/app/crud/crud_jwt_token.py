@@ -28,8 +28,6 @@ def create_token_pair(
         user_id: int,
         access_token: str,
         refresh_token: str,
-        user_agent: Optional[str] = None,
-        ip_address: Optional[str] = None
 ) -> JWTToken:
     from datetime import datetime, timedelta
 
@@ -42,8 +40,6 @@ def create_token_pair(
         refresh_token_hash=refresh_hash,
         access_expires_at=datetime.utcnow() + timedelta(minutes=30),
         refresh_expires_at=datetime.utcnow() + timedelta(days=7),
-        user_agent=user_agent,
-        ip_address=ip_address,
         created_at=datetime.utcnow(),
         last_used_at=datetime.utcnow()
     )

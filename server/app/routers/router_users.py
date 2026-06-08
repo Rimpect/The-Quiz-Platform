@@ -10,13 +10,13 @@ from ..utils.security import get_current_user
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.post("/", response_model=schemas.User, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=schemas.UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     """Создание нового пользователя"""
     # Проверка уникальности логина и email
     if crud_user.get_user_by_email(db, user.email):
         raise HTTPException(status_code=400, detail="Email already registered")
-    return crud_user.create_user(db=db, schema_user=user)
+    return crud_user.create_user(db=db, user=user)
 
 
 @router.get("/", response_model=List[schemas.User])
