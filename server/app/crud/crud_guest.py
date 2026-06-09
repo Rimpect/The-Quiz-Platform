@@ -8,7 +8,7 @@ from ..models.model_guest import Guest
 def create_guest(
         db: Session,
         expires_hours: int = 24
-) -> Guest :
+) -> Guest:
     """Создание нового гостя с обезличенным ником"""
     # Генерация уникального session_id
     session_id = str(uuid.uuid4())
@@ -29,31 +29,31 @@ def create_guest(
     return db_guest
 
 
-def get_guest(db: Session, guest_id: int) :
+def get_guest(db: Session, guest_id: int):
     return db.query(Guest).filter(Guest.id == guest_id).first()
 
 
-def get_guest_by_session(db: Session, session_id: str) :
+def get_guest_by_session(db: Session, session_id: str):
     return db.query(Guest).filter(Guest.session_id == session_id).first()
 
 
-def get_active_guests(db: Session) :
+def get_active_guests(db: Session):
     """Получение активных (не истекших) гостей"""
     now = datetime.utcnow()
     return db.query(Guest).filter(Guest.expires_at > now).all()
 
 
-def update_guest_activity(db: Session, guest_id: int) -> bool :
+def update_guest_activity(db: Session, guest_id: int) -> bool:
     """Обновление времени последней активности"""
     guest_user = get_guest(db, guest_id)
-    if guest_user :
+    if guest_user:
         guest_user.last_active_at = datetime.utcnow()
         db.commit()
         return True
     return False
 
 
-def delete_expired_guests(db: Session) -> int :
+def delete_expired_guests(db: Session) -> int:
     """Удаление истекших гостей"""
     now = datetime.utcnow()
     result = db.query(Guest).filter(Guest.expires_at < now).delete()
@@ -61,7 +61,7 @@ def delete_expired_guests(db: Session) -> int :
     return result
 
 
-def get_guest_statistics(db: Session) -> dict :
+def get_guest_statistics(db: Session) -> dict:
     """Статистика по гостям"""
     now = datetime.utcnow()
     total = db.query(Guest).count()
@@ -69,7 +69,7 @@ def get_guest_statistics(db: Session) -> dict :
     expired = total - active
 
     return {
-        "total_guests" : total,
-        "active_guests" : active,
-        "expired_guests" : expired
+        "total_guests": total,
+        "active_guests": active,
+        "expired_guests": expired
     }

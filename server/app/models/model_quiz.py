@@ -8,6 +8,7 @@ import enum
 class QuizMode(str, enum.Enum) :
     SINGLE = "single"
     TEAM = "team"
+    COMPETITIVE = "competitive"
 
 
 class Quiz(Base) :

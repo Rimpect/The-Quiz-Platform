@@ -180,12 +180,12 @@ def can_guest_access_quiz(
 ) -> bool:
     quiz = get_quiz(db, quiz_id)
     if not quiz:
-        return
+        return quiz.is_public and quiz.quiz_mode == "single"
 
 
 # ========== ОПЕРАЦИИ С ОДОБРЕННЫМИ КВИЗАМИ ==========
 
-def get_quiz(db: Session, quiz_id: int) -> Optional[Quiz] :
+def get_quiz(db: Session, quiz_id: int) -> Optional[Quiz]:
     return db.query(Quiz).options(joinedload(Quiz.category_ref)).filter(Quiz.id == quiz_id).first()
 
 
@@ -196,20 +196,20 @@ def get_quizzes(
         category_id: Optional[int] = None,
         author_id: Optional[int] = None,
         is_public: Optional[bool] = True
-) -> List[Quiz] :
+) -> List[Quiz]:
     query = db.query(Quiz).options(joinedload(Quiz.category_ref))
 
-    if category_id :
+    if category_id:
         query = query.filter(Quiz.category_id == category_id)
-    if author_id :
+    if author_id:
         query = query.filter(Quiz.author_id == author_id)
-    if is_public is not None :
+    if is_public is not None:
         query = query.filter(Quiz.is_public == is_public)
 
     return query.order_by(Quiz.created_at.desc()).offset(skip).limit(limit).all()
 
 
-def create_quiz(db: Session, quiz: schemas.QuizCreate, author_id: int) -> Quiz :
+def create_quiz(db: Session, quiz: schemas.QuizCreate, author_id: int) -> Quiz:
     """Создание квиза (сразу в опубликованные, без модерации)"""
     db_quiz = Quiz(
         title=quiz.title,
@@ -226,7 +226,7 @@ def create_quiz(db: Session, quiz: schemas.QuizCreate, author_id: int) -> Quiz :
     return db_quiz
 
 
-def create_quiz_pending(db: Session, quiz: schemas.QuizCreate, author_id: int) -> PendingQuiz :
+def create_quiz_pending(db: Session, quiz: schemas.QuizCreate, author_id: int) -> PendingQuiz:
     """Создание квиза на модерацию"""
     db_pending = PendingQuiz(
         title=quiz.title,
@@ -243,12 +243,12 @@ def create_quiz_pending(db: Session, quiz: schemas.QuizCreate, author_id: int) -
     return db_pending
 
 
-def update_quiz(db: Session, quiz_id: int, quiz_update: schemas.QuizUpdate, user_id: int) -> Optional[Quiz] :
+def update_quiz(db: Session, quiz_id: int, quiz_update: schemas.QuizUpdate, user_id: int) -> Optional[Quiz]:
     """Обновление квиза (только автор)"""
     db_quiz = get_quiz(db, quiz_id)
-    if db_quiz and db_quiz.author_id == user_id :
+    if db_quiz and db_quiz.author_id == user_id:
         update_data = quiz_update.model_dump(exclude_unset=True)
-        for field, value in update_data.items() :
+        for field, value in update_data.items():
             setattr(db_quiz, field, value)
         db_quiz.updated_at = datetime.utcnow()
         db.commit()
@@ -256,10 +256,10 @@ def update_quiz(db: Session, quiz_id: int, quiz_update: schemas.QuizUpdate, user
     return db_quiz
 
 
-def delete_quiz(db: Session, quiz_id: int, user_id: int, is_admin: bool = False) -> bool :
+def delete_quiz(db: Session, quiz_id: int, user_id: int, is_admin: bool = False) -> bool:
     """Удаление квиза (автор или админ)"""
     db_quiz = get_quiz(db, quiz_id)
-    if db_quiz and (db_quiz.author_id == user_id or is_admin) :
+    if db_quiz and (db_quiz.author_id == user_id or is_admin):
         db.delete(db_quiz)
         db.commit()
         return True
@@ -268,7 +268,7 @@ def delete_quiz(db: Session, quiz_id: int, user_id: int, is_admin: bool = False)
 
 # ========== ОПЕРАЦИИ С КВИЗАМИ НА МОДЕРАЦИИ ==========
 
-def get_pending_quiz(db: Session, pending_id: int) -> Optional[PendingQuiz] :
+def get_pending_quiz(db: Session, pending_id: int) -> Optional[PendingQuiz]:
     return db.query(PendingQuiz).filter(PendingQuiz.id == pending_id).first()
 
 
@@ -278,12 +278,12 @@ def get_pending_quizzes(
         limit: int = 100,
         status: Optional[PendingQuizStatus] = None,
         author_id: Optional[int] = None
-) -> List[PendingQuiz] :
+) -> List[PendingQuiz]:
     query = db.query(PendingQuiz)
 
-    if status :
+    if status:
         query = query.filter(PendingQuiz.status == status)
-    if author_id :
+    if author_id:
         query = query.filter(PendingQuiz.author_id == author_id)
 
     return query.order_by(PendingQuiz.created_at.desc()).offset(skip).limit(limit).all()
@@ -294,10 +294,10 @@ def update_pending_quiz_status(
         pending_id: int,
         status: PendingQuizStatus,
         moderator_id: int
-) -> Optional[PendingQuiz] :
+) -> Optional[PendingQuiz]:
     """Обновление статуса квиза на модерации"""
     pending = get_pending_quiz(db, pending_id)
-    if pending :
+    if pending:
         pending.status = status
         pending.moderated_at = datetime.utcnow()
         pending.moderated_by = moderator_id
@@ -306,10 +306,10 @@ def update_pending_quiz_status(
     return pending
 
 
-def approve_pending_quiz(db: Session, pending_id: int, moderator_id: int) -> Optional[Quiz] :
+def approve_pending_quiz(db: Session, pending_id: int, moderator_id: int) -> Optional[Quiz]:
     """Одобрение квиза: перенос из pending в опубликованные"""
     pending = get_pending_quiz(db, pending_id)
-    if not pending or pending.status != PendingQuizStatus.PENDING :
+    if not pending or pending.status != PendingQuizStatus.PENDING:
         return None
 
     # Создаём опубликованный квиз
@@ -338,10 +338,10 @@ def approve_pending_quiz(db: Session, pending_id: int, moderator_id: int) -> Opt
     return new_quiz
 
 
-def reject_pending_quiz(db: Session, pending_id: int, moderator_id: int) -> bool :
+def reject_pending_quiz(db: Session, pending_id: int, moderator_id: int) -> bool:
     """Отклонение квиза: удаление из pending"""
     pending = get_pending_quiz(db, pending_id)
-    if pending and pending.status == PendingQuizStatus.PENDING :
+    if pending and pending.status == PendingQuizStatus.PENDING:
         pending.status = PendingQuizStatus.REJECTED
         pending.moderated_at = datetime.utcnow()
         pending.moderated_by = moderator_id
@@ -352,10 +352,10 @@ def reject_pending_quiz(db: Session, pending_id: int, moderator_id: int) -> bool
     return False
 
 
-def delete_pending_quiz(db: Session, pending_id: int, user_id: int, is_admin: bool = False) -> bool :
+def delete_pending_quiz(db: Session, pending_id: int, user_id: int, is_admin: bool = False) -> bool:
     """Удаление квиза из модерации (автор или админ)"""
     pending = get_pending_quiz(db, pending_id)
-    if pending and (pending.author_id == user_id or is_admin) :
+    if pending and (pending.author_id == user_id or is_admin):
         db.delete(pending)
         db.commit()
         return True
@@ -364,12 +364,12 @@ def delete_pending_quiz(db: Session, pending_id: int, user_id: int, is_admin: bo
 
 # ========== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ==========
 
-def get_user_quizzes(db: Session, user_id: int) -> Dict[str, Any] :
+def get_user_quizzes(db: Session, user_id: int) -> Dict[str, Any]:
     """Получение всех квизов пользователя (опубликованных и на модерации)"""
     published = get_quizzes(db, author_id=user_id, is_public=True)
     pending = get_pending_quizzes(db, author_id=user_id, status=PendingQuizStatus.PENDING)
 
     return {
-        "published" : published,
-        "pending" : pending
+        "published": published,
+        "pending": pending
     }
