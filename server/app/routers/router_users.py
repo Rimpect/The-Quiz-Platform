@@ -38,12 +38,7 @@ def read_users(
         current_user: schemas.User = Depends(get_current_user)
 ) :
     """
-
-    :param skip:
-    :param limit:
-    :param db:
-    :param current_user:
-    :return:
+    Запрос всех пользователей(только для админов)
     """
     if current_user.role == "admin" :
         return crud_user.get_users(db, skip=skip, limit=limit)
