@@ -12,6 +12,14 @@ from .schemas_response import (
     ResponseStatus
 )
 
+# Guest
+from .schemas_guest import (
+    GuestCreate,
+    GuestResponse,
+    PromoteGuestRequest
+)
+
+
 # User
 from .schemas_user import (
     User,
@@ -19,9 +27,6 @@ from .schemas_user import (
     UserCreate,
     UserUpdate,
     UserResponse,
-    GuestCreate,
-    GuestResponse,
-    PromoteGuestRequest,
     Token,
     EmailRequest,
     RefreshTokenRequest,
@@ -86,6 +91,10 @@ from .schemas_lobby import (
     LobbyResponse,
     JoinLobbyRequest,
     StartGameResponse
+)
+
+from .schemas_pending_quiz_response import (
+    PendingQuizResponse
 )
 
 __all__ = [
@@ -155,5 +164,8 @@ __all__ = [
     "LobbyCreate",
     "LobbyResponse",
     "JoinLobbyRequest",
-    "StartGameResponse"
+    "StartGameResponse",
+
+    # PendingQuizResponse
+    "PendingQuizResponse"
 ]

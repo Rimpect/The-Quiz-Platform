@@ -1,27 +1,35 @@
-from typing import Optional
-
+from typing import Optional, List, Type
 from sqlalchemy.orm import Session
+
+# from ..models import Category
 from ..models.model_category import Category
 
 
-def get_categories(db: Session, categories_id: int) -> Optional[Category]:
-    return db.query(Category).filter(Category.id == categories_id).first()
+def get_all_categories(db: Session) -> List[Type[Category]]:  # ✅ List[Category]
+    return db.query(Category).all()
 
 
-def post_categories(db: Session, categories_id: int, category_type: str)\
-        -> Optional[Category]:
-    db_category = get_categories(db, categories_id)
-    if db_category:
-        db_category.category_type = category_type
-        db.commit()
-        db.refresh(db_category)
+def get_category(db: Session, category_id: int) -> Optional[Category]:
+    return db.query(Category).filter(Category.id == category_id).first()
+
+
+def get_category_by_type(db: Session, category_type: str) -> Optional[Category]:
+    """✅ Добавлено: получение категории по названию"""
+    return db.query(Category).filter(Category.category_type == category_type).first()
+
+
+def create_category(db: Session, category_type: str) -> Category:
+    db_category = Category(category_type=category_type)
+    db.add(db_category)
+    db.commit()
+    db.refresh(db_category)
     return db_category
 
 
-def delete_categories(db: Session, categories_id: int) -> bool:
-    db_categories = get_categories(db, categories_id)
-    if db_categories:
-        db.delete(db_categories)
+def delete_category(db: Session, category_id: int) -> bool:
+    db_category = get_category(db, category_id)
+    if db_category:
+        db.delete(db_category)
         db.commit()
         return True
     return False

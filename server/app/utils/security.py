@@ -2,18 +2,19 @@
 Модуль безопасности: JWT токены, хеширование паролей, аутентификация
 """
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Type
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from .. import schemas
+
 from ..crud import crud_guest as guest_crud
 from ..crud import crud_user as user_crud
 from ..database.database import get_db
+from ..models import User
 
 # ========== Конфигурация ==========
 SECRET_KEY = "your-secret-key-change-in-production"
@@ -153,7 +154,7 @@ def verify_refresh_token(token: str) -> Optional[Dict[str, Any]]:
 def get_current_user(
         credentials: HTTPAuthorizationCredentials = Depends(security),
         db: Session = Depends(get_db)
-) -> schemas.UserResponse:
+) -> Type[User] :
     """Получение текущего пользователя (только зарегистрированные)"""
     if not credentials:
         raise HTTPException(
@@ -226,3 +227,25 @@ def get_current_guest(
         )
 
     return guest
+
+
+def get_current_user_or_guest_optional(
+        request: Request,
+        db: Session = Depends(get_db)
+) :
+    """Получение текущего пользователя или гостя (опционально)"""
+    auth_header = request.headers.get("Authorization")
+
+    if not auth_header or not auth_header.startswith("Bearer ") :
+        return None
+
+    token = auth_header.split(" ")[1]
+    verification = verify_access_token(token, db)
+
+    if verification["status"] != "valid" :
+        return None
+
+    if verification.get("is_guest") :
+        return guest_crud.get_guest_by_session(db, verification["guest_id"])
+    else :
+        return user_crud.get_user(db, verification["user_id"])

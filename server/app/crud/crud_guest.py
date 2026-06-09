@@ -1,78 +1,75 @@
 import uuid
 from datetime import datetime, timedelta
-
 from sqlalchemy.orm import Session
 
-from ..models import model_guest as guest
+from ..models.model_guest import Guest
 
 
 def create_guest(
         db: Session,
-        nickname: str = None,
         expires_hours: int = 24
-) -> guest:
-    """Создание нового гостя"""
-    if not nickname:
-        nickname = f"Guest_{uuid.uuid4().hex[:8]}"
+) -> Guest :
+    """Создание нового гостя с обезличенным ником"""
+    # Генерация уникального session_id
+    session_id = str(uuid.uuid4())
+    expires_at = datetime.utcnow() + timedelta(hours=expires_hours)
 
-    # Проверяем уникальность никнейма среди гостей
-    base_nickname = nickname
-    counter = 1
-    while db.query(guest).filter(guest.nickname == nickname).first():
-        nickname = f"{base_nickname}_{counter}"
-        counter += 1
+    # Фиксированный никнейм "Гость" + короткий идентификатор для различия
+    short_id = session_id[:6]
+    nickname = f"Гость_{short_id}"
 
-    guest.session_id = str(uuid.uuid4())
-    guest.expires_at = datetime.utcnow() + timedelta(hours=expires_hours)
-
-    db_guest = guest
+    db_guest = Guest(
+        nickname=nickname,
+        session_id=session_id,
+        expires_at=expires_at
+    )
     db.add(db_guest)
     db.commit()
     db.refresh(db_guest)
     return db_guest
 
 
-def get_guest(db: Session, guest_id: int) -> guest:
-    return db.query(guest).filter(guest.id == guest_id).first()
+def get_guest(db: Session, guest_id: int) :
+    return db.query(Guest).filter(Guest.id == guest_id).first()
 
 
-def get_guest_by_session(db: Session, session_id: str) -> guest:
-    return db.query(guest).filter(guest.session_id == session_id).first()
+def get_guest_by_session(db: Session, session_id: str) :
+    return db.query(Guest).filter(Guest.session_id == session_id).first()
 
 
-def get_active_guests(db: Session) -> [guest]:
+def get_active_guests(db: Session) :
     """Получение активных (не истекших) гостей"""
     now = datetime.utcnow()
-    return db.query(guest).filter(guest.expires_at > now).all()
+    return db.query(Guest).filter(Guest.expires_at > now).all()
 
 
-def update_guest_activity(db: Session, guest_id: int) -> bool:
+def update_guest_activity(db: Session, guest_id: int) -> bool :
     """Обновление времени последней активности"""
     guest_user = get_guest(db, guest_id)
-    if guest_user:
+    if guest_user :
         guest_user.last_active_at = datetime.utcnow()
         db.commit()
         return True
     return False
 
 
-def delete_expired_guests(db: Session) -> int:
+def delete_expired_guests(db: Session) -> int :
     """Удаление истекших гостей"""
     now = datetime.utcnow()
-    result = db.query(guest).filter(guest.expires_at < now).delete()
+    result = db.query(Guest).filter(Guest.expires_at < now).delete()
     db.commit()
     return result
 
 
-def get_guest_statistics(db: Session) -> dict:
+def get_guest_statistics(db: Session) -> dict :
     """Статистика по гостям"""
     now = datetime.utcnow()
-    total = db.query(guest).count()
-    active = db.query(guest).filter(guest.expires_at > now).count()
+    total = db.query(Guest).count()
+    active = db.query(Guest).filter(Guest.expires_at > now).count()
     expired = total - active
 
     return {
-        "total_guests": total,
-        "active_guests": active,
-        "expired_guests": expired
+        "total_guests" : total,
+        "active_guests" : active,
+        "expired_guests" : expired
     }

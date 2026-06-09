@@ -31,7 +31,8 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    email: str = Field()
+    nickname: str = Field(..., min_length=3, max_length=20)
+    email: str = Field(..., )
     password: str = Field(..., min_length=6)
 
 
@@ -44,6 +45,7 @@ class UserUpdate(BaseModel):
 
 class UserResponse(UserBase):
     id: int
+    nickname: str
     photo_profile: Optional[str] = None
     role: UserRole
     is_guest: bool = False
@@ -53,29 +55,6 @@ class UserResponse(UserBase):
 
     class Config:
         from_attributes = True
-
-
-# ========== Гости ==========
-class GuestCreate(BaseModel):
-    nickname: Optional[str] = Field(None, min_length=1, max_length=50)
-    expires_hours: int = Field(24, ge=1, le=168)
-
-
-class GuestResponse(BaseModel):
-    id: int
-    nickname: str
-    role: UserRole
-    is_guest: bool
-    expires_at: Optional[datetime]
-    access_token: str
-    token_type: str = "bearer"
-
-
-class PromoteGuestRequest(BaseModel):
-    guest_id: int
-    login: str = Field(..., min_length=3, max_length=50)
-    email: EmailStr
-    password: str = Field(..., min_length=6)
 
 
 # ========== JWT и аутентификация ==========

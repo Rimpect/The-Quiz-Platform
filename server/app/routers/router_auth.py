@@ -30,7 +30,7 @@ COOKIE_HTTP_ONLY = True
 REFRESH_TOKEN_EXPIRE_DAYS = os.getenv("REFRESH_TOKEN_EXPIRE_DAYS")
 
 
-def set_refresh_token_cookie(response: Response, refresh_token: str, expires_days: int = 7):
+def set_refresh_token_cookie(response: Response, refresh_token: str, expires_days: int = int(REFRESH_TOKEN_EXPIRE_DAYS)):
     """Установка refresh токена в HttpOnly cookie"""
     expires = datetime.utcnow() + timedelta(days=expires_days)
     response.set_cookie(
@@ -86,15 +86,7 @@ def login(
 
     # Устанавливаем refresh токен в HttpOnly cookie
     # Устанавливаем refresh_token в cookie
-    response.set_cookie(
-        key="refresh_token",
-        value=refresh_token,
-        httponly=True,
-        secure=False,
-        samesite="lax",
-        max_age=7 * 24 * 60 * 60,
-        path="/api/auth"
-    )
+    set_refresh_token_cookie(response, REFRESH_TOKEN_EXPIRE_DAYS)
 
     # Логируем вход (опционально)
     logger.info(f"User {user.email} logged")
@@ -112,7 +104,7 @@ def login(
     )
 
 
-@router.post("/refresh", response_model=schemas.RefreshTokenResponse)
+@router.post("/refresh", response_model=schemas.BaseResponse)
 def refresh_token(
         request: Request,
         response: Response,
@@ -172,16 +164,11 @@ def refresh_token(
     crud_jwt.revoke_both_tokens(db, refresh_token, "Used for refresh")
 
     # 8. Создаем новую пару
-    user_agent = request.headers.get("user-agent")
-    ip_address = request.client.host if request.client else None
-
     crud_jwt.create_token_pair(
         db=db,
         user_id=user.id,
         access_token=new_access_token,
         refresh_token=new_refresh_token,
-        user_agent=user_agent,
-        ip_address=ip_address
     )
 
     # 9. Устанавливаем новый refresh токен в cookie
@@ -221,13 +208,7 @@ def logout(
         )
 
     # 3. Очищаем refresh токен из cookie
-    response.delete_cookie(
-        key="refresh_token",
-        path="/api/auth",
-        httponly=True,
-        secure=False,  # True для HTTPS
-        samesite="lax"
-    )
+    clear_refresh_token_cookie(response)
 
     # 4. Возвращаем успешный ответ
     return ResponseFactory.success(
@@ -239,7 +220,7 @@ def logout(
     )
 
 
-@router.get("/verify", response_model=schemas.AccessTokenStatusResponse)
+@router.get("/verify", response_model=schemas.BaseResponse)
 def verify_token(
         request: Request,
 ):
