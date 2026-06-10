@@ -1,16 +1,15 @@
 import { useState } from 'react'
 
-import { QuizSearch } from '@features'
+import { QuizSearch, useAdminSearch } from '@features'
 import { RejectQuizDialog, ViewQuizDialog } from '@shared'
 import { AdminPanelHeader, QuizTabs, StatsCards } from '@widgets'
 import { toast } from 'sonner'
 
+import { myQuizzes } from '../../MockData/myQuizzes'
+
 import styles from './AdminPanel.module.scss'
 
-export function AdminPanel({
-  onBack,
-  quizzes = [], //onApprove, onReject
-}) {
+export function AdminPanel({ onBack }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedQuiz, setSelectedQuiz] = useState(null)
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false)
@@ -18,13 +17,8 @@ export function AdminPanel({
   const [filterStatus, setFilterStatus] = useState('pending')
   const [currentPage, setCurrentPage] = useState(1)
 
-  const filteredQuizzes = quizzes.filter((quiz) => {
-    const matchesSearch =
-      quiz.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      quiz.author.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesStatus = filterStatus === 'all' || quiz.status === filterStatus
-    return matchesSearch && matchesStatus
-  })
+  const quizzes = myQuizzes
+  const searchedQuizzes = useAdminSearch(quizzes, searchQuery)
 
   const handleFilterChange = (newStatus) => {
     setFilterStatus(newStatus)
@@ -35,15 +29,12 @@ export function AdminPanel({
   const approvedCount = quizzes.filter((q) => q.status === 'approved').length
   const rejectedCount = quizzes.filter((q) => q.status === 'rejected').length
 
-  // const handleApprove = (quiz) => {
-  //   onApprove(quiz.id)
-  //   alert(`Квиз "${quiz.title}" одобрен`)
-  // }
   const handleApprove = () => {
     toast.success('Квиз одобрен', {
       description: 'Эта функция еще не доработана',
     })
-  } //@TODO заглушка пока что вместо алертов будут кастомные модалки
+  }
+
   const handleRejectClick = (quiz) => {
     setSelectedQuiz(quiz)
     setIsRejectDialogOpen(true)
@@ -60,15 +51,9 @@ export function AdminPanel({
       description: 'Эта функция еще не доработана',
     })
     setIsRejectDialogOpen(false)
-    setSelectedQuiz(null) //@TODO заглушка пока что вместо алертов будут кастомные модалки
+    setSelectedQuiz(null)
   }
-  // const handleRejectConfirm = (reason) => {
-  //   if (!selectedQuiz) return
-  //   onReject(selectedQuiz.id, reason)
-  //   alert(`Квиз "${selectedQuiz.title}" отклонен`)
-  //   setIsRejectDialogOpen(false)
-  //   setSelectedQuiz(null)
-  // }
+
   return (
     <div className={styles.adminPanel}>
       <div className={styles.container}>
@@ -80,10 +65,10 @@ export function AdminPanel({
           rejectedCount={rejectedCount}
         />
 
-        <QuizSearch quizzes={quizzes} />
+        <QuizSearch query={searchQuery} onQueryChange={setSearchQuery} />
 
         <QuizTabs
-          quizzes={filteredQuizzes}
+          quizzes={searchedQuizzes}
           filterStatus={filterStatus}
           onFilterChange={handleFilterChange}
           currentPage={currentPage}

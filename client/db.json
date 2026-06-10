@@ -73,7 +73,9 @@
       "author": "QuizLab",
       "language": "Русский",
       "lastUpdated": "2026-05-10",
-      "type": "rating"
+      "type": "rating",
+      "status": "approved",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "2",
@@ -90,7 +92,9 @@
       "author": "GeoQuiz Team",
       "language": "Русский",
       "lastUpdated": "2026-05-22",
-      "type": "solo"
+      "type": "solo",
+      "status": "pending",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "3",
@@ -107,7 +111,9 @@
       "author": "DevSkills",
       "language": "Русский",
       "lastUpdated": "2026-05-15",
-      "type": "teams"
+      "type": "teams",
+      "status": "reject",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "4",
@@ -124,7 +130,9 @@
       "author": "HistoryPro",
       "language": "Русский",
       "lastUpdated": "2026-05-18",
-      "type": "solo"
+      "type": "solo",
+      "status": "pending",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "5",
@@ -141,7 +149,9 @@
       "author": "CinemaQuiz",
       "language": "Русский",
       "lastUpdated": "2026-05-21",
-      "type": "solo"
+      "type": "solo",
+      "status": "pending",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "6",
@@ -158,7 +168,9 @@
       "author": "SoundMind",
       "language": "Русский",
       "lastUpdated": "2026-05-24",
-      "type": "solo"
+      "type": "solo",
+      "status": "pending",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "7",
@@ -175,7 +187,9 @@
       "author": "SportBrain",
       "language": "Русский",
       "lastUpdated": "2026-05-12",
-      "type": "solo"
+      "type": "solo",
+      "status": "reject",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "8",
@@ -192,7 +206,9 @@
       "author": "EcoQuiz",
       "language": "Русский",
       "lastUpdated": "2026-05-14",
-      "type": "solo"
+      "type": "solo",
+      "status": "reject",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "9",
@@ -209,7 +225,9 @@
       "author": "Foodies",
       "language": "Русский",
       "lastUpdated": "2026-05-16",
-      "type": "solo"
+      "type": "solo",
+      "status": "reject",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "10",
@@ -226,7 +244,9 @@
       "author": "TechInsight",
       "language": "Русский",
       "lastUpdated": "2026-05-20",
-      "type": "solo"
+      "type": "solo",
+      "status": "approved",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "11",
@@ -243,7 +263,9 @@
       "author": "LogicLab",
       "language": "Русский",
       "lastUpdated": "2026-05-19",
-      "type": "solo"
+      "type": "solo",
+      "status": "approved",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "12",
@@ -260,7 +282,9 @@
       "author": "CultureQuest",
       "language": "Русский",
       "lastUpdated": "2026-05-23",
-      "type": "solo"
+      "type": "solo",
+      "status": "approved",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "13",
@@ -277,7 +301,9 @@
       "author": "LinguaLab",
       "language": "Русский",
       "lastUpdated": "2026-05-17",
-      "type": "solo"
+      "type": "solo",
+      "status": "approved",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "14",
@@ -294,7 +320,9 @@
       "author": "StarQuest",
       "language": "Русский",
       "lastUpdated": "2026-05-25",
-      "type": "solo"
+      "type": "solo",
+      "status": "approved",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "15",
@@ -311,7 +339,9 @@
       "author": "AIQuiz",
       "language": "Русский",
       "lastUpdated": "2026-05-26",
-      "type": "solo"
+      "type": "solo",
+      "status": "approved",
+      "createdAt": "10 апреля 2026"
     },
     {
       "id": "16",
@@ -328,7 +358,199 @@
       "author": "LitMasters",
       "language": "Русский",
       "lastUpdated": "2026-05-27",
-      "type": "solo"
+      "type": "solo",
+      "status": "approved",
+      "createdAt": "10 апреля 2026"
+    },
+    {
+      "id": "17",
+      "img": "https://avatars.mds.yandex.net/i?id=37b0b6152e7d71a95da72d8612d20e33_l-8242815-images-thumbs&n=13",
+      "title": "Фронтенд-разработка",
+      "description": "Проверьте знания HTML, CSS, JavaScript и современных фреймворков.",
+      "difficulty": "Средний",
+      "category": "Программирование",
+      "participants": 890,
+      "duration": 25,
+      "rating": 4.7,
+      "topScore": 96,
+      "questionCount": 20,
+      "author": "FrontendGuru",
+      "language": "Русский",
+      "lastUpdated": "2026-06-01",
+      "type": "solo",
+      "status": "approved",
+      "createdAt": "15 апреля 2026"
+    },
+    {
+      "id": "18",
+      "img": "https://avatars.mds.yandex.net/get-sprav-products/17712810/2a0000019d09f509fbbceefc6a55befead17/M_height",
+      "title": "Кибербезопасность",
+      "description": "Тест по основам информационной безопасности, шифрованию и сетевым угрозам.",
+      "difficulty": "Сложный",
+      "category": "Технологии",
+      "participants": 670,
+      "duration": 30,
+      "rating": 4.8,
+      "topScore": 94,
+      "questionCount": 22,
+      "author": "CyberSecTeam",
+      "language": "Русский",
+      "lastUpdated": "2026-06-02",
+      "type": "rating",
+      "status": "pending",
+      "createdAt": "18 апреля 2026"
+    },
+    {
+      "id": "19",
+      "img": "https://images-cdn.onlinetestpad.net/bb/b3/fbdb6bcb47f3ac241b8fe114482b.jpg",
+      "title": "Базы данных и SQL",
+      "description": "Проверьте навыки работы с реляционными базами данных и написания SQL-запросов.",
+      "difficulty": "Средний",
+      "category": "Программирование",
+      "participants": 720,
+      "duration": 28,
+      "rating": 4.5,
+      "topScore": 92,
+      "questionCount": 18,
+      "author": "DataMaster",
+      "language": "Русский",
+      "lastUpdated": "2026-06-03",
+      "type": "solo",
+      "status": "approved",
+      "createdAt": "20 апреля 2026"
+    },
+    {
+      "id": "20",
+      "img": "https://travel-mania.org/uploads/Blog/tours-2.jpg",
+      "title": "Столицы мира",
+      "description": "Угадайте столицы стран всех континентов. Сложный тест для знатоков географии.",
+      "difficulty": "Сложный",
+      "category": "География",
+      "participants": 1150,
+      "duration": 20,
+      "rating": 4.9,
+      "topScore": 98,
+      "questionCount": 25,
+      "author": "GeoExpert",
+      "language": "Русский",
+      "lastUpdated": "2026-06-04",
+      "type": "rating",
+      "status": "approved",
+      "createdAt": "22 апреля 2026"
+    },
+    {
+      "id": "21",
+      "img": "https://static.tildacdn.com/tild6639-6239-4535-b964-663333363964/yFljTSEdkr4_.jpeg",
+      "title": "Великая Отечественная война",
+      "description": "Тест на знание ключевых сражений, дат и героев Великой Отечественной войны.",
+      "difficulty": "Средний",
+      "category": "История",
+      "participants": 2100,
+      "duration": 25,
+      "rating": 4.8,
+      "topScore": 97,
+      "questionCount": 20,
+      "author": "HistoryMemorial",
+      "language": "Русский",
+      "lastUpdated": "2026-06-05",
+      "type": "teams",
+      "status": "pending",
+      "createdAt": "25 апреля 2026"
+    },
+    {
+      "id": "22",
+      "img": "https://cf4.ppt-online.org/files4/slide/h/HcxkVUOelJ3E8KRv7fmQuba0jYqB61SXCDL2s4/slide-0.jpg",
+      "title": "Рок-музыка",
+      "description": "Проверьте знание легендарных рок-групп, альбомов и исполнителей.",
+      "difficulty": "Средний",
+      "category": "Музыка",
+      "participants": 980,
+      "duration": 22,
+      "rating": 4.7,
+      "topScore": 95,
+      "questionCount": 16,
+      "author": "RockStar",
+      "language": "Русский",
+      "lastUpdated": "2026-06-06",
+      "type": "solo",
+      "status": "approved",
+      "createdAt": "28 апреля 2026"
+    },
+    {
+      "id": "23",
+      "img": "https://avatars.mds.yandex.net/get-kinopoisk-image/10893610/22505d13-1885-443e-8b1e-c97b1298b247/384x384",
+      "title": "Сериалы 2020-х",
+      "description": "Тест на знание популярных сериалов последних лет: сюжеты, персонажи, актёры.",
+      "difficulty": "Легкий",
+      "category": "Кино",
+      "participants": 1450,
+      "duration": 15,
+      "rating": 4.6,
+      "topScore": 93,
+      "questionCount": 12,
+      "author": "SeriesFan",
+      "language": "Русский",
+      "lastUpdated": "2026-06-07",
+      "type": "solo",
+      "status": "rejected",
+      "createdAt": "30 апреля 2026"
+    },
+    {
+      "id": "24",
+      "img": "https://img.olympics.com/images/image/private/t_social_share_thumb/f_auto/primary/zbucnfm22b3atj9gghoc",
+      "title": "Футбол: Лига чемпионов",
+      "description": "Проверьте знания истории и рекордов главного клубного турнира Европы.",
+      "difficulty": "Средний",
+      "category": "Спорт",
+      "participants": 1850,
+      "duration": 20,
+      "rating": 4.9,
+      "topScore": 99,
+      "questionCount": 18,
+      "author": "UEFAFan",
+      "language": "Русский",
+      "lastUpdated": "2026-06-08",
+      "type": "rating",
+      "status": "approved",
+      "createdAt": "2 мая 2026"
+    },
+    {
+      "id": "25",
+      "img": "https://images.gastronom.ru/unwCV1JQ6M-Mr07cno6GAklDAd_1w10_uiBpdoREEsc/pr:article-cover-image/g:ce/rs:auto:0:0:0/L2Ntcy9hbGwtaW1hZ2VzLzUyN2JhZWIwLTY1YTUtNDljZC1hMzQxLTBkZDljN2U2NmMwMi5qcGc.webp",
+      "title": "Национальные кухни",
+      "description": "Угадайте блюда и кулинарные традиции разных стран мира.",
+      "difficulty": "Средний",
+      "category": "Еда",
+      "participants": 760,
+      "duration": 18,
+      "rating": 4.5,
+      "topScore": 91,
+      "questionCount": 14,
+      "author": "TasteWorld",
+      "language": "Русский",
+      "lastUpdated": "2026-06-09",
+      "type": "solo",
+      "status": "pending",
+      "createdAt": "5 мая 2026"
+    },
+    {
+      "id": "26",
+      "img": "https://dot.vtk-portal.ru/pluginfile.php/30233/course/overviewfiles/%D0%90%D1%81%D1%82%D1%80%D0%BE%D0%BD%D0%BE%D0%BC%D0%B8%D1%8F.jpg",
+      "title": "Солнечная система",
+      "description": "Тест о планетах, спутниках и других объектах Солнечной системы.",
+      "difficulty": "Легкий",
+      "category": "Наука",
+      "participants": 1340,
+      "duration": 15,
+      "rating": 4.7,
+      "topScore": 96,
+      "questionCount": 12,
+      "author": "SpaceExplorer",
+      "language": "Русский",
+      "lastUpdated": "2026-06-10",
+      "type": "solo",
+      "status": "approved",
+      "createdAt": "8 мая 2026"
     }
   ],
   "questions": [

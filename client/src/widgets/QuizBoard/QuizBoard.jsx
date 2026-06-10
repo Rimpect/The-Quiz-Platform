@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { useQuizzes } from '@entities/quiz'
 import { useQuizBoard } from '@features/quiz-board'
@@ -8,7 +9,6 @@ import {
   ModalNotifications,
   getQuizDescriptionRoute,
 } from '@shared'
-import { Link } from 'react-router-dom'
 
 import styles from './QuizBoard.module.scss'
 
@@ -16,9 +16,10 @@ export function QuizBoard({ currentPage, onPageChange }) {
   const [open, setOpen] = useState(false)
   const { quizzes, loading, error } = useQuizzes()
 
-  const quizList = Array.isArray(quizzes) ? quizzes : []
+  const approvedQuizzes = quizzes.filter((quiz) => quiz.status === 'approved')
+
   const { paginatedQuizList, totalPages, activePage, filteredQuizList } =
-    useQuizBoard(quizList, currentPage)
+    useQuizBoard(approvedQuizzes, currentPage)
 
   return (
     <div className={styles.containerBoard}>

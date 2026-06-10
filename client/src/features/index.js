@@ -52,3 +52,5 @@ export {
   WarningModal,
 } from './anti-cheating'
 export { RulesModal } from './rules'
+// фичи для поиска
+export { useAdminSearch, useQuizSearch } from './search-quiz'

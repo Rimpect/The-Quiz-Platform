@@ -1,6 +1,6 @@
 import { Pagination } from '@shared'
 
-import { myQuizzes } from '../../MockData/myQuizzes'
+// import { myQuizzes } from '../../MockData/myQuizzes'
 import { QuizInfo } from '../QuizInfo/QuizInfo'
 
 import styles from './QuizTabs.module.scss'
@@ -16,7 +16,7 @@ export function QuizTabs({
   onView,
 }) {
   const allQuizzes =
-    externalQuizzes && externalQuizzes.length > 0 ? externalQuizzes : myQuizzes
+    externalQuizzes && externalQuizzes.length > 0 ? externalQuizzes : []
 
   const filteredQuizzes =
     filterStatus === 'all'
