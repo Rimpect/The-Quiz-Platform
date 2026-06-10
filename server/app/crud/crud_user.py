@@ -6,6 +6,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from ..crud import crud_quiz as quiz_crud
+from ..crud import crud_achievement as achievement_crud
 from ..database.database import get_db
 from ..models.model_quiz_result import QuizResult as quiz_result
 from ..models.model_user import User
@@ -39,6 +40,7 @@ def create_user(db: Session, user: UserCreate) -> User:
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    achievement_crud.initialize_user_achievements(db, db_user.id)
     return db_user
 
 

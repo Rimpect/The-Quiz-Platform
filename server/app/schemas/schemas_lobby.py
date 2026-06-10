@@ -9,6 +9,7 @@ from datetime import datetime
 class LobbyCreate(BaseModel):
     quiz_id: int
     max_players: int = Field(4, ge=2, le=10)
+    is_public: bool = False
 
 
 class LobbyResponse(BaseModel):

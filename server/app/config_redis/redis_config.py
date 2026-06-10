@@ -70,6 +70,10 @@ class RedisKeys:
     def quiz_leaderboard(quiz_id: int) -> str:
         return f"quiz:leaderboard:{quiz_id}"
 
+    @classmethod
+    def public_lobbies_index(cls) :
+        pass
+
 
 # Время жизни данных (в секундах)
 SESSION_TTL = 3600  # 1 час для сессии

@@ -124,7 +124,12 @@ class LobbyService:
     def __init__(self):
         self.redis = get_redis()
 
-    def create_lobby(self, host_user_id: int, quiz_id: int, max_players: int = 4) -> str:
+    def create_lobby(self,
+                     host_user_id: int,
+                     quiz_id: int,
+                     max_players: int = 4,
+                     is_public: bool = False
+        ) -> str:
         """Создание нового лобби"""
         lobby_id = str(uuid.uuid4())[:8]
 
@@ -133,6 +138,7 @@ class LobbyService:
             "host_user_id": str(host_user_id),
             "quiz_id": str(quiz_id),
             "max_players": str(max_players),
+            "is_public": "true" if is_public else "false",
             "status": "waiting",
             "created_at": datetime.utcnow().isoformat(),
             "players": json.dumps([host_user_id])
@@ -142,11 +148,34 @@ class LobbyService:
         self.redis.hset(key, mapping=lobby_data)
         self.redis.expire(key, LOBBY_TTL)
 
+        if is_public:
+            index_key = RedisKeys.public_lobbies_index()
+            self.redis.zadd(index_key, {lobby_id: datetime.utcnow().timestamp()})
+            self.redis.expire(index_key, LOBBY_TTL)
+
+
         # Отмечаем, что пользователь в лобби
         user_lobby_key = RedisKeys.user_lobby(host_user_id)
         self.redis.setex(user_lobby_key, LOBBY_TTL, lobby_id)
 
         return lobby_id
+
+    def get_public_lobbies(self, limit: int = 20) -> List[Dict]:
+        """Получение списка публичных лобби"""
+        index_key = RedisKeys.public_lobbies_index()
+        lobby_ids = self.redis.zrevrange(index_key, 0, limit - 1)
+
+        lobbies = []
+        for lobby_id in lobby_ids :
+            key = RedisKeys.public_lobby(lobby_id)
+            data = self.redis.hgetall(key)
+            if data and data.get("status") == "waiting" :
+                data["players"] = json.loads(data.get("players", "[]"))
+                lobbies.append(data)
+
+        return lobbies
+
+
 
     def get_lobby(self, lobby_id: str) -> Optional[Dict]:
         """Получение данных лобби"""

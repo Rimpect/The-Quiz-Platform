@@ -43,7 +43,8 @@ def create_lobby(
     lobby_id = lobby_service.create_lobby(
         host_user_id=current_user.id,
         quiz_id=lobby_data.quiz_id,
-        max_players=lobby_data.max_players
+        max_players=lobby_data.max_players,
+        is_public=lobby_data.is_public
     )
 
     return lobby_service.get_lobby(lobby_id)
@@ -208,3 +209,34 @@ def get_active_lobbies():
         },
         message=f"Found {len(active_lobbies)} active lobbies"
     )
+
+
+@router.get("/public")
+def get_public_lobbies(
+        limit: int = 20,
+) :
+    """Получение списка публичных лобби"""
+    lobbies = lobby_service.get_public_lobbies(limit)
+
+    return ResponseFactory.success(
+        data={
+            "total" : len(lobbies),
+            "lobbies" : lobbies
+        },
+        message=f"Found {len(lobbies)} public lobbies"
+    )
+
+
+@router.post("/join/public/{lobby_id}")
+def join_public_lobby(
+        lobby_id: str
+) :
+    """Присоединение к публичному лобби (без кода)"""
+    lobby = lobby_service.get_lobby(lobby_id)
+    if not lobby :
+        raise HTTPException(404, "Lobby not found")
+
+    if lobby.get("is_public") != "true" :
+        raise HTTPException(400, "This lobby is private")
+
+
