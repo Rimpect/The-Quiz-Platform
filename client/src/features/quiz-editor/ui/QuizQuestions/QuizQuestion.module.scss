@@ -309,22 +309,6 @@
   align-items: center;
   cursor: pointer;
   position: relative;
-
-  input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-
-    &:checked + .radioCustom {
-      border-color: #22c55e;
-      background-color: #22c55e;
-
-      &::after {
-        transform: translate(-50%, -50%) scale(1);
-      }
-    }
-  }
 }
 
 .radioCustom {

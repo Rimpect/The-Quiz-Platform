@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Button } from '@shared'
+import { Button, Input } from '@shared'
 import { toast } from 'sonner'
 
 import { changePasswordSchema } from '../model/schema/changePasswordSchema'
@@ -68,7 +68,7 @@ export function ChangePassword() {
 
       <div className={styles.field}>
         <label>Текущий пароль</label>
-        <input
+        <Input
           type="password"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
@@ -77,7 +77,7 @@ export function ChangePassword() {
 
       <div className={styles.field}>
         <label>Новый пароль</label>
-        <input
+        <Input
           type="password"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
@@ -86,7 +86,7 @@ export function ChangePassword() {
 
       <div className={styles.field}>
         <label>Подтвердите пароль</label>
-        <input
+        <Input
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}

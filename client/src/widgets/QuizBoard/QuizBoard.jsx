@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 
 import { useQuizzes } from '@entities/quiz'
 import { useQuizBoard } from '@features/quiz-board'
@@ -9,6 +8,7 @@ import {
   ModalNotifications,
   getQuizDescriptionRoute,
 } from '@shared'
+import { Link } from 'react-router-dom'
 
 import styles from './QuizBoard.module.scss'
 

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Button, ROUTES } from '@shared'
+import { Button, ROUTES, Input } from '@shared'
 import { Mail, User, Lock, Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -52,7 +52,7 @@ export function RegistrationForm() {
           <label htmlFor="name">Имя</label>
           <div className={styles.relative}>
             <User className={styles.icon} />
-            <input
+            <Input
               type="text"
               placeholder="Имя"
               value={formData.name}
@@ -67,7 +67,7 @@ export function RegistrationForm() {
           <label htmlFor="email">Email</label>
           <div className={styles.relative}>
             <Mail className={styles.icon} />
-            <input
+            <Input
               type="email"
               placeholder="Email"
               value={formData.email}
@@ -82,7 +82,7 @@ export function RegistrationForm() {
           <label htmlFor="password">Пароль</label>
           <div className={styles.relative}>
             <Lock className={styles.icon} />
-            <input
+            <Input
               type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               name="password"
@@ -104,7 +104,7 @@ export function RegistrationForm() {
           <label htmlFor="confirmPassword">Подтвердите пароль</label>
           <div className={styles.relative}>
             <Lock className={styles.icon} />
-            <input
+            <Input
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="••••••••"
               value={formData.confirmPassword}

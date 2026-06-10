@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 
+import { Input } from '@shared'
+
 import styles from './RulesModal.module.scss'
 
 export const RulesModal = ({ isOpen, onAccept, onDecline }) => {
@@ -59,7 +61,7 @@ export const RulesModal = ({ isOpen, onAccept, onDecline }) => {
 
           <div className={styles.checkboxWrapper}>
             <label className={styles.checkbox}>
-              <input
+              <Input
                 type="checkbox"
                 checked={isChecked}
                 onChange={(e) => setIsChecked(e.target.checked)}

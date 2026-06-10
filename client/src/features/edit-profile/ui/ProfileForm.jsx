@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { Button } from '@shared'
+import { Button, Input } from '@shared'
 import { Save } from 'lucide-react'
 
 import styles from './ProfileForm.module.scss'
@@ -30,7 +30,7 @@ export function ProfileForm({ user }) {
       <div className={styles.field}>
         <label>Имя</label>
 
-        <input
+        <Input
           type="text"
           value={name}
           maxLength={50}
@@ -40,7 +40,7 @@ export function ProfileForm({ user }) {
       <div className={styles.field}>
         <label>Email</label>
 
-        <input
+        <Input
           type="email"
           value={email}
           maxLength={50}

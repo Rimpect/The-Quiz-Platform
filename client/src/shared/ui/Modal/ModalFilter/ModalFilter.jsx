@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
-import { Button } from '@shared'
+import { Button, Input } from '@shared'
 import { X, Image, Video, Music } from 'lucide-react'
 
 import styles from './ModalFilter.module.scss'
@@ -139,7 +139,7 @@ export function ModalFilter({ isOpen, onClose, onApply, onReset, filter }) {
             <div className={styles.categoriesGrid}>
               {categories.map((category) => (
                 <div key={category} className={styles.checkboxItem}>
-                  <input
+                  <Input
                     type="checkbox"
                     id={category}
                     className={styles.checkboxInput}
@@ -164,7 +164,7 @@ export function ModalFilter({ isOpen, onClose, onApply, onReset, filter }) {
                 { id: 'hard', label: 'Сложный', value: 'Сложный' },
               ].map((option) => (
                 <div key={option.id} className={styles.radioItem}>
-                  <input
+                  <Input
                     type="radio"
                     name="difficulty"
                     id={option.id}
@@ -197,7 +197,7 @@ export function ModalFilter({ isOpen, onClose, onApply, onReset, filter }) {
                 },
               ].map((option) => (
                 <div key={option.id} className={styles.checkboxItem}>
-                  <input
+                  <Input
                     type="checkbox"
                     id={option.id}
                     className={styles.checkboxInput}
@@ -238,7 +238,7 @@ export function ModalFilter({ isOpen, onClose, onApply, onReset, filter }) {
                 },
               ].map((option) => (
                 <div key={option.id} className={styles.checkboxItem}>
-                  <input
+                  <Input
                     type="checkbox"
                     id={option.id}
                     className={styles.checkboxInput}
@@ -259,7 +259,7 @@ export function ModalFilter({ isOpen, onClose, onApply, onReset, filter }) {
             <div className={styles.rangeRow}>
               <div className={styles.rangeField}>
                 <label className={styles.rangeLabel}>От</label>
-                <input
+                <Input
                   type="number"
                   min={QUESTION_MIN}
                   max={QUESTION_MAX}
@@ -275,7 +275,7 @@ export function ModalFilter({ isOpen, onClose, onApply, onReset, filter }) {
               </div>
               <div className={styles.rangeField}>
                 <label className={styles.rangeLabel}>До</label>
-                <input
+                <Input
                   type="number"
                   min={QUESTION_MIN}
                   max={QUESTION_MAX}
@@ -300,7 +300,7 @@ export function ModalFilter({ isOpen, onClose, onApply, onReset, filter }) {
             <div className={styles.rangeRow}>
               <div className={styles.rangeField}>
                 <label className={styles.rangeLabel}>От</label>
-                <input
+                <Input
                   type="number"
                   min={DURATION_MIN}
                   max={DURATION_MAX}
@@ -313,7 +313,7 @@ export function ModalFilter({ isOpen, onClose, onApply, onReset, filter }) {
               </div>
               <div className={styles.rangeField}>
                 <label className={styles.rangeLabel}>До</label>
-                <input
+                <Input
                   type="number"
                   min={DURATION_MIN}
                   max={DURATION_MAX}

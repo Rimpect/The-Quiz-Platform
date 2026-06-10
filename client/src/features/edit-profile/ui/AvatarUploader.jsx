@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 
-import { Button } from '@shared'
+import { Button, Input } from '@shared'
 
 import styles from './AvatarUploader.module.scss'
 
@@ -71,7 +71,7 @@ export function AvatarUploader({ onAvatarChange, initialAvatar = null }) {
           <div className={styles.avatar}></div>
         )}
         <div className={styles.buttonBlock}>
-          <input
+          <Input
             ref={fileInputRef}
             type="file"
             accept="image/jpeg,image/jpg,image/png"

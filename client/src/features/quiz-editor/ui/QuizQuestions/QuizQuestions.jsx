@@ -123,7 +123,7 @@ export function QuizQuestions() {
                   >
                     <div className={styles.correctMarker}>
                       <label className={styles.radioControl}>
-                        <input
+                        <Input
                           type="radio"
                           checked={answer.isCorrect}
                           onChange={() =>

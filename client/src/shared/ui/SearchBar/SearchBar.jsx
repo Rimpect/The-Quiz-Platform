@@ -1,3 +1,4 @@
+import { Input } from '@shared'
 import clsx from 'clsx'
 import { Search } from 'lucide-react'
 
@@ -21,7 +22,7 @@ export function SearchBar({
           <Search />
         </span>
 
-        <input
+        <Input
           type="text"
           placeholder={placeholder}
           className={styles.searchInput}

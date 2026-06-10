@@ -1,5 +1,3 @@
-import React from 'react'
-
 import styles from './Input.module.scss'
 
 function Input({ className, type, maxLength, ...props }) {
@@ -19,8 +17,8 @@ function Input({ className, type, maxLength, ...props }) {
     <input
       type={type}
       data-slot="input"
-      className={`${styles.input} ${className || ''}`}
       maxLength={computedMaxLength}
+      className={`${styles.input} ${className || ''}`}
       {...props}
     />
   )

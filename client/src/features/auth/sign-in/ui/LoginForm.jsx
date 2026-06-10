@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Button, ROUTES } from '@shared'
+import { Button, ROUTES, Input } from '@shared'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -51,7 +51,7 @@ export function LoginForm() {
           <label htmlFor="email">Email</label>
           <div className={styles.relative}>
             <Mail className={styles.icon} />
-            <input
+            <Input
               type="email"
               placeholder="your@email.com"
               value={formData.email}
@@ -66,7 +66,7 @@ export function LoginForm() {
           <label htmlFor="password">Пароль</label>
           <div className={styles.relative}>
             <Lock className={styles.icon} />
-            <input
+            <Input
               type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               value={formData.password}
