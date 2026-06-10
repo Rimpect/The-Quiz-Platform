@@ -60,7 +60,7 @@ export function RegistrationForm() {
               id="name"
               required
               maxLength={50}
-              className={styles.input}
+              variant="form"
             />
           </div>
 
@@ -75,7 +75,7 @@ export function RegistrationForm() {
               id="email"
               required
               maxLength={50}
-              className={styles.input}
+              variant="form"
             />
           </div>
 
@@ -88,7 +88,7 @@ export function RegistrationForm() {
               name="password"
               id="password"
               required
-              className={styles.input}
+              variant="form"
               value={formData.password}
               onChange={(e) => handleChange('password', e.target.value)}
             />
@@ -110,7 +110,7 @@ export function RegistrationForm() {
               value={formData.confirmPassword}
               id="confirmPassword"
               required
-              className={styles.input}
+              variant="form"
               onChange={(e) => handleChange('confirmPassword', e.target.value)}
             />
             <button

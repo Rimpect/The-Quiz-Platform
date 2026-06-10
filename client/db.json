@@ -112,7 +112,7 @@
       "language": "Русский",
       "lastUpdated": "2026-05-15",
       "type": "teams",
-      "status": "reject",
+      "status": "rejected",
       "createdAt": "10 апреля 2026"
     },
     {
@@ -188,7 +188,7 @@
       "language": "Русский",
       "lastUpdated": "2026-05-12",
       "type": "solo",
-      "status": "reject",
+      "status": "rejected",
       "createdAt": "10 апреля 2026"
     },
     {
@@ -207,7 +207,7 @@
       "language": "Русский",
       "lastUpdated": "2026-05-14",
       "type": "solo",
-      "status": "reject",
+      "status": "rejected",
       "createdAt": "10 апреля 2026"
     },
     {
@@ -226,7 +226,7 @@
       "language": "Русский",
       "lastUpdated": "2026-05-16",
       "type": "solo",
-      "status": "reject",
+      "status": "rejected",
       "createdAt": "10 апреля 2026"
     },
     {
@@ -659,5 +659,150 @@
       "points": 10
     }
   ],
+  "achievements": [
+    {
+      "id": "first_quiz",
+      "icon": "🏆",
+      "title": "Первый квиз",
+      "description": "Пройдите первый квиз",
+      "unlocked": true,
+      "category": "progress",
+      "points": 10,
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "sniper",
+      "icon": "🎯",
+      "title": "Снайпер",
+      "description": "100% правильных ответов",
+      "unlocked": true,
+      "category": "accuracy",
+      "points": 50,
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "fast_mind",
+      "icon": "⚡",
+      "title": "Быстрый ум",
+      "description": "Пройдите 10 квизов",
+      "unlocked": true,
+      "category": "progress",
+      "points": 20,
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "hot_streak",
+      "icon": "🔥",
+      "title": "Горячая серия",
+      "description": "5 квизов подряд",
+      "unlocked": true,
+      "category": "streak",
+      "points": 30,
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "erudite",
+      "icon": "📚",
+      "title": "Эрудит",
+      "description": "Пройдите 50 квизов",
+      "unlocked": false,
+      "category": "progress",
+      "points": 100,
+      "requirements": {
+        "completedQuizzes": 50
+      }
+    },
+    {
+      "id": "master",
+      "icon": "👑",
+      "title": "Мастер",
+      "description": "Достигните 15 уровня",
+      "unlocked": false,
+      "category": "level",
+      "points": 150,
+      "requirements": {
+        "level": 15
+      }
+    },
+    {
+      "id": "star",
+      "icon": "🌟",
+      "title": "Звезда",
+      "description": "Получите 5 звезд рейтинга",
+      "unlocked": true,
+      "category": "rating",
+      "points": 40,
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "perfectionist",
+      "icon": "💎",
+      "title": "Перфекционист",
+      "description": "10 идеальных результатов",
+      "unlocked": false,
+      "category": "accuracy",
+      "points": 200,
+      "requirements": {
+        "perfectScores": 10
+      }
+    },
+    {
+      "id": "student",
+      "icon": "🎓",
+      "title": "Ученик",
+      "description": "Изучите все категории",
+      "unlocked": true,
+      "category": "exploration",
+      "points": 60,
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "rocket",
+      "icon": "🚀",
+      "title": "Ракета",
+      "description": "Пройдите квиз за рекордное время",
+      "unlocked": false,
+      "category": "speed",
+      "points": 80,
+      "requirements": {
+        "recordTime": true
+      }
+    },
+    {
+      "id": "champion",
+      "icon": "🏅",
+      "title": "Чемпион",
+      "description": "Войдите в топ-10",
+      "unlocked": false,
+      "category": "rank",
+      "points": 120,
+      "requirements": {
+        "top10": true
+      }
+    },
+    {
+      "id": "persistent",
+      "icon": "💪",
+      "title": "Упорный",
+      "description": "Пройдите 100 квизов",
+      "unlocked": false,
+      "category": "progress",
+      "points": 300,
+      "requirements": {
+        "completedQuizzes": 100
+      }
+    }
+  ],
+  "categories": {
+    "progress": "Прогресс",
+    "accuracy": "Точность",
+    "streak": "Серии",
+    "level": "Уровни",
+    "rating": "Рейтинг",
+    "exploration": "Исследование",
+    "speed": "Скорость",
+    "rank": "Ранги"
+  },
+
   "$schema": "./node_modules/json-server/schema.json"
 }

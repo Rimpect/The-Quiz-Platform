@@ -1,6 +1,5 @@
 import { Pagination } from '@shared'
 
-// import { myQuizzes } from '../../MockData/myQuizzes'
 import { QuizInfo } from '../QuizInfo/QuizInfo'
 
 import styles from './QuizTabs.module.scss'

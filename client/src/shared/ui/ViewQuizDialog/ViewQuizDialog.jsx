@@ -1,4 +1,6 @@
-import { Badge } from '@shared'
+import { Badge, getQuizDescriptionRoute, Button } from '@shared'
+import { Eye, Check, X } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 import styles from './ViewQuizDialog.module.scss'
 
@@ -9,6 +11,7 @@ export function ViewQuizDialog({
   onApprove,
   onRejectClick,
 }) {
+  const navigate = useNavigate()
   if (!isOpen || !quiz) return null
 
   const statusLabels = {
@@ -72,26 +75,43 @@ export function ViewQuizDialog({
 
           {quiz.status === 'pending' && (
             <div className={styles.viewActions}>
-              <button
-                className={`${styles.viewApproveButton} ${styles.viewButtonFull}`}
+              <Button
+                variant="green"
+                fullWidth
+                icon={<Check />} // или ✓
                 onClick={() => onApprove(quiz)}
               >
-                ✓ Одобрить
-              </button>
-              <button
-                className={`${styles.viewRejectButton} ${styles.viewButtonFull}`}
+                Одобрить
+              </Button>
+
+              <Button
+                variant="red"
+                fullWidth
+                icon={<X />} // или ✗
                 onClick={() => onRejectClick(quiz)}
               >
-                ✗ Отклонить
-              </button>
+                Отклонить
+              </Button>
+
+              <Button
+                variant="transparent"
+                fullWidth
+                icon={<Eye />}
+                onClick={() => {
+                  onClose()
+                  navigate(getQuizDescriptionRoute(quiz.id))
+                }}
+              >
+                Посмотреть
+              </Button>
             </div>
           )}
         </div>
 
         <div className={styles.dialogFooter}>
-          <button className={styles.closeButton} onClick={onClose}>
+          <Button variant="transparent" fullWidth onClick={onClose}>
             Закрыть
-          </button>
+          </Button>
         </div>
       </div>
     </div>

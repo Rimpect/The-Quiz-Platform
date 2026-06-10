@@ -59,7 +59,7 @@ export function LoginForm() {
               id="email"
               required
               maxLength={50}
-              className={styles.input}
+              variant="form"
             />
           </div>
 
@@ -73,7 +73,7 @@ export function LoginForm() {
               onChange={(e) => handleChange('password', e.target.value)}
               id="password"
               required
-              className={styles.input}
+              variant="form"
             />
             <button
               type="button"

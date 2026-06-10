@@ -1,11 +1,10 @@
 import { useState } from 'react'
 
+import { useQuizzes } from '@entities/quiz'
 import { QuizSearch, useAdminSearch } from '@features'
 import { RejectQuizDialog, ViewQuizDialog } from '@shared'
 import { AdminPanelHeader, QuizTabs, StatsCards } from '@widgets'
 import { toast } from 'sonner'
-
-import { myQuizzes } from '../../MockData/myQuizzes'
 
 import styles from './AdminPanel.module.scss'
 
@@ -16,8 +15,8 @@ export function AdminPanel({ onBack }) {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [filterStatus, setFilterStatus] = useState('pending')
   const [currentPage, setCurrentPage] = useState(1)
+  const { quizzes } = useQuizzes()
 
-  const quizzes = myQuizzes
   const searchedQuizzes = useAdminSearch(quizzes, searchQuery)
 
   const handleFilterChange = (newStatus) => {

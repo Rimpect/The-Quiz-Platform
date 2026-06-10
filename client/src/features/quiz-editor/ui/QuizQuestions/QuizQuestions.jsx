@@ -24,6 +24,21 @@ export function QuizQuestions() {
 
   const setCorrectAnswer = useQuizStore((state) => state.setCorrectAnswer)
 
+  // Функция для обработки выбора правильного ответа с возможностью отмены
+  const handleCorrectAnswerToggle = (
+    questionId,
+    answerId,
+    isCurrentlyCorrect,
+  ) => {
+    if (isCurrentlyCorrect) {
+      // Если ответ уже правильный - отменяем выбор (передаём null)
+      setCorrectAnswer(questionId, null)
+    } else {
+      // Если ответ не правильный - выбираем его
+      setCorrectAnswer(questionId, answerId)
+    }
+  }
+
   return (
     <div>
       <div className={styles.headerBar}>
@@ -123,11 +138,16 @@ export function QuizQuestions() {
                   >
                     <div className={styles.correctMarker}>
                       <label className={styles.radioControl}>
-                        <Input
+                        <input
                           type="radio"
+                          name={`question-${question.id}`}
                           checked={answer.isCorrect}
                           onChange={() =>
-                            setCorrectAnswer(question.id, answer.id)
+                            handleCorrectAnswerToggle(
+                              question.id,
+                              answer.id,
+                              answer.isCorrect,
+                            )
                           }
                         />
 
@@ -146,10 +166,11 @@ export function QuizQuestions() {
                       }
                       placeholder={`Вариант ${answerIndex + 1}`}
                       className={styles.answerInput}
+                      variant="default"
                     />
 
                     <Button
-                      className={styles.removeAnswerBtn}
+                      variant="transparent"
                       size="medium"
                       icon={<X size={20} />}
                       type="button"

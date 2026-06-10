@@ -26,7 +26,6 @@ export function QuizStats() {
             value={quiz.title}
             maxLength={50}
             onChange={(e) => setField('title', e.target.value)}
-            className={styles.editorInput}
           />
         </div>
 

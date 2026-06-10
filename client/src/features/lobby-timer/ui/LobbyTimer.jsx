@@ -1,11 +1,22 @@
-import { useEffect, useState } from 'react'
-
 import { Clock } from 'lucide-react'
+
+import { useTimer } from '../../quiz-timer/model/useTimer'
 
 import styles from './LobbyTimer.module.scss'
 
-export function LobbyTimer({ initialTime, onTimeEnd, variant = 'default' }) {
-  const [seconds, setSeconds] = useState(initialTime)
+export function LobbyTimer({
+  initialTime,
+  onTimeEnd,
+  variant = 'default',
+  enableSound = true,
+}) {
+  const { timeLeft: seconds, isWarning } = useTimer({
+    duration: initialTime,
+    onTimeEnd,
+    enableSound,
+    isLobby: true,
+    lobbyWarningThreshold: 5,
+  })
 
   const progressPercent = ((initialTime - seconds) / initialTime) * 100
   const remainingPercent = (seconds / initialTime) * 100
@@ -18,21 +29,6 @@ export function LobbyTimer({ initialTime, onTimeEnd, variant = 'default' }) {
   }
 
   const progressColor = getProgressColor(remainingPercent)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSeconds((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval)
-          if (onTimeEnd) onTimeEnd()
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
-
-    return () => clearInterval(interval)
-  }, [onTimeEnd])
 
   const minutes = Math.floor(seconds / 60)
   const secs = seconds % 60
@@ -64,8 +60,6 @@ export function LobbyTimer({ initialTime, onTimeEnd, variant = 'default' }) {
     return (
       <div className={styles.timerCenteredContainer}>
         <div className={styles.timerCentered}>
-          {/* <Clock size={18} /> */}
-
           <div className={styles.timerTextCentered}>Начало через</div>
           <div
             className={styles.timerValueCentered}

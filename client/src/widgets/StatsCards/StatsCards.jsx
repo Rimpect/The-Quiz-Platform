@@ -24,7 +24,7 @@ export function StatsCards({ pendingCount, approvedCount, rejectedCount }) {
       label: 'Отклонено',
       value: rejectedCount,
       icon: X,
-      type: 'rejected',
+      type: 'reject',
       iconBgColor: '#fee2e2',
       iconColor: '#dc2626',
     },

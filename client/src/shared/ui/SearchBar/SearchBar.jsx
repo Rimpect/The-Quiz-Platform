@@ -25,10 +25,10 @@ export function SearchBar({
         <Input
           type="text"
           placeholder={placeholder}
-          className={styles.searchInput}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           maxLength={100}
+          variant="search"
         />
       </div>
     </div>
