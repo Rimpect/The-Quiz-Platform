@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from ..models.model_category import Category
 
 
-def get_all_categories(db: Session) -> List[Type[Category]]:  # ✅ List[Category]
+def get_all_categories(db: Session) -> List[Type[Category]]:
     return db.query(Category).all()
 
 
@@ -14,7 +14,7 @@ def get_category(db: Session, category_id: int) -> Optional[Category]:
 
 
 def get_category_by_type(db: Session, category_type: str) -> Optional[Category]:
-    """✅ Добавлено: получение категории по названию"""
+    """Получение категории по названию"""
     return db.query(Category).filter(Category.category_type == category_type).first()
 
 

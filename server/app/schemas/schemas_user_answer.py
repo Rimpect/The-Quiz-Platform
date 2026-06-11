@@ -9,7 +9,6 @@ from pydantic import BaseModel
 
 class UserAnswerCreate(BaseModel):
     question_id: int
-    answer_text: Optional[str] = None
     answer_id: Optional[int] = None
     answer_ids: Optional[List[int]] = None
     time_spent_seconds: Optional[int] = 0

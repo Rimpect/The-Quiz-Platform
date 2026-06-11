@@ -1,11 +1,10 @@
-from datetime import datetime
-from typing import Optional, Type
+from typing import Type
 
 from sqlalchemy.orm import Session
 
-from .. import schemas
 # from ..models.model_question import Question
 from ..models.model_quiz_result import QuizResult
+from ..schemas.schemas_quiz_result import *
 
 
 def get_quiz_result(db: Session, result_id: int) -> Optional[QuizResult]:
@@ -49,7 +48,7 @@ def create_quiz_result(
     return db_result
 
 
-def update_quiz_result(db: Session, result_id: int, result_update: schemas.QuizResultUpdate) -> Optional[QuizResult]:
+def update_quiz_result(db: Session, result_id: int, result_update: QuizResultUpdate) -> Optional[QuizResult]:
     db_result = get_quiz_result(db, result_id)
     if db_result:
         update_data = result_update.model_dump(exclude_unset=True)

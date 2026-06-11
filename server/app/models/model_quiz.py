@@ -29,9 +29,9 @@ class Quiz(Base) :
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Связи
-    author = relationship("User", back_populates="quizzes")
+    author = relationship("User")
     questions = relationship("Question", back_populates="quiz", cascade="all, delete-orphan")
-    results = relationship("QuizResult", back_populates="quiz", cascade="all, delete-orphan")
+    quiz_results = relationship("QuizResult", back_populates="quiz", cascade="all, delete-orphan")
     category_ref = relationship("Category", back_populates="quizzes")
 
     @property
@@ -55,3 +55,7 @@ class Quiz(Base) :
 
     def __repr__(self) :
         return f"<Quiz {self.title}>"
+
+    @total_questions.setter
+    def total_questions(self, value) :
+        self._total_questions = value

@@ -1,10 +1,10 @@
 from datetime import datetime
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Type
 from typing import Type
 
 from sqlalchemy.orm import Session, joinedload
 
-from .. import schemas
+from ..schemas.schemas_quiz import *
 from ..models.model_answer import Answer
 from ..models.model_pending_quiz import PendingQuiz, PendingQuizStatus
 from ..models.model_question import Question as Quest
@@ -19,7 +19,7 @@ def get_quiz_questions(db: Session, quiz_id):
     return db.query(Quest).filter(quiz_id == Quest.quiz_id)
 
 
-def create_quiz(db: Session, quiz: schemas.QuizCreate) -> Quiz:
+def create_quiz(db: Session, quiz: QuizCreate) -> Quiz:
     db_quiz = Quiz(
         title=quiz.title,
         category=quiz.category,
@@ -34,7 +34,7 @@ def create_quiz(db: Session, quiz: schemas.QuizCreate) -> Quiz:
     return db_quiz
 
 
-def update_quiz(db: Session, quiz_id: int, quiz_update: schemas.QuizUpdate) -> Optional[Quiz]:
+def update_quiz(db: Session, quiz_id: int, quiz_update: QuizUpdate) -> Optional[Quiz]:
     db_quiz = get_quiz(db, quiz_id)
     if db_quiz:
         update_data = quiz_update.model_dump(exclude_unset=True)
@@ -80,7 +80,7 @@ def get_quiz_categories(db: Session) -> List[str]:
 
 def create_quiz_full(
         db: Session,
-        quiz_data: schemas.QuizBulkCreate
+        quiz_data: QuizBulkCreate
 ) -> Dict[str, Any]:
     """
     Массовое создание квиза с вопросами и ответами
@@ -196,7 +196,7 @@ def get_quizzes(
         category_id: Optional[int] = None,
         author_id: Optional[int] = None,
         is_public: Optional[bool] = True
-) -> List[Quiz]:
+) -> list[Type[Quiz]] :
     query = db.query(Quiz).options(joinedload(Quiz.category_ref))
 
     if category_id:
@@ -209,7 +209,7 @@ def get_quizzes(
     return query.order_by(Quiz.created_at.desc()).offset(skip).limit(limit).all()
 
 
-def create_quiz(db: Session, quiz: schemas.QuizCreate, author_id: int) -> Quiz:
+def create_quiz(db: Session, quiz: QuizCreate, author_id: int) -> Quiz:
     """Создание квиза (сразу в опубликованные, без модерации)"""
     db_quiz = Quiz(
         title=quiz.title,
@@ -226,7 +226,7 @@ def create_quiz(db: Session, quiz: schemas.QuizCreate, author_id: int) -> Quiz:
     return db_quiz
 
 
-def create_quiz_pending(db: Session, quiz: schemas.QuizCreate, author_id: int) -> PendingQuiz:
+def create_quiz_pending(db: Session, quiz: QuizCreate, author_id: int) -> PendingQuiz:
     """Создание квиза на модерацию"""
     db_pending = PendingQuiz(
         title=quiz.title,
@@ -243,7 +243,7 @@ def create_quiz_pending(db: Session, quiz: schemas.QuizCreate, author_id: int) -
     return db_pending
 
 
-def update_quiz(db: Session, quiz_id: int, quiz_update: schemas.QuizUpdate, user_id: int) -> Optional[Quiz]:
+def update_quiz(db: Session, quiz_id: int, quiz_update: QuizUpdate, user_id: int) -> Optional[Quiz]:
     """Обновление квиза (только автор)"""
     db_quiz = get_quiz(db, quiz_id)
     if db_quiz and db_quiz.author_id == user_id:
@@ -278,7 +278,7 @@ def get_pending_quizzes(
         limit: int = 100,
         status: Optional[PendingQuizStatus] = None,
         author_id: Optional[int] = None
-) -> List[PendingQuiz]:
+) -> list[Type[PendingQuiz]] :
     query = db.query(PendingQuiz)
 
     if status:

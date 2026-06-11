@@ -7,6 +7,9 @@ from .model_answer import Answer
 from .model_quiz_result import QuizResult
 from .model_media import MediaFile, MediaEntity, MediaType
 from .model_category import Category
+from .model_user_answer import UserAnswer
+from .model_pending_quiz import PendingQuiz
+#from .model_achievement import UserAchievement
 
 __all__ = [
     "User",
@@ -24,4 +27,5 @@ __all__ = [
     "MediaEntity",
     "MediaType",
     "Category"
+    #"UserAchievement"
 ]

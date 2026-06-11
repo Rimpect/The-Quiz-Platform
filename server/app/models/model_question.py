@@ -11,8 +11,6 @@ import enum
 class AnswerType(str, enum.Enum):
     SINGLE = "single"  # Одиночный выбор
     MULTIPLE = "multiple"  # Множественный выбор
-    # TEXT = "text"  # Текстовый ответ
-    # NUMERIC = "numeric"  # Числовой ответ
 
 
 class Question(Base):

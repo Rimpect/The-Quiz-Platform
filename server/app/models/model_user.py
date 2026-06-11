@@ -27,7 +27,7 @@ class User(Base):
 
     # Обязательные поля
     id = Column(Integer, primary_key=True, index=True)
-    nickname = Column(String(50), nullable=True)  # Никнейм
+    nickname = Column(String(50), nullable=False)  # Никнейм
     theme_site = Column(SQLEnum(ThemeMode), default=ThemeMode.LIGHT, nullable=False)  # Тема сайта
     photo_profile = Column(String(500), nullable=True)  # Фото профиля (путь к файлу)
     email = Column(String(100), unique=True, nullable=False, index=True)  # Почта
@@ -43,7 +43,7 @@ class User(Base):
     jwt_tokens = relationship("JWTToken", back_populates="user", cascade="all, delete-orphan")
     quiz_results = relationship("QuizResult", back_populates="user", cascade="all, delete-orphan")
     quiz = relationship("Quiz", cascade="all, delete-orphan")
-    achievements = relationship("UserAchievement", back_populates="user", cascade="all, delete-orphan")
+    #achievements = relationship("UserAchievement", back_populates="user", cascade="all, delete-orphan")
 
     @property
     def profile_image_url(self) -> Optional[str]:

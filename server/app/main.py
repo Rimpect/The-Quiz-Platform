@@ -15,17 +15,18 @@ from .config_redis.redis_config import get_redis, redis_pool
 # Сервисы
 from .config_redis.redis_service import cleanup_expired_sessions
 # CRUD
-from .crud import crud_guest as guest_crud
+from .crud.crud_guest import Guest as guest_crud
 # База данных
 from .database.database import engine, Base, close_db_connections, get_db, test_connection
-from .middleware.error_handler_middleware import ErrorHandlerMiddleware
 # Middleware
+from .middleware.error_handler_middleware import ErrorHandlerMiddleware
 from .middleware.logging_middleware import LoggingMiddleware
 from .middleware.rate_limit_middleware import RateLimitMiddleware
 from .middleware.response_middleware import ResponseFormatterMiddleware
 from .utils.logger import get_logger
 # Роутеры
 from .routers import (
+    admin_router,
     auth_router,
     users_router,
     guest_router,
@@ -163,7 +164,8 @@ app = FastAPI(
     lifespan=lifespan,
     docs_url="/api/docs",
     redoc_url="/api/redoc",
-    openapi_url="/api/openapi.json"
+    openapi_url="/api/openapi.json",
+    openapi_version="3.1.0"
 )
 
 # ========== CORS НАСТРОЙКИ (должны быть первыми) ==========
@@ -191,20 +193,20 @@ app.add_middleware(
 
 # ========== ПОДКЛЮЧЕНИЕ MIDDLEWARE (порядок важен!) ==========
 
-# 1. Response Formatter (форматирует все ответы в единый шаблон)
+# # 1. Response Formatter (форматирует все ответы в единый шаблон)
 app.add_middleware(ResponseFormatterMiddleware)
-
-# 2. Logging (логирует все запросы)
+#
+# # 2. Logging (логирует все запросы)
 app.add_middleware(LoggingMiddleware)
-
-# 3. Rate Limit (ограничивает количество запросов)
+#
+# # 3. Rate Limit (ограничивает количество запросов)
 app.add_middleware(RateLimitMiddleware)
-
-# 4. Error Handler (должен быть последним, перехватывает все ошибки)
+#
+# # 4. Error Handler (должен быть последним, перехватывает все ошибки)
 app.add_middleware(ErrorHandlerMiddleware)
-
-# ========== СТАТИЧЕСКИЕ ФАЙЛЫ ==========
-app.mount("/media", StaticFiles(directory="media_files"), name="media")
+#
+# # ========== СТАТИЧЕСКИЕ ФАЙЛЫ ==========
+# app.mount("/media", StaticFiles(directory="media_files"), name="media")
 
 # ========== ПОДКЛЮЧЕНИЕ РОУТЕРОВ ==========
 app.include_router(auth_router, prefix="/api")
@@ -218,7 +220,7 @@ app.include_router(quiz_results_router, prefix="/api")
 app.include_router(quiz_session_router, prefix="/api")
 app.include_router(lobby_router, prefix="/api")
 app.include_router(media_router, prefix="/api")
-
+app.include_router(admin_router, prefix="/api")
 
 # ========== СИСТЕМНЫЕ ЭНДПОИНТЫ ==========
 @app.get("/")
@@ -228,7 +230,7 @@ async def root():
         "name": "Quiz API",
         "version": "3.0.0",
         "status": "running",
-        "docs": "/api/docs"
+        "docs": "/api/docs",
     }
 
 
@@ -290,5 +292,6 @@ if __name__ == "__main__":
         port=8000,
         reload=True,
         log_level="info",
-        timeout_graceful_shutdown=30
+        timeout_graceful_shutdown=30,
+        lifespan="on"
     )

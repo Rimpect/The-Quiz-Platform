@@ -10,7 +10,8 @@ from ..database.database import get_db
 from ..utils.logger import logger
 
 from ..models import model_user
-from ..schemas import ResponseFactory
+from ..schemas.schemas_response import ResponseFactory, BaseResponse
+from ..schemas.schemas_user import EmailRequest, AccessTokenStatusResponse,  RefreshTokenResponse
 from ..utils.security import (
     verify_password,
     create_access_token,
@@ -20,7 +21,7 @@ from ..utils.security import (
     verify_refresh_token
 )
 
-from .. import schemas
+
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -55,7 +56,7 @@ def clear_refresh_token_cookie(response: Response):
 @router.post("/login")
 def login(
         response: Response,
-        email_data: schemas.EmailRequest,
+        email_data: EmailRequest,
         db: Session = Depends(get_db)
 ):
     """Вход пользователя - создание пары токенов"""
@@ -104,7 +105,7 @@ def login(
     )
 
 
-@router.post("/refresh", response_model=schemas.BaseResponse)
+@router.post("/refresh", response_model=BaseResponse)
 def refresh_token(
         request: Request,
         response: Response,
@@ -177,7 +178,7 @@ def refresh_token(
     # 10. Очищаем отработанные токены
     crud_jwt.cleanup_expired_tokens(db)
 
-    return schemas.RefreshTokenResponse(
+    return RefreshTokenResponse(
         access_token=new_access_token,
         token_type="bearer",
         access_status="valid",
@@ -220,7 +221,7 @@ def logout(
     )
 
 
-@router.get("/verify", response_model=schemas.BaseResponse)
+@router.get("/verify", response_model=BaseResponse)
 def verify_token(
         request: Request,
 ):
@@ -230,7 +231,7 @@ def verify_token(
     auth_header = request.headers.get("Authorization")
 
     if not auth_header or not auth_header.startswith("Bearer "):
-        return schemas.AccessTokenStatusResponse(
+        return AccessTokenStatusResponse(
             access_status="missing",
             error_message="Access token is missing"
         )
@@ -238,7 +239,7 @@ def verify_token(
     access_token = auth_header.split(" ")[1]
     verification = verify_access_token(access_token)
 
-    return schemas.AccessTokenStatusResponse(
+    return AccessTokenStatusResponse(
         access_status=verification["status"],
         error_message=verification.get("error_message"),
         user_id=verification.get("user_id"),

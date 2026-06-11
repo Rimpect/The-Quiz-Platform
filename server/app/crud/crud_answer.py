@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from ..models.model_answer import Answer
-from .. import schemas
+from ..schemas.schemas_answer import *
 from typing import Optional, List, Type
 
 
@@ -14,7 +14,7 @@ def get_answers_by_question(db: Session, question_id: int) -> list[Type[Answer]]
     ).order_by(Answer.order_number).all()
 
 
-def create_answer(db: Session, answer: schemas.AnswerCreate, question_id: int) -> Answer:
+def create_answer(db: Session, answer: AnswerCreate, question_id: int) -> Answer:
     db_answer = Answer(
         **answer.model_dump(),
         question_id=question_id
@@ -25,7 +25,7 @@ def create_answer(db: Session, answer: schemas.AnswerCreate, question_id: int) -
     return db_answer
 
 
-def create_answers_bulk(db: Session, answers: List[schemas.AnswerCreate], question_id: int) -> List[Answer]:
+def create_answers_bulk(db: Session, answers: List[AnswerCreate], question_id: int) -> List[Answer]:
     db_answers = []
     for answer in answers:
         db_answer = Answer(
@@ -40,7 +40,7 @@ def create_answers_bulk(db: Session, answers: List[schemas.AnswerCreate], questi
     return db_answers
 
 
-def update_answer(db: Session, answer_id: int, answer_update: schemas.AnswerUpdate) -> Optional[Answer]:
+def update_answer(db: Session, answer_id: int, answer_update: AnswerUpdate) -> Optional[Answer]:
     db_answer = get_answer(db, answer_id)
     if db_answer:
         update_data = answer_update.model_dump(exclude_unset=True)

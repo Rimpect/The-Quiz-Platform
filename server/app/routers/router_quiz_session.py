@@ -10,10 +10,12 @@ from ..crud import crud_question as question_crud
 from ..crud import crud_user_answer as answer_service
 from ..crud.crud_user_answer import user_answer_service
 from ..database.database import get_db
-from ..schemas import ResponseFactory
+from ..models import Guest, User
+from ..schemas.schemas_response import ResponseFactory
+from ..schemas.schemas_user_answer import  StartSessionResponse, UserAnswerCreate
 from ..utils.security import get_current_user, get_current_guest
 from ..config_redis.redis_service import QuizSessionService
-from .. import schemas, models
+
 
 router = APIRouter(prefix="/quiz-session", tags=["quiz-sessions"])
 
@@ -21,11 +23,11 @@ router = APIRouter(prefix="/quiz-session", tags=["quiz-sessions"])
 quiz_session_service = QuizSessionService()
 
 
-@router.post("/start", response_model=schemas.StartSessionResponse)
+@router.post("/start", response_model=StartSessionResponse)
 def start_session(
         quiz_id: int,
         db: Session = Depends(get_db),
-        current_user: models.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """Начало новой сессии прохождения квиза"""
     # Проверяем существование квиза
@@ -43,7 +45,7 @@ def start_session(
         total_questions=len(questions)
     )
 
-    return schemas.StartSessionResponse(
+    return StartSessionResponse(
         session_id=session_id,
         quiz_id=quiz_id,
         total_questions=len(questions),
@@ -51,11 +53,11 @@ def start_session(
     )
 
 
-@router.post("/guest/start", response_model=schemas.StartSessionResponse)
+@router.post("/guest/start", response_model=StartSessionResponse)
 def start_guest_session(
         quiz_id: int,
         db: Session = Depends(get_db),
-        current_guest: models.Guest = Depends(get_current_guest)
+        current_guest: Guest = Depends(get_current_guest)
 ):
     """Начало сессии для гостя"""
     quiz = quiz_crud.get_quiz(db, quiz_id)
@@ -74,7 +76,7 @@ def start_guest_session(
         total_questions=len(questions)
     )
 
-    return schemas.StartSessionResponse(
+    return StartSessionResponse(
         session_id=session_id,
         quiz_id=quiz_id,
         total_questions=len(questions),
@@ -86,9 +88,9 @@ def start_guest_session(
 def save_answer(
         self,
         session_id: str,
-        answer: schemas.UserAnswerCreate,
+        answer: UserAnswerCreate,
         db: Session = Depends(get_db),
-        current_user: models.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """Сохранение ответа пользователя"""
     # Проверяем сессию
@@ -103,6 +105,8 @@ def save_answer(
     question = question_crud.get_question(db, answer.question_id)
     if not question:
         raise HTTPException(status_code=404, detail="Question not found")
+    if question.answer_type not in ["single", "multiple"]:
+        raise HTTPException(status_code=400, detail="Invalid question type")
 
     # Сохраняем ответ
     result = answer_service.UserAnswerService.save_answer(
@@ -125,7 +129,7 @@ def save_answer(
 @router.get("/answers")
 def get_session_answers(
         session_id: str,
-        current_user: models.User = Depends(get_current_user),
+        current_user: User = Depends(get_current_user),
         # db: Session = Depends(get_db)
 ):
     """Получение всех ответов сессии"""
@@ -144,7 +148,7 @@ def get_session_answers(
 def get_session_score(
         session_id: str,
         db: Session = Depends(get_db),
-        current_user: models.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """Подсчет результатов и завершение сессии"""
     session = quiz_session_service.get_session(session_id)
@@ -210,7 +214,7 @@ def get_session_score(
 @router.delete("/{session_id}")
 def cancel_session(
         session_id: str,
-        current_user: models.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """Отмена сессии (удаление временных данных)"""
     session = quiz_session_service.get_session(session_id)

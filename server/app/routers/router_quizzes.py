@@ -3,21 +3,23 @@ from typing import Optional
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 
-from .. import schemas
+
 from ..crud import crud_quiz as crud_quiz
 from ..database.database import get_db
 from ..models.model_user import User
-from ..schemas import ResponseFactory, QuizResponse
+from ..schemas.schemas_response import ResponseFactory
+from ..schemas.schemas_quiz import QuizResponse, QuizBase, QuizBulkCreate, QuizBulkResponse, QuizCreate, QuizUpdate
 from ..utils.security import get_current_user, get_current_user_or_guest_optional
+
 
 router = APIRouter(prefix="/quizzes", tags=["quizzes"])
 
 
-@router.post("/", response_model=schemas.QuizBase, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=QuizBase, status_code=status.HTTP_201_CREATED)
 def create_quiz(
-        quiz: schemas.QuizCreate,
+        quiz: QuizCreate,
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """Создание нового квиза"""
     if current_user.role in ("admin", "author"):
@@ -107,12 +109,12 @@ def read_quiz_full(quiz_id: int, db: Session = Depends(get_db)):
     return db_quiz
 
 
-@router.put("/{quiz_id}", response_model=schemas.QuizBase)
+@router.put("/{quiz_id}", response_model=QuizBase)
 def update_quiz(
         quiz_id: int,
-        quiz_update: schemas.QuizUpdate,
+        quiz_update: QuizUpdate,
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """Обновление квиза"""
     if current_user.role == "admin":
@@ -129,7 +131,7 @@ def update_quiz(
 def delete_quiz(
         quiz_id: int,
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """Удаление квиза"""
     if current_user.role == "admin":
@@ -152,11 +154,11 @@ def get_leaderboard(
 """
 
 
-@router.post("/bulk", response_model=schemas.QuizBulkResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/bulk", response_model=QuizBulkResponse, status_code=status.HTTP_201_CREATED)
 def create_quiz_bulk(
-        quiz_data: schemas.QuizBulkCreate,
+        quiz_data: QuizBulkCreate,
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """
     Массовое создание квиза с вопросами и ответами за один запрос
@@ -202,9 +204,9 @@ def create_quiz_bulk(
     raise HTTPException(status_code=404, detail="No admin or author rules")
 
 
-@router.post("/")
+@router.post("/pending")
 def create_quiz(
-        quiz: schemas.QuizCreate,
+        quiz: QuizCreate,
         db: Session = Depends(get_db),
         current_user: User = Depends(get_current_user)
 ):
@@ -224,4 +226,3 @@ def create_quiz(
         },
         message="Quiz submitted for moderation"
     )
-

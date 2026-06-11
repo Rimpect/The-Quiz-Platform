@@ -2,13 +2,12 @@
 CRUD операции для временных ответов (Redis)
 """
 import json
-from datetime import datetime
-from typing import Optional, List, Dict, Any
+from typing import Dict, Any
 
 from sqlalchemy.orm import Session
 
-from .. import schemas
 from ..config_redis.redis_config import get_redis, RedisKeys
+from ..schemas.schemas_user_answer import *
 
 # Время жизни ответов в Redis (секунды)
 ANSWER_TTL = 3600  # 1 час
@@ -26,7 +25,7 @@ class UserAnswerService:
             user_id: int,
             quiz_id: int,
             question_id: int,
-            answer_data: schemas.UserAnswerCreate,
+            answer_data: UserAnswerCreate,
             db: Session  # Добавляем параметр db
     ) -> Dict[str, Any]:
         """
@@ -45,7 +44,6 @@ class UserAnswerService:
             "user_id": str(user_id),
             "quiz_id": str(quiz_id),
             "question_id": str(question_id),
-            "answer_text": answer_data.answer_text or "",
             "answer_ids": json.dumps(answer_data.answer_ids) if answer_data.answer_ids else "",
             "answer_id": str(answer_data.answer_id) if answer_data.answer_id else "",
             "is_correct": "true" if is_correct else "false",
@@ -73,7 +71,7 @@ class UserAnswerService:
     def _check_answer(
             self,
             question_id: int,
-            answer_data: schemas.UserAnswerCreate,
+            answer_data: UserAnswerCreate,
             db: Session  # Добавляем сессию БД
     ) -> tuple[bool, int]:
         """

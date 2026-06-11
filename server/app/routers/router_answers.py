@@ -3,31 +3,32 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from ..crud import crud_answer as crud_answer, crud_question as crud_question
-from .. import schemas
+from ..schemas.schemas_answer import AnswerBase, AnswerUpdate, AnswerCreate
+from ..schemas.schemas_user import User
 from ..database.database import get_db
 from ..utils.security import get_current_user
 
 router = APIRouter(prefix="/questions/{question_id}/answers", tags=["answers"])
 
 
-@router.post("/", response_model=schemas.AnswerBase, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=AnswerBase, status_code=status.HTTP_201_CREATED)
 def create_answer(
         question_id: int,
-        answer: schemas.AnswerCreate,
+        answer: AnswerCreate,
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     if not crud_question.get_question(db, question_id):
         raise HTTPException(status_code=404, detail="Question not found")
     return answer.create_answer(db, answer, question_id)
 
 
-@router.post("/bulk", response_model=List[schemas.AnswerBase], status_code=status.HTTP_201_CREATED)
+@router.post("/bulk", response_model=List[AnswerBase], status_code=status.HTTP_201_CREATED)
 def create_answers_bulk(
         question_id: int,
-        answers: List[schemas.AnswerCreate],
+        answers: List[AnswerCreate],
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """Массовое создание вариантов ответов"""
     if not crud_question.get_question(db, question_id):
@@ -35,7 +36,7 @@ def create_answers_bulk(
     return crud_answer.create_answers_bulk(db, answers, question_id)
 
 
-@router.get("/", response_model=List[schemas.AnswerBase])
+@router.get("/", response_model=List[AnswerBase])
 def read_answers(
         question_id: int,
         db: Session = Depends(get_db)
@@ -44,7 +45,7 @@ def read_answers(
     return crud_answer.get_answers_by_question(db, question_id)
 
 
-@router.get("/{answer_id}", response_model=schemas.AnswerBase)
+@router.get("/{answer_id}", response_model=AnswerBase)
 def read_answer(
         question_id: int,
         answer_id: int,
@@ -57,13 +58,13 @@ def read_answer(
     return answer_id
 
 
-@router.put("/{answer_id}", response_model=schemas.AnswerBase)
+@router.put("/{answer_id}", response_model=AnswerBase)
 def update_answer(
         question_id: int,
         answer_id: int,
-        answer_update: schemas.AnswerUpdate,
+        answer_update: AnswerUpdate,
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """Обновление варианта ответа"""
     answer = crud_answer.get_answer(db, answer_id)
@@ -77,7 +78,7 @@ def delete_answer(
         question_id: int,
         answer_id: int,
         db: Session = Depends(get_db),
-        current_user: schemas.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """Удаление варианта ответа"""
     answer = crud_answer.get_answer(db, answer_id)

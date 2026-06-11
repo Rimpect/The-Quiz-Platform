@@ -4,12 +4,12 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-
-from .. import schemas, models
 from ..config_redis.redis_service import LobbyService, QuizSessionService
 from ..crud import crud_quiz as quiz_crud
 from ..database.database import get_db
-from ..schemas import ResponseFactory
+from ..models import User
+from ..schemas.schemas_response import ResponseFactory
+from ..schemas.schemas_lobby import LobbyCreate, LobbyResponse
 from ..utils.security import get_current_user
 
 router = APIRouter(prefix="/lobby", tags=["lobby"])
@@ -19,11 +19,11 @@ lobby_service = LobbyService()
 quiz_session_service = QuizSessionService()
 
 
-@router.post("/create", response_model=schemas.LobbyResponse)
+@router.post("/create", response_model=LobbyResponse)
 def create_lobby(
-        lobby_data: schemas.LobbyCreate,
+        lobby_data: LobbyCreate,
         db: Session = Depends(get_db),
-        current_user: models.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """
     Создание приватного лобби
@@ -50,11 +50,11 @@ def create_lobby(
     return lobby_service.get_lobby(lobby_id)
 
 
-@router.post("/join/{lobby_id}", response_model=schemas.LobbyResponse)
+@router.post("/join/{lobby_id}", response_model=LobbyResponse)
 def join_lobby(
         lobby_id: str,
         # db: Session = Depends(get_db),
-        current_user: models.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """
     Присоединение к лобби по ID
@@ -87,7 +87,7 @@ def join_lobby(
 @router.post("/leave")
 def leave_lobby(
         # db: Session = Depends(get_db),
-        current_user: models.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """
     Выход из текущего лобби
@@ -103,7 +103,7 @@ def leave_lobby(
 @router.post("/start")
 def start_game(
         db: Session = Depends(get_db),
-        current_user: models.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """
     Начало игры в лобби (только для хоста)
@@ -151,7 +151,7 @@ def start_game(
 
 @router.get("/info")
 def get_lobby_info(
-        current_user: models.User = Depends(get_current_user)
+        current_user: User = Depends(get_current_user)
 ):
     """Получение информации о текущем лобби пользователя"""
     lobby = lobby_service.get_user_lobby(current_user.id)

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from ..models.model_question import Question as Quest
-from .. import schemas
+from ..schemas.schemas_question import *
 from datetime import datetime
 from typing import Optional, Type
 
@@ -15,7 +15,7 @@ def get_questions_by_quiz(db: Session, quiz_id: int, skip: int = 0, limit: int =
     ).offset(skip).limit(limit).all()
 
 
-def create_question(db: Session, question: schemas.QuestionCreate, quiz_id: int) -> Quest:
+def create_question(db: Session, question: QuestionCreate, quiz_id: int) -> Quest:
     db_question = Quest(
         **question.model_dump(),
         quiz_id=quiz_id
@@ -26,7 +26,7 @@ def create_question(db: Session, question: schemas.QuestionCreate, quiz_id: int)
     return db_question
 
 
-def update_question(db: Session, question_id: int, question_update: schemas.QuestionUpdate) -> Optional[Quest]:
+def update_question(db: Session, question_id: int, question_update: QuestionUpdate) -> Optional[Quest]:
     db_question = get_question(db, question_id)
     if db_question:
         update_data = question_update.model_dump(exclude_unset=True)
