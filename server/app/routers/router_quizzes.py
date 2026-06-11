@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from ..crud import crud_quiz as crud_quiz
 from ..database.database import get_db
-from ..models.model_user import User
+from ..models.model_user import User, UserRole
 from ..schemas.schemas_response import ResponseFactory
 from ..schemas.schemas_quiz import QuizResponse, QuizBase, QuizBulkCreate, QuizBulkResponse, QuizCreate, QuizUpdate
 from ..utils.security import get_current_user, get_current_user_or_guest_optional
@@ -198,7 +198,7 @@ def create_quiz_bulk(
         ]
     }
     """
-    if current_user.role in ("admin", "author"):
+    if current_user.role == UserRole.ADMIN:
         result = crud_quiz.create_quiz_full(db, quiz_data)
         return result
     raise HTTPException(status_code=404, detail="No admin or author rules")
