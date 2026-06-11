@@ -22,8 +22,8 @@ def create_quiz(
         current_user: User = Depends(get_current_user)
 ):
     """Создание нового квиза"""
-    if current_user.role in ("admin", "author"):
-        return crud_quiz.create_quiz(db=db, quiz=quiz)
+    if current_user.role == UserRole.ADMIN:
+        return crud_quiz.create_quiz_fast(db=db, quiz=quiz, author_id=current_user.id)
     raise HTTPException(status_code=404, detail="Quiz not found")
 
 

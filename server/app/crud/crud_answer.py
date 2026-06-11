@@ -8,7 +8,7 @@ def get_answer(db: Session, answer_id: int) -> Optional[Answer]:
     return db.query(Answer).filter(Answer.id == answer_id).first()
 
 
-def get_answers_by_question(db: Session, question_id: int) -> list[Type[Answer]]:
+def get_answers_by_question(db: Session, question_id: int) -> List[Answer]:
     return db.query(Answer).filter(
         Answer.question_id == question_id
     ).order_by(Answer.order_number).all()

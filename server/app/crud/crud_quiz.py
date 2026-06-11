@@ -209,7 +209,7 @@ def get_quizzes(
     return query.order_by(Quiz.created_at.desc()).offset(skip).limit(limit).all()
 
 
-def create_quiz(db: Session, quiz: QuizCreate, author_id: int) -> Quiz:
+def create_quiz_fast(db: Session, quiz: QuizCreate, author_id: int) -> Quiz:
     """Создание квиза (сразу в опубликованные, без модерации)"""
     db_quiz = Quiz(
         title=quiz.title,
