@@ -1,3 +1,7 @@
+import { Badge, getQuizDescriptionRoute, Button } from '@shared'
+import { Eye, Check, X } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
 import styles from './ViewQuizDialog.module.scss'
 
 export function ViewQuizDialog({
@@ -7,20 +11,13 @@ export function ViewQuizDialog({
   onApprove,
   onRejectClick,
 }) {
+  const navigate = useNavigate()
   if (!isOpen || !quiz) return null
 
-  const getStatusBadge = (status) => {
-    const variants = {
-      approved: { label: 'Одобрен', className: styles.badgeApproved },
-      pending: { label: 'На модерации', className: styles.badgePending },
-      rejected: { label: 'Отклонен', className: styles.badgeRejected },
-    }
-    const variant = variants[status]
-    return (
-      <span className={`${styles.badge} ${variant.className}`}>
-        {variant.label}
-      </span>
-    )
+  const statusLabels = {
+    approved: 'Одобрен',
+    pending: 'На модерации',
+    rejected: 'Отклонен',
   }
 
   return (
@@ -40,7 +37,9 @@ export function ViewQuizDialog({
           <div className={styles.viewQuizHeader}>
             <div>
               <h3 className={styles.viewQuizTitle}>{quiz.title}</h3>
-              {getStatusBadge(quiz.status)}
+              <Badge variant={quiz.status} size="sm">
+                {statusLabels[quiz.status] || quiz.status}
+              </Badge>
             </div>
           </div>
 
@@ -76,26 +75,43 @@ export function ViewQuizDialog({
 
           {quiz.status === 'pending' && (
             <div className={styles.viewActions}>
-              <button
-                className={`${styles.viewApproveButton} ${styles.viewButtonFull}`}
+              <Button
+                variant="green"
+                fullWidth
+                icon={<Check />} // или ✓
                 onClick={() => onApprove(quiz)}
               >
-                ✓ Одобрить
-              </button>
-              <button
-                className={`${styles.viewRejectButton} ${styles.viewButtonFull}`}
+                Одобрить
+              </Button>
+
+              <Button
+                variant="red"
+                fullWidth
+                icon={<X />} // или ✗
                 onClick={() => onRejectClick(quiz)}
               >
-                ✗ Отклонить
-              </button>
+                Отклонить
+              </Button>
+
+              <Button
+                variant="transparent"
+                fullWidth
+                icon={<Eye />}
+                onClick={() => {
+                  onClose()
+                  navigate(getQuizDescriptionRoute(quiz.id))
+                }}
+              >
+                Посмотреть
+              </Button>
             </div>
           )}
         </div>
 
         <div className={styles.dialogFooter}>
-          <button className={styles.closeButton} onClick={onClose}>
+          <Button variant="transparent" fullWidth onClick={onClose}>
             Закрыть
-          </button>
+          </Button>
         </div>
       </div>
     </div>

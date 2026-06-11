@@ -1,4 +1,4 @@
-@use '/src/app/GlobalStyles/media';
+@use 'mixins';
 
 :root {
   // ===== Base Colors =====
@@ -140,6 +140,12 @@
 
   // ===== Transitions =====
   --transition-duration: 0.2s;
+
+  // ===== Button Colors =====
+  --color-white-btn-bg: #ffffff;
+  --color-white-btn-text: #111827;
+  --color-white-btn-hover-bg: #f3f4f6;
+  --color-white-btn-hover-border: #d1d5db;
 
   // ===== Misc =====
   --border: 1px solid var(--color-dark);

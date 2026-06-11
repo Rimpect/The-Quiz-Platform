@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+import { useSearchStore } from '@features/search-quiz/model/search.store'
 import { Button, SearchBar, ModalFilter } from '@shared'
 import { SlidersHorizontal } from 'lucide-react'
 
@@ -7,30 +8,27 @@ import styles from './QuizToolbar.module.scss'
 
 export function QuizToolbar() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
-  // const [searchQuery, setSearchQuery] = useState('')
+  const query = useSearchStore((state) => state.query)
+  const filter = useSearchStore((state) => state.filter)
+  const setQuery = useSearchStore((state) => state.setQuery)
+  const setFilter = useSearchStore((state) => state.setFilter)
+  const resetFilters = useSearchStore((state) => state.resetFilters)
 
-  // Заглушка для обработки поиска
-  // const handleSearch = (e) => {
-  //   setSearchQuery(e.target.value)
-  //   console.log('Поиск:', e.target.value)
-  // }
-
-  // Открытие фильтров
   const handleFilterClick = () => {
     setIsFilterOpen(true)
-    console.log('Открыть фильтры')
   }
 
-  // Закрытие фильтров
   const handleFilterClose = () => {
     setIsFilterOpen(false)
-    console.log('Закрыть фильтры')
   }
 
-  // Применение фильтров
   const handleApplyFilters = (filters) => {
-    console.log('Примененные фильтры:', filters)
-    // Здесь будет логика применения фильтров
+    setFilter(filters)
+    setIsFilterOpen(false)
+  }
+
+  const handleResetFilters = () => {
+    resetFilters()
     setIsFilterOpen(false)
   }
 
@@ -47,8 +45,12 @@ export function QuizToolbar() {
               icon={<SlidersHorizontal size={18} />}
             />
 
-            <SearchBar elevated={false} />
-            {/* @TODO переделать поиск */}
+            <SearchBar
+              elevated={false}
+              value={query}
+              onChange={setQuery}
+              placeholder="Поиск по названию или автору..."
+            />
           </div>
         </div>
       </div>
@@ -56,6 +58,8 @@ export function QuizToolbar() {
         isOpen={isFilterOpen}
         onClose={handleFilterClose}
         onApply={handleApplyFilters}
+        onReset={handleResetFilters}
+        filter={filter}
       />
     </>
   )

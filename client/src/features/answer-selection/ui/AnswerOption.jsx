@@ -1,3 +1,5 @@
+import { Input } from '@shared'
+
 import styles from './AnswerOption.module.scss'
 
 export function AnswerOption({
@@ -23,7 +25,7 @@ export function AnswerOption({
   return (
     <div className={className} onClick={() => onSelect(index)}>
       {questionType === 'multiple' && (
-        <input
+        <Input
           type="checkbox"
           checked={isSelected}
           readOnly

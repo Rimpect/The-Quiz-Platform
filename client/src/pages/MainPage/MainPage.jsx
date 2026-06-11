@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-import { QuizToolbar, QuizeBoard } from '@widgets'
+import { QuizToolbar, QuizBoard } from '@widgets'
 
 export function MainPage() {
+  const [currentPage, setCurrentPage] = useState(1)
+
   return (
     <>
-      <QuizToolbar></QuizToolbar>
-      <QuizeBoard></QuizeBoard>
+      <QuizToolbar />
+      <QuizBoard currentPage={currentPage} onPageChange={setCurrentPage} />
     </>
   )
 }

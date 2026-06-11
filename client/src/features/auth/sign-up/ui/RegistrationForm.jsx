@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { Button, ROUTES } from '@shared'
+import { Button, ROUTES, Input } from '@shared'
 import { Mail, User, Lock, Eye, EyeOff } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -52,41 +52,43 @@ export function RegistrationForm() {
           <label htmlFor="name">Имя</label>
           <div className={styles.relative}>
             <User className={styles.icon} />
-            <input
+            <Input
               type="text"
               placeholder="Имя"
               value={formData.name}
               onChange={(e) => handleChange('name', e.target.value)}
               id="name"
               required
-              className={styles.input}
+              maxLength={50}
+              variant="form"
             />
           </div>
 
           <label htmlFor="email">Email</label>
           <div className={styles.relative}>
             <Mail className={styles.icon} />
-            <input
+            <Input
               type="email"
               placeholder="Email"
               value={formData.email}
               onChange={(e) => handleChange('email', e.target.value)}
               id="email"
               required
-              className={styles.input}
+              maxLength={50}
+              variant="form"
             />
           </div>
 
           <label htmlFor="password">Пароль</label>
           <div className={styles.relative}>
             <Lock className={styles.icon} />
-            <input
+            <Input
               type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               name="password"
               id="password"
               required
-              className={styles.input}
+              variant="form"
               value={formData.password}
               onChange={(e) => handleChange('password', e.target.value)}
             />
@@ -102,13 +104,13 @@ export function RegistrationForm() {
           <label htmlFor="confirmPassword">Подтвердите пароль</label>
           <div className={styles.relative}>
             <Lock className={styles.icon} />
-            <input
+            <Input
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="••••••••"
               value={formData.confirmPassword}
               id="confirmPassword"
               required
-              className={styles.input}
+              variant="form"
               onChange={(e) => handleChange('confirmPassword', e.target.value)}
             />
             <button

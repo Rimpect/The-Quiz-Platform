@@ -1,7 +1,8 @@
 .card {
-  background: white;
+  background: var(--color-white);
   border-radius: 20px;
   padding: 24px;
+  transition: background 0.3s ease;
 }
 
 .title {

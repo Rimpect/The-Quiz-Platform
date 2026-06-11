@@ -24,6 +24,21 @@ export function QuizQuestions() {
 
   const setCorrectAnswer = useQuizStore((state) => state.setCorrectAnswer)
 
+  // Функция для обработки выбора правильного ответа с возможностью отмены
+  const handleCorrectAnswerToggle = (
+    questionId,
+    answerId,
+    isCurrentlyCorrect,
+  ) => {
+    if (isCurrentlyCorrect) {
+      // Если ответ уже правильный - отменяем выбор (передаём null)
+      setCorrectAnswer(questionId, null)
+    } else {
+      // Если ответ не правильный - выбираем его
+      setCorrectAnswer(questionId, answerId)
+    }
+  }
+
   return (
     <div>
       <div className={styles.headerBar}>
@@ -90,9 +105,11 @@ export function QuizQuestions() {
 
               <Textarea
                 value={question.questionText}
+                maxLength={100}
                 onChange={(e) =>
                   updateQuestion(question.id, 'questionText', e.target.value)
                 }
+                className={styles.questionTextarea}
               />
             </div>
 
@@ -123,9 +140,14 @@ export function QuizQuestions() {
                       <label className={styles.radioControl}>
                         <input
                           type="radio"
+                          name={`question-${question.id}`}
                           checked={answer.isCorrect}
                           onChange={() =>
-                            setCorrectAnswer(question.id, answer.id)
+                            handleCorrectAnswerToggle(
+                              question.id,
+                              answer.id,
+                              answer.isCorrect,
+                            )
                           }
                         />
 
@@ -138,15 +160,17 @@ export function QuizQuestions() {
                     <Input
                       type="text"
                       value={answer.text}
+                      maxLength={40}
                       onChange={(e) =>
                         updateAnswerText(question.id, answer.id, e.target.value)
                       }
                       placeholder={`Вариант ${answerIndex + 1}`}
                       className={styles.answerInput}
+                      variant="default"
                     />
 
                     <Button
-                      className={styles.removeAnswerBtn}
+                      variant="transparent"
                       size="medium"
                       icon={<X size={20} />}
                       type="button"

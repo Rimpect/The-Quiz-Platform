@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+import { Input } from '@shared'
 import { Image } from 'lucide-react'
 
 import styles from './CoverUpload.module.scss'
@@ -22,7 +23,7 @@ export function CoverUpload() {
     <div className={styles.coverSection}>
       <div className={styles.coverLabel}>Обложка квиза</div>
 
-      <input
+      <Input
         type="file"
         id="coverInput"
         accept="image/png, image/jpeg, image/jpg"

@@ -1,4 +1,6 @@
 import './App.scss'
+import { useEffect } from 'react'
+
 import { RouterProvider } from 'react-router-dom'
 import { Toaster } from 'sonner'
 

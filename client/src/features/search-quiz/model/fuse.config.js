@@ -1,4 +1,4 @@
 export const fuseOptions = {
   keys: ['title', 'author'],
-  threshold: 0.4,
+  threshold: 0.5, //пару опечаток позволяет сделать
 }

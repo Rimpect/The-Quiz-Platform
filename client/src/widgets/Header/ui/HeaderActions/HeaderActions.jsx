@@ -1,14 +1,14 @@
-import { ThemeToggle } from '@features'
+import { useAuthStore } from '@entities'
 
 import styles from './HeaderActions.module.scss'
 import { AdminButton, UserMenu } from './ui'
 
 export function HeaderActions() {
+  const isAdmin = useAuthStore((state) => state.user?.role === 'admin')
+
   return (
     <div className={styles.container}>
-      {/* @TODO сделать потом для кнопки с админкой сокрытие если пользовать не является админом! и так же для UserMenu доработать вариант с авторизованым и неавторизованым пользователем */}
-      <AdminButton />
-      <ThemeToggle />
+      {isAdmin && <AdminButton />}
       <UserMenu />
     </div>
   )

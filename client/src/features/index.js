@@ -4,8 +4,6 @@ export { DangerZone } from './delete-account'
 
 // DangerZone ProfileInfo
 
-// фичи для Header
-export { ThemeToggle } from './theme-toggle'
 // фичи для HeaderCreateQuiz
 export { QuizHelp } from './quiz-help'
 export { SaveQuiz } from './save-quiz'
@@ -15,8 +13,11 @@ export { QuizQuestions } from './quiz-editor'
 // фичи для QuizSearch
 export { QuizSearch } from './search-quiz'
 
-export { RegistrationForm } from './auth/sign-up'
-export { LoginForm } from './auth/sign-up'
+export { loginSchema } from './auth'
+export { registerSchema } from './auth'
+
+export { LoginForm } from './auth'
+export { RegistrationForm } from './auth'
 
 // фичи для Quiz
 
@@ -38,3 +39,18 @@ export { getMotivation } from './quiz-finish'
 // фичи для ProfileSettingsPage
 
 export { ProfileInfo } from './edit-profile'
+
+export { JoinTeamButton } from './join-team'
+export { CreateTeamModal } from './create-team-modal'
+export { LeaveTeamButton } from './leave-team'
+export { LobbyTimer } from './lobby-timer'
+
+// фичи для Quiz
+export {
+  AntiCheatProvider,
+  useAntiCheatContext,
+  WarningModal,
+} from './anti-cheating'
+export { RulesModal } from './rules'
+// фичи для поиска
+export { useAdminSearch, useQuizSearch } from './search-quiz'

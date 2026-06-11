@@ -24,6 +24,7 @@ export function QuizStats() {
             type="text"
             placeholder="Введите название квиза"
             value={quiz.title}
+            maxLength={50}
             onChange={(e) => setField('title', e.target.value)}
           />
         </div>
@@ -35,7 +36,9 @@ export function QuizStats() {
             id="quiz-description"
             placeholder="Краткое описание квиза"
             value={quiz.description}
+            maxLength={100}
             onChange={(e) => setField('description', e.target.value)}
+            className={styles.editorTextarea}
           />
         </div>
       </div>

@@ -24,8 +24,6 @@ export function ProfileStats({ user }) {
     )
   }
 
-  const levelProgress = ((user.xp || 0) / (user.nextLevelXp || 1)) * 100
-
   return (
     <div className={styles.profileCard}>
       <div className={styles.profileHeader}>
@@ -47,29 +45,6 @@ export function ProfileStats({ user }) {
           <div className={styles.userInfo}>
             <div className={styles.nameSection}>
               <h1 className={styles.userName}>{user.name || 'Пользователь'}</h1>
-              <span className={styles.levelBadge}>
-                Уровень {user.level || 1}
-              </span>
-            </div>
-            <p className={styles.userEmail}>
-              {user.email || 'email@example.com'}
-            </p>
-
-            <div className={styles.xpSection}>
-              <div className={styles.xpLabels}>
-                <span>{user.xp || 0} XP</span>
-                <span>{user.nextLevelXp || 1000} XP</span>
-              </div>
-              <div className={styles.progressBar}>
-                <div
-                  className={styles.progressFill}
-                  style={{ width: `${levelProgress}%` }}
-                />
-              </div>
-              <p className={styles.xpRemaining}>
-                {(user.nextLevelXp || 1000) - (user.xp || 0)} XP до следующего
-                уровня
-              </p>
             </div>
           </div>
 

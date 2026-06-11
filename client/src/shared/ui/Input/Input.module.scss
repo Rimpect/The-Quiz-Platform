@@ -1,68 +1,128 @@
 .input {
-  display: flex;
-  height: 36px;
   width: 100%;
-  min-width: 0;
-  border-radius: 6px;
-  border: 1px solid var(--border, #e2e8f0);
-  padding: 4px 12px;
-  font-size: 16px;
-  background-color: var(--input-background, #edebeb);
-  transition: color, box-shadow;
-  outline: none;
-  font-weight: 500;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
 
-  &[type='file'] {
-    &::file-selector-button {
-      display: inline-flex;
-      height: 28px;
-      border: 0;
-      background: transparent;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--foreground, #0f172a);
-    }
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1e293b;
+  background-color: #ffffff;
+
+  transition: all 0.2s ease-in-out;
+
+  // Базовый ховер эффект
+  &:hover:not(:disabled) {
+    border-color: #60a5fa; // мягкий голубой
+    background-color: #fafcff;
   }
 
+  // Фокус с приятной голубой подсветкой
+  &:focus {
+    outline: none;
+    border-color: #3b82f6; // сине-голубой
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    background-color: #ffffff;
+  }
+
+  // Плейсхолдер
   &::placeholder {
-    color: var(--muted-foreground, #64748b);
+    color: #94a3b8;
+    transition: color 0.2s ease;
   }
 
-  &::selection {
-    background-color: var(--primary, #3b82f6);
-    color: var(--primary-foreground, #ffffff);
+  &:hover::placeholder {
+    color: #cbd5e1;
   }
 
+  // Disabled состояние
   &:disabled {
-    pointer-events: none;
+    background-color: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #94a3b8;
     cursor: not-allowed;
-    opacity: 0.5;
-  }
 
-  &:focus-visible {
-    border-color: var(--ring, #3b82f6);
-    box-shadow: 0 0 0 3px var(--ring-50, rgba(59, 130, 246, 0.2));
-  }
-
-  &[aria-invalid='true'] {
-    border-color: var(--destructive, #ef4444);
-
-    &:focus-visible {
-      box-shadow: 0 0 0 3px var(--destructive-20, rgba(239, 68, 68, 0.2));
+    &:hover {
+      border-color: #e2e8f0;
+      background-color: #f1f5f9;
     }
   }
 
-  @media (min-width: 640px) {
-    font-size: 14px;
+  // Read-only состояние
+  &:read-only {
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
   }
 }
 
-:global(.dark) .input {
-  background-color: var(--input-30, rgba(255, 255, 255, 0.03));
+// Вариант: поиск
+.search {
+  border-radius: 24px;
+  padding-left: 40px;
+  background-repeat: no-repeat;
+  background-position: 16px center;
+  background-size: 18px;
+}
 
-  &[aria-invalid='true'] {
-    &:focus-visible {
-      box-shadow: 0 0 0 3px var(--destructive-40, rgba(239, 68, 68, 0.4));
-    }
+// Вариант: ошибка
+.error {
+  border-color: #f43f5e;
+  background-color: #fff8f9;
+
+  &:hover:not(:disabled) {
+    border-color: #fb7185;
+    background-color: #fffbfc;
+  }
+
+  &:focus {
+    border-color: #f43f5e;
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.1);
+  }
+}
+
+// Вариант: успех
+.success {
+  border-color: #10b981;
+  background-color: #f0fdf4;
+
+  &:hover:not(:disabled) {
+    border-color: #34d399;
+    background-color: #f3fef7;
+  }
+
+  &:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+}
+
+// Вариант: заполненный
+.filled {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+
+  &:hover:not(:disabled) {
+    background-color: #f1f5f9;
+    border-color: #60a5fa;
+  }
+
+  &:focus {
+    background-color: #ffffff;
+  }
+}
+
+
+.form {
+  width: 100%;
+  padding: 10px 12px 10px 40px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color var(--transition-duration);
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-blue);
+    box-shadow: 0 0 0 3px var(--color-blue-focus-shadow);
   }
 }

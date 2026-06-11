@@ -1,27 +1,39 @@
 import React from 'react'
 
-import { Button, ROUTES } from '@shared'
+import { Badge, Button, ROUTES, getQuizRoute } from '@shared'
 import { ArrowLeft, Users, Clock, Trophy, Star, Award } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 
 import image1 from '../../assets/img/QuizCardTest/pic.jpg'
 
 import styles from './QuizDescription.module.scss'
 
-export function QuizDescription() {
-  // Заглушки данных заменить потом на пропсы
+export function QuizDescription({ quiz }) {
+  const { id } = useParams()
   const quizData = {
-    id: 1,
-    title: 'Великие научные открытия',
-    description: 'Квиз о великих научных открытиях и изобретениях человечества',
-    category: 'Наука',
-    difficulty: 'Средний',
-    rating: 4.7,
-    participants: 1234,
-    duration: 45,
-    topScore: 98,
-    questionCount: 20,
-    image: image1,
+    id: quiz?.id ?? 2,
+    title: quiz?.title ?? 'Великие научные открытия',
+    description:
+      quiz?.description ??
+      'Квиз о великих научных открытиях и изобретениях человечества',
+    category: quiz?.category ?? 'Наука',
+    difficulty: quiz?.difficulty ?? 'Средний',
+    rating: quiz?.rating ?? 4.7,
+    participants: quiz?.participants ?? 1234,
+    duration: quiz?.duration ?? 45,
+    topScore: quiz?.topScore ?? 98,
+    questionCount: quiz?.questionCount ?? 20,
+    author: quiz?.author ?? 'QuizStudio',
+    language: quiz?.language ?? 'Русский',
+    lastUpdated: quiz?.lastUpdated ?? '2026-01-01',
+    image: quiz?.img || quiz?.image || image1,
+  }
+
+  let difficultyVariant = 'medium'
+  if (quizData.difficulty === 'Легкий') {
+    difficultyVariant = 'easy'
+  } else if (quizData.difficulty === 'Сложный') {
+    difficultyVariant = 'hard'
   }
 
   return (
@@ -49,15 +61,9 @@ export function QuizDescription() {
                   <span className={styles.metaCategory}>
                     {quizData.category}
                   </span>
-                  <span
-                    className={`${styles.badge} ${
-                      (quizData.difficulty === 'Легкий' && styles.easy) ||
-                      (quizData.difficulty === 'Средний' && styles.medium) ||
-                      (quizData.difficulty === 'Сложный' && styles.hard)
-                    }`}
-                  >
+                  <Badge variant={difficultyVariant} size="sm">
                     {quizData.difficulty}
-                  </span>
+                  </Badge>
                 </div>
                 <h1 className={styles.title}>{quizData.title}</h1>
                 <div className={styles.rating}>
@@ -146,8 +152,26 @@ export function QuizDescription() {
                     {quizData.questionCount}
                   </span>
                 </li>
+                <li className={styles.statsItem}>
+                  <div className={styles.statsLeft}>
+                    <span className={styles.statsIcon}>
+                      <Award />
+                    </span>
+                    <span className={styles.statsLabel}>Автор:</span>
+                  </div>
+                  <span className={styles.statsValue}>{quizData.author}</span>
+                </li>
+                <li className={styles.statsItem}>
+                  <div className={styles.statsLeft}>
+                    <span className={styles.statsIcon}>
+                      <Award />
+                    </span>
+                    <span className={styles.statsLabel}>Язык:</span>
+                  </div>
+                  <span className={styles.statsValue}>{quizData.language}</span>
+                </li>
               </ul>
-              <Link to={ROUTES.quiz}>
+              <Link to={getQuizRoute(id)}>
                 <Button variant="black" size="medium" fullWidth>
                   Начать квиз
                 </Button>

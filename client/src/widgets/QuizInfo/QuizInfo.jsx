@@ -1,21 +1,19 @@
-import { Button } from '@shared'
+import { Badge, Button } from '@shared'
 import { Eye, Dot, Users, Check, X } from 'lucide-react'
 
 import styles from './QuizInfo.module.scss'
 
 export function QuizInfo({ quiz, onApprove, onReject, onView }) {
-  const getStatusBadge = (status) => {
-    const variants = {
-      approved: { label: 'Одобрен', className: styles.badgeApproved },
-      pending: { label: 'На модерации', className: styles.badgePending },
-      rejected: { label: 'Отклонен', className: styles.badgeRejected },
-    }
-    const variant = variants[status]
-    return (
-      <span className={`${styles.badge} ${variant.className}`}>
-        {variant.label}
-      </span>
-    )
+  const difficultyMap = {
+    Легкий: 'easy',
+    Средний: 'medium',
+    Сложный: 'hard',
+  }
+
+  const statusLabels = {
+    approved: 'Одобрен',
+    pending: 'На модерации',
+    rejected: 'Отклонен',
   }
 
   return (
@@ -24,7 +22,9 @@ export function QuizInfo({ quiz, onApprove, onReject, onView }) {
         <div className={styles.quizInfo}>
           <div className={styles.quizHeader}>
             <h3 className={styles.quizTitle}>{quiz.title}</h3>
-            {getStatusBadge(quiz.status)}
+            <Badge variant={quiz.status} size="sm">
+              {statusLabels[quiz.status] || quiz.status}
+            </Badge>
           </div>
           <p className={styles.quizDescription}>{quiz.description}</p>
           <div className={styles.quizMeta}>
@@ -39,7 +39,13 @@ export function QuizInfo({ quiz, onApprove, onReject, onView }) {
             </span>
             <Dot />
             <span className={styles.metaItem}>
-              Сложность: {quiz.difficulty}
+              Сложность:
+              <Badge
+                variant={difficultyMap[quiz.difficulty] || 'medium'}
+                size="sm"
+              >
+                {quiz.difficulty}
+              </Badge>
             </span>
             <Dot />
             <span className={styles.metaItem}> {quiz.createdAt}</span>

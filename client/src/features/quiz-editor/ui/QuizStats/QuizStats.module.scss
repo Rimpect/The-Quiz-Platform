@@ -13,26 +13,32 @@
 .stats {
   display: flex;
   flex-direction: row;
-  gap: 20px; 
+  gap: 20px;
 
   > div {
     flex: 1;
-    min-width: 0; 
+    min-width: 0;
   }
 }
 
 .label {
   display: flex;
   flex-direction: column;
-  gap: 8px; 
-  font-size: 14px; 
-  font-weight: 500; 
-
-  input,
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
   select,
   textarea {
     width: 100%;
   }
+}
+
+.editorInput,
+.editorTextarea {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #d1d5db;
 }
 
 .fieldGroup {

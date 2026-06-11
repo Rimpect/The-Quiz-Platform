@@ -1,0 +1,7 @@
+export { authService } from './authService'
+export { usersService } from './usersService'
+export { quizzesService } from './quizzesService'
+export { questionsService } from './questionsService'
+export { answersService } from './answersService'
+export { mediaService } from './mediaService'
+export { resultsService } from './resultsService'
