@@ -20,19 +20,15 @@ class ThemeMode(str, Enum):
 
 
 # ========== Пользователи ==========
-class User(BaseModel):
-    email: Optional[EmailStr] = None
-    password: str
-
-
 class UserBase(BaseModel):
     theme_site: ThemeMode = ThemeMode.LIGHT
     email: Optional[EmailStr] = None
+    nickname: str
 
 
 class UserCreate(UserBase):
-    nickname: str = Field(..., min_length=3, max_length=20)
-    email: str = Field(..., )
+    # nickname: str = Field(..., min_length=3, max_length=20)
+    # email: str = Field(..., )
     password: str = Field(..., min_length=6)
 
 

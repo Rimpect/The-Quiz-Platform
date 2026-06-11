@@ -4,7 +4,7 @@ from typing import List
 
 from ..crud import crud_answer as crud_answer, crud_question as crud_question
 from ..schemas.schemas_answer import AnswerBase, AnswerUpdate, AnswerCreate
-from ..schemas.schemas_user import User
+from ..schemas.schemas_user import UserResponse
 from ..database.database import get_db
 from ..utils.security import get_current_user
 
@@ -16,7 +16,7 @@ def create_answer(
         question_id: int,
         answer: AnswerCreate,
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: UserResponse = Depends(get_current_user)
 ):
     if not crud_question.get_question(db, question_id):
         raise HTTPException(status_code=404, detail="Question not found")
@@ -28,7 +28,7 @@ def create_answers_bulk(
         question_id: int,
         answers: List[AnswerCreate],
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: UserResponse = Depends(get_current_user)
 ):
     """Массовое создание вариантов ответов"""
     if not crud_question.get_question(db, question_id):
@@ -64,7 +64,7 @@ def update_answer(
         answer_id: int,
         answer_update: AnswerUpdate,
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: UserResponse = Depends(get_current_user)
 ):
     """Обновление варианта ответа"""
     answer = crud_answer.get_answer(db, answer_id)
@@ -78,7 +78,7 @@ def delete_answer(
         question_id: int,
         answer_id: int,
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: UserResponse = Depends(get_current_user)
 ):
     """Удаление варианта ответа"""
     answer = crud_answer.get_answer(db, answer_id)

@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from ..crud import crud_quiz as quiz_crud
 from ..crud import crud_user as crud_user
 from ..database.database import get_db
-from ..schemas.schemas_user import User, UserRole
+from ..schemas.schemas_user import UserRole
 from ..schemas.schemas_user import UserCreate, UserResponse, UserUpdate
 from ..schemas.schemas_quiz import QuizResponse, QuizUpdate
 from ..schemas.schemas_response import ResponseFactory
@@ -33,12 +33,12 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     return crud_user.create_user(db=db, user=user)
 
 
-@router.get("/", response_model=List[User])
+@router.get("/", response_model=List[UserResponse])
 def read_users(
         skip: int = 0,
         limit: int = 100,
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: UserResponse = Depends(get_current_user)
 ):
     """
     Запрос всех пользователей(только для админов)
@@ -52,13 +52,13 @@ def read_users(
         )
 
 
-@router.get("/me", response_model=User)
-def read_current_user(current_user: User = Depends(get_current_user)):
+@router.get("/me", response_model=UserResponse)
+def read_current_user(current_user: UserResponse = Depends(get_current_user)):
     """Получение текущего пользователя"""
     return current_user
 
 
-@router.get("/{user_id}", response_model=User)
+@router.get("/{user_id}", response_model=UserResponse)
 def read_user(
         user_id: int,
         db: Session = Depends(get_db),
@@ -70,11 +70,11 @@ def read_user(
     return db_user
 
 
-@router.put("/me", response_model=User)
+@router.put("/me", response_model=UserResponse)
 def update_current_user(
         user_update: UserUpdate,
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: UserResponse = Depends(get_current_user)
 ):
     """Обновление текущего пользователя"""
     return crud_user.update_user(db, current_user.id, user_update)
@@ -83,7 +83,7 @@ def update_current_user(
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
 def delete_current_user(
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: UserResponse = Depends(get_current_user)
 ):
     """Удаление текущего пользователя"""
     crud_user.delete_user(db, current_user.id)
@@ -92,7 +92,7 @@ def delete_current_user(
 @router.get("/me/statistics")
 def get_my_statistics(
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: UserResponse = Depends(get_current_user)
 ):
     """Получение статистики текущего пользователя"""
     return crud_user.get_user_statistics(db, current_user.id)
@@ -106,7 +106,7 @@ user_quiz_router = APIRouter(prefix="/me/quizzes", tags=["users"])
 @user_quiz_router.get("/")
 def get_my_quizzes(
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: UserResponse = Depends(get_current_user)
 ):
     """Получение всех квизов текущего пользователя (опубликованные + на модерации)"""
     user_quizzes = quiz_crud.get_user_quizzes(db, current_user.id)
@@ -129,7 +129,7 @@ def get_my_quizzes(
 def delete_my_published_quiz(
         quiz_id: int,
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: UserResponse = Depends(get_current_user)
 ):
     """Удаление своего опубликованного квиза"""
     deleted = quiz_crud.delete_quiz(db, quiz_id, current_user.id, is_admin=False)
@@ -143,7 +143,7 @@ def delete_my_published_quiz(
 def delete_my_pending_quiz(
         pending_id: int,
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: UserResponse = Depends(get_current_user)
 ):
     """Удаление своего квиза из модерации"""
     deleted = quiz_crud.delete_pending_quiz(db, pending_id, current_user.id, is_admin=False)
@@ -158,7 +158,7 @@ def update_my_published_quiz(
         quiz_id: int,
         quiz_update: QuizUpdate,
         db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
+        current_user: UserResponse = Depends(get_current_user)
 ):
     """Редактирование своего опубликованного квиза"""
     updated = quiz_crud.update_quiz(db, quiz_id, quiz_update, current_user.id)
