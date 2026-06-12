@@ -1,4 +1,4 @@
-import { Input } from '@shared'
+import { Avatar, Input } from '@shared'
 
 import styles from './AnswerOption.module.scss'
 
@@ -10,6 +10,7 @@ export function AnswerOption({
   correctAnswers,
   isAnswered,
   onSelect,
+  voters,
 }) {
   const isSelected = selectedAnswers.includes(index)
   const isCorrect = correctAnswers.includes(index)
@@ -34,6 +35,19 @@ export function AnswerOption({
       )}
 
       <span className={styles.answerText}>{text}</span>
+
+      {voters?.length > 0 && (
+        <span className={styles.voters}>
+          {voters.slice(0, 5).map((v, i) => (
+            <span key={i} className={styles.voter} title={v.nickname}>
+              <Avatar src={v.avatar} alt={v.nickname} size={26} />
+            </span>
+          ))}
+          {voters.length > 5 && (
+            <span className={styles.voterMore}>+{voters.length - 5}</span>
+          )}
+        </span>
+      )}
 
       {isAnswered && isCorrect && (
         <span className={`${styles.resultIcon} ${styles.resultIconCorrect}`}>

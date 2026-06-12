@@ -15,6 +15,8 @@ export function LobbyTeams({ quiz, quizId }) {
   const startedRef = useRef(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [codeInput, setCodeInput] = useState('')
+  const [waitSeconds, setWaitSeconds] = useState(30)
+  const WAIT_PRESETS = [15, 30, 60, 120, 300]
   const {
     sessionId,
     players,
@@ -81,10 +83,30 @@ export function LobbyTeams({ quiz, quizId }) {
           <h1>{quiz.title}</h1>
           <p className={styles.preHint}>Командный режим</p>
 
+          <div className={styles.waitSetting}>
+            <span className={styles.waitLabel}>
+              <Clock size={16} /> Время ожидания игроков
+            </span>
+            <div className={styles.waitPresets}>
+              {WAIT_PRESETS.map((sec) => (
+                <button
+                  key={sec}
+                  type="button"
+                  className={`${styles.waitPreset} ${
+                    waitSeconds === sec ? styles.waitPresetActive : ''
+                  }`}
+                  onClick={() => setWaitSeconds(sec)}
+                >
+                  {sec < 60 ? `${sec} сек` : `${sec / 60} мин`}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <Button
             variant="black"
             fullWidth
-            onClick={createLobby}
+            onClick={() => createLobby(waitSeconds)}
             disabled={loading}
           >
             Создать лобби

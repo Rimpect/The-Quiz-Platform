@@ -50,4 +50,4 @@ export {
 } from './anti-cheating'
 export { RulesModal, RulesGate } from './rules'
 // фичи для поиска
-export { useAdminSearch, useQuizSearch } from './search-quiz'
+export { useAdminSearch, useQuizSearch, useSearchStore } from './search-quiz'

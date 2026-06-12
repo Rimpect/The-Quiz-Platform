@@ -92,22 +92,32 @@ export function useGameLobby(quizId, gameMode) {
     return () => clearInterval(pollRef.current)
   }, [sessionId, applyState])
 
-  // Создать хост-лобби с кодом приглашения (командный режим)
-  const createLobby = useCallback(async () => {
-    setLoading(true)
-    try {
-      const state = await client('/game/lobby/create', {
-        method: 'POST',
-        body: JSON.stringify({ quiz_id: Number(quizId), game_mode: 'team' }),
-      })
-      setSessionId(state.session_id)
-      applyState(state)
-    } catch (err) {
-      toast.error(err.message || 'Не удалось создать лобби')
-    } finally {
-      setLoading(false)
-    }
-  }, [quizId, applyState])
+  // Создать хост-лобби с кодом приглашения (командный режим).
+  // lobbyWaitSeconds — настраиваемое хостом время ожидания игроков.
+  const createLobby = useCallback(
+    async (lobbyWaitSeconds) => {
+      setLoading(true)
+      try {
+        const state = await client('/game/lobby/create', {
+          method: 'POST',
+          body: JSON.stringify({
+            quiz_id: Number(quizId),
+            game_mode: 'team',
+            ...(lobbyWaitSeconds
+              ? { lobby_wait_seconds: Number(lobbyWaitSeconds) }
+              : {}),
+          }),
+        })
+        setSessionId(state.session_id)
+        applyState(state)
+      } catch (err) {
+        toast.error(err.message || 'Не удалось создать лобби')
+      } finally {
+        setLoading(false)
+      }
+    },
+    [quizId, applyState],
+  )
 
   // Войти в лобби по коду приглашения
   const joinByCode = useCallback(

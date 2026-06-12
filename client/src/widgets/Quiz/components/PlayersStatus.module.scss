@@ -1,0 +1,87 @@
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0 4px;
+}
+
+.team {
+  flex: 1;
+  min-width: 200px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.teamName {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.players {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.player {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #111827;
+}
+
+.banned {
+  opacity: 0.55;
+
+  .name {
+    text-decoration: line-through;
+  }
+}
+
+.avatarBox {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.dot {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+.online {
+  background: #22c55e;
+}
+.offline {
+  background: #9ca3af;
+}
+
+.name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderIcon {
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+.answeredIcon {
+  color: #22c55e;
+  flex-shrink: 0;
+}
+.banIcon {
+  color: #ef4444;
+  flex-shrink: 0;
+}

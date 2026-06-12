@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { useQuestions, useQuestionStore } from '@entities'
+import { useQuestions, useQuestionStore, useUser } from '@entities'
 import {
   calculatePartialScore,
   useAnswerSelection,
@@ -19,6 +19,7 @@ const POLL_INTERVAL_MS = 1000
  */
 export function useSyncedQuiz(quizId, sessionId) {
   const navigate = useNavigate()
+  const currentUser = useUser()
   const questions = useQuestions()
   const fetchQuestions = useQuestionStore((s) => s.fetchQuestions)
   const loading = useQuestionStore((s) => s.loading)
@@ -29,11 +30,19 @@ export function useSyncedQuiz(quizId, sessionId) {
   const [totalScore, setTotalScore] = useState(0)
   const [correctCount, setCorrectCount] = useState(0)
   const [submittedIndex, setSubmittedIndex] = useState(-1)
+  const [votedIndex, setVotedIndex] = useState(-1)
+
+  // Командное состояние из поллинга
+  const [players, setPlayers] = useState([])
+  const [teams, setTeams] = useState([])
+  const [currentVotes, setCurrentVotes] = useState([])
 
   const startTimeRef = useRef(Date.now())
   const finishedRef = useRef(false)
   const prevIndexRef = useRef(0)
   const gameModeRef = useRef('competitive')
+  const teamsRef = useRef([])
+  const myTeamIdRef = useRef(null)
 
   const currentQ = questions[serverIndex]
   const { selectedAnswers, toggleAnswer, resetAnswers } = useAnswerSelection(
@@ -42,7 +51,39 @@ export function useSyncedQuiz(quizId, sessionId) {
 
   const totalQuestions = questions.length
   const maxPossibleScore = questions.reduce((sum, q) => sum + q.points, 0)
-  const isAnswered = submittedIndex === serverIndex
+
+  // ----- Роли в командном режиме -----
+  const myId = currentUser?.id
+  const me = players.find((p) => p.user_id === myId)
+  const isTeam = gameModeRef.current === 'team'
+  const isLeader = !!me?.is_leader
+  const myTeamId = me?.team_id || null
+  const myTeam = teams.find((t) => t.id === myTeamId)
+  const leaderAnswered = !!myTeam?.leader_answered
+  myTeamIdRef.current = myTeamId
+
+  // Аватары проголосовавших по вариантам (только моя команда)
+  const voters = {}
+  if (isTeam && myTeamId) {
+    for (const v of currentVotes) {
+      if (v.team_id !== myTeamId) continue
+      for (const optIdx of v.answer_ids || []) {
+        if (!voters[optIdx]) voters[optIdx] = []
+        voters[optIdx].push({
+          avatar: v.photo_profile || '',
+          nickname: v.nickname || '',
+        })
+      }
+    }
+  }
+
+  // Лидер «ответил» (submittedIndex) либо рядовой проголосовал (votedIndex)
+  const isAnswered = isTeam
+    ? isLeader
+      ? submittedIndex === serverIndex
+      : leaderAnswered // рядовому показываем результат, когда лидер решил
+    : submittedIndex === serverIndex
+  const hasVoted = votedIndex === serverIndex
 
   // Загрузка вопросов (одинаковый порядок у всех игроков)
   useEffect(() => {
@@ -56,17 +97,30 @@ export function useSyncedQuiz(quizId, sessionId) {
     const durationSeconds = Math.round(
       (Date.now() - startTimeRef.current) / 1000,
     )
+
+    // Командный режим: счёт = результат капитана (берём из стейта команды),
+    // и он одинаков для всех участников команды. Иначе — личный счёт.
+    let finalScore = totalScore
+    let finalCorrect = correctCount
+    if (gameModeRef.current === 'team') {
+      const myTeam = teamsRef.current.find((t) => t.id === myTeamIdRef.current)
+      if (myTeam) {
+        finalScore = myTeam.score ?? 0
+        finalCorrect = myTeam.correct ?? 0
+      }
+    }
+
     const percentScore = maxPossibleScore
-      ? Math.round((totalScore / maxPossibleScore) * 100)
+      ? Math.round((finalScore / maxPossibleScore) * 100)
       : 0
 
     const navState = {
       quizTitle: 'Квиз',
       maxPossibleScore,
       percentScore,
-      correctCount,
+      correctCount: finalCorrect,
       totalQuestions,
-      totalScore,
+      totalScore: finalScore,
       durationSeconds,
       quizMode: gameModeRef.current,
       sessionId, // для таблицы результатов по группе
@@ -78,7 +132,7 @@ export function useSyncedQuiz(quizId, sessionId) {
         method: 'POST',
         body: JSON.stringify({
           quiz_id: Number(quizId),
-          score: totalScore,
+          score: finalScore,
           max_score: maxPossibleScore || 0,
           duration_seconds: durationSeconds,
         }),
@@ -86,9 +140,9 @@ export function useSyncedQuiz(quizId, sessionId) {
       client(`/game/sessions/${sessionId}/result`, {
         method: 'POST',
         body: JSON.stringify({
-          score: totalScore,
+          score: finalScore,
           max_score: maxPossibleScore || 0,
-          correct_count: correctCount,
+          correct_count: finalCorrect,
           duration_seconds: durationSeconds,
         }),
       }),
@@ -115,6 +169,13 @@ export function useSyncedQuiz(quizId, sessionId) {
         if (state.game_mode) gameModeRef.current = state.game_mode
         setTimeLeft(state.time_left ?? null)
         setServerIndex(state.current_question_index ?? 0)
+        setPlayers(Array.isArray(state.players) ? state.players : [])
+        const t = Array.isArray(state.teams) ? state.teams : []
+        setTeams(t)
+        teamsRef.current = t
+        setCurrentVotes(
+          Array.isArray(state.current_votes) ? state.current_votes : [],
+        )
         if (state.is_finished) handleFinish()
       } catch {
         // единичные ошибки поллинга игнорируем
@@ -126,18 +187,35 @@ export function useSyncedQuiz(quizId, sessionId) {
     return () => clearInterval(id)
   }, [sessionId, handleFinish])
 
-  // При смене вопроса сервером — сбрасываем выбор ответа
+  // При смене вопроса сервером — сбрасываем выбор ответа и флаг голоса
   useEffect(() => {
     if (prevIndexRef.current !== serverIndex) {
       prevIndexRef.current = serverIndex
       resetAnswers()
+      setVotedIndex(-1)
     }
     // resetAnswers намеренно не в зависимостях (нестабильная ссылка)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serverIndex])
 
   const submitAnswer = useCallback(() => {
-    if (!currentQ || isAnswered) return
+    if (!currentQ) return
+
+    // ---- Командный режим: рядовой только голосует (можно переголосовать) ----
+    if (isTeam && !isLeader) {
+      if (leaderAnswered || timeLeft === 0) return
+      setVotedIndex(serverIndex)
+      client(`/game/sessions/${sessionId}/vote`, {
+        method: 'POST',
+        body: JSON.stringify({
+          question_index: serverIndex,
+          answer_ids: selectedAnswers,
+        }),
+      }).catch(() => {})
+      return
+    }
+
+    if (isAnswered) return
 
     const score = calculatePartialScore(
       selectedAnswers,
@@ -150,12 +228,38 @@ export function useSyncedQuiz(quizId, sessionId) {
     if (fullyCorrect) setCorrectCount((p) => p + 1)
     setSubmittedIndex(serverIndex)
 
-    // Сообщаем серверу — если ответили все, он сразу переключит вопрос
+    // ---- Командный лидер: фиксируем ответ команды + копим командный счёт ----
+    if (isTeam && isLeader) {
+      client(`/game/sessions/${sessionId}/team-answer`, {
+        method: 'POST',
+        body: JSON.stringify({
+          question_index: serverIndex,
+          answer_ids: selectedAnswers,
+          points_earned: score,
+          max_possible: maxPossibleScore || 0,
+          is_correct: fullyCorrect,
+        }),
+      }).catch(() => {})
+      return
+    }
+
+    // ---- Рейтинговый режим: сообщаем серверу о готовности к переходу ----
     client(`/game/sessions/${sessionId}/answered`, {
       method: 'POST',
       body: JSON.stringify({ question_index: serverIndex }),
     }).catch(() => {})
-  }, [currentQ, isAnswered, selectedAnswers, serverIndex, sessionId])
+  }, [
+    currentQ,
+    isAnswered,
+    isTeam,
+    isLeader,
+    leaderAnswered,
+    timeLeft,
+    selectedAnswers,
+    serverIndex,
+    sessionId,
+    maxPossibleScore,
+  ])
 
   const currentScore = calculatePartialScore(
     selectedAnswers,
@@ -178,5 +282,13 @@ export function useSyncedQuiz(quizId, sessionId) {
     timeLeft,
     toggleAnswer,
     submitAnswer,
+    // командный режим
+    isTeam,
+    isLeader,
+    voters,
+    hasVoted,
+    leaderAnswered,
+    players,
+    teams,
   }
 }

@@ -37,6 +37,7 @@ class JoinLobbyRequest(BaseModel):
 class CreateLobbyRequest(BaseModel):
     quiz_id: int
     game_mode: str = "team"
+    lobby_wait_seconds: Optional[int] = None
 
 
 class JoinByCodeRequest(BaseModel):
@@ -45,6 +46,19 @@ class JoinByCodeRequest(BaseModel):
 
 class AnsweredRequest(BaseModel):
     question_index: int
+
+
+class VoteRequest(BaseModel):
+    question_index: int
+    answer_ids: List[int]  # индексы выбранных вариантов
+
+
+class TeamAnswerRequest(BaseModel):
+    question_index: int
+    answer_ids: List[int]
+    points_earned: int
+    max_possible: int
+    is_correct: bool
 
 
 class ResultRequest(BaseModel):
@@ -233,13 +247,17 @@ def create_lobby(
 
     time_limits = [q.time_limit_seconds for q in quiz.questions]
     code = game_sessions_manager.generate_join_code()
+    # Время ожидания лобби задаёт хост при создании (с клампом 10..600 сек)
+    default_wait = getattr(quiz, "lobby_wait_time_seconds", 30) or 30
+    wait_seconds = request.lobby_wait_seconds or default_wait
+    wait_seconds = max(10, min(600, int(wait_seconds)))
     session_id = game_sessions_manager.create_session(
         quiz_id=request.quiz_id,
         quiz_title=quiz.title,
         total_questions=len(quiz.questions),
         game_mode=game_mode,
         question_time_limits=time_limits,
-        lobby_wait_seconds=getattr(quiz, "lobby_wait_time_seconds", 30) or 30,
+        lobby_wait_seconds=wait_seconds,
         max_team_members=getattr(quiz, "max_team_members", 10) or 10,
         join_code=code,
     )
@@ -405,6 +423,50 @@ def mark_answered(
     game_sessions_manager.sync_progress(session_id)
     state = game_sessions_manager.get_session_state(session_id)
     return ResponseFactory.success(data=state, message="Answer marked")
+
+
+@router.post("/sessions/{session_id}/vote")
+def cast_vote(
+    session_id: str,
+    request: VoteRequest,
+    current_user: User = Depends(get_current_user),
+):
+    """Голос рядового участника команды за варианты (можно переголосовать)."""
+    session = game_sessions_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    game_sessions_manager.record_vote(
+        session_id, current_user.id, request.question_index, request.answer_ids
+    )
+    state = game_sessions_manager.get_session_state(session_id)
+    return ResponseFactory.success(data=state, message="Vote recorded")
+
+
+@router.post("/sessions/{session_id}/team-answer")
+def team_answer(
+    session_id: str,
+    request: TeamAnswerRequest,
+    current_user: User = Depends(get_current_user),
+):
+    """Финальный ответ команды (только лидер): фиксирует ответ и копит счёт."""
+    session = game_sessions_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    game_sessions_manager.record_team_answer(
+        session_id,
+        current_user.id,
+        request.question_index,
+        request.answer_ids,
+        request.points_earned,
+        request.max_possible,
+        request.is_correct,
+    )
+    # Двигаем прогресс — вдруг все лидеры уже ответили
+    game_sessions_manager.sync_progress(session_id)
+    state = game_sessions_manager.get_session_state(session_id)
+    return ResponseFactory.success(data=state, message="Team answer recorded")
 
 
 @router.post("/sessions/{session_id}/result")

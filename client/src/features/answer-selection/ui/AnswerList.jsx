@@ -8,6 +8,7 @@ export function AnswerList({
   correctAnswers,
   isAnswered,
   onSelect,
+  voters,
 }) {
   return (
     <div className={styles.answersContainer}>
@@ -21,6 +22,7 @@ export function AnswerList({
           correctAnswers={correctAnswers}
           isAnswered={isAnswered}
           onSelect={onSelect}
+          voters={voters?.[index]}
         />
       ))}
     </div>

@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react'
 
-import { useCategories } from '@entities/category/model/useCategories'
 import { Button, Input } from '@shared'
 import { X, Image, Video, Music } from 'lucide-react'
 
@@ -23,7 +22,14 @@ const createInitialFilters = () => ({
   typeQuiz: null,
 })
 
-export function ModalFilter({ isOpen, onClose, onApply, onReset, filter }) {
+export function ModalFilter({
+  isOpen,
+  onClose,
+  onApply,
+  onReset,
+  filter,
+  categories = [],
+}) {
   if (!isOpen) return null
   return (
     <ModalFilterContent
@@ -31,17 +37,17 @@ export function ModalFilter({ isOpen, onClose, onApply, onReset, filter }) {
       onApply={onApply}
       onReset={onReset}
       filter={filter}
+      categories={categories}
     />
   )
 }
 
-function ModalFilterContent({ onClose, onApply, onReset, filter }) {
+function ModalFilterContent({ onClose, onApply, onReset, filter, categories }) {
   const [draftFilters, setDraftFilters] = useState(
     filter ?? createInitialFilters(),
   )
-  const { categories: dbCategories } = useCategories()
 
-  const categoryNames = dbCategories
+  const categoryNames = categories
     .map((c) => c.category_type || c)
     .filter(Boolean)
 

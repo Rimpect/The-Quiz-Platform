@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 
 import {
   AnswerList,
@@ -14,6 +14,7 @@ import { Clock, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 import { AntiCheatWarning } from './components/AntiCheatWarning'
+import { PlayersStatus } from './components/PlayersStatus'
 import { QuizBlocked } from './components/QuizBlocked'
 import { QuizError } from './components/QuizError'
 import { QuizLoading } from './components/QuizLoading'
@@ -21,17 +22,13 @@ import styles from './Quiz.module.scss'
 
 export const SyncedQuizContent = ({ quizId, sessionId }) => {
   const { violationsCount, isBlocked } = useAntiCheatContext()
-  const [showBlockedMessage, setShowBlockedMessage] = useState(false)
 
   // Бан — per-player: сообщаем серверу, остальные (и хост) продолжают
   useEffect(() => {
-    if (isBlocked) {
-      setShowBlockedMessage(true)
-      if (sessionId) {
-        client(`/game/sessions/${sessionId}/banned`, { method: 'POST' }).catch(
-          () => {},
-        )
-      }
+    if (isBlocked && sessionId) {
+      client(`/game/sessions/${sessionId}/banned`, { method: 'POST' }).catch(
+        () => {},
+      )
     }
   }, [isBlocked, sessionId])
 
@@ -49,10 +46,20 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
     timeLeft,
     toggleAnswer,
     submitAnswer,
+    isTeam,
+    isLeader,
+    voters,
+    hasVoted,
+    leaderAnswered,
+    players,
+    teams,
   } = useSyncedQuiz(quizId, sessionId)
 
-  if (showBlockedMessage)
-    return <QuizBlocked violationsCount={violationsCount} />
+  // Рядовой участник команды (не капитан): только голосует
+  const isVoter = isTeam && !isLeader
+  const voteLocked = leaderAnswered || timeLeft === 0
+
+  if (isBlocked) return <QuizBlocked violationsCount={violationsCount} />
   if (loading) return <QuizLoading />
   if (error) return <QuizError error={error} />
   if (!currentQ) return <QuizLoading />
@@ -67,7 +74,12 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
             Выход
           </Link>
           <div className={styles.quizCategory}>
-            <Users size={16} /> Совместный режим
+            <Users size={16} />{' '}
+            {isTeam
+              ? isLeader
+                ? 'Капитан команды'
+                : 'Голосование в команде'
+              : 'Совместный режим'}
           </div>
         </div>
         <div className={styles.syncedTimer}>
@@ -83,6 +95,8 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
         maxPossibleScore={maxPossibleScore}
       />
 
+      {isTeam && <PlayersStatus players={players} teams={teams} />}
+
       <div className={styles.questionContainer}>
         <QuestionSection question={currentQ} />
         <AnswerList
@@ -91,7 +105,10 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
           correctAnswers={currentQ?.correctAnswers}
           questionType={currentQ?.questionType}
           isAnswered={isAnswered}
-          onSelect={toggleAnswer}
+          onSelect={
+            isAnswered || (isVoter && voteLocked) ? () => {} : toggleAnswer
+          }
+          voters={isTeam ? voters : undefined}
         />
         <AnswerResult
           isAnswered={isAnswered}
@@ -100,9 +117,32 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
         />
       </div>
 
-      {isAnswered ? (
+      {isVoter ? (
+        // ----- Рядовой участник команды: только голос -----
+        voteLocked ? (
+          <div className={styles.waitingNext}>
+            Капитан зафиксировал ответ команды. Переходим дальше...
+          </div>
+        ) : (
+          <>
+            <Button
+              variant="green"
+              fullWidth
+              onClick={submitAnswer}
+              disabled={selectedAnswers.length === 0}
+            >
+              {hasVoted ? 'Изменить голос' : 'Голосовать'}
+            </Button>
+            <div className={styles.voteHint}>
+              Решение принимает капитан. Ваш голос виден команде.
+            </div>
+          </>
+        )
+      ) : isAnswered ? (
         <div className={styles.waitingNext}>
-          Ответ принят. Ждём остальных и переход к следующему вопросу...
+          {isTeam
+            ? 'Ответ команды зафиксирован. Ждём остальных капитанов...'
+            : 'Ответ принят. Ждём остальных и переход к следующему вопросу...'}
         </div>
       ) : (
         <Button
@@ -111,7 +151,7 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
           onClick={submitAnswer}
           disabled={selectedAnswers.length === 0}
         >
-          Ответить
+          {isTeam ? 'Ответить за команду' : 'Ответить'}
         </Button>
       )}
     </div>

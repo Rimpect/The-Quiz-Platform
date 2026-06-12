@@ -9,9 +9,9 @@ export function TeamMember({ member }) {
 
       <span>{member.name}</span>
 
-      {member.isLeader && <Crown size={14} />}
+      {member.isLeader && <Crown size={14} className={styles.leaderIcon} />}
 
-      {member.isReady && <CheckCircle size={14} />}
+      {member.isReady && <CheckCircle size={14} className={styles.readyIcon} />}
     </div>
   )
 }

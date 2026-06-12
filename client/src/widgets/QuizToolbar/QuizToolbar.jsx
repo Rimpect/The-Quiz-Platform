@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
-import { useSearchStore } from '@features/search-quiz/model/search.store'
+import { useCategories } from '@entities'
+import { useSearchStore } from '@features'
 import { Button, SearchBar, ModalFilter } from '@shared'
 import { SlidersHorizontal } from 'lucide-react'
 
@@ -8,6 +9,7 @@ import styles from './QuizToolbar.module.scss'
 
 export function QuizToolbar() {
   const [isFilterOpen, setIsFilterOpen] = useState(false)
+  const { categories } = useCategories()
   const query = useSearchStore((state) => state.query)
   const filter = useSearchStore((state) => state.filter)
   const setQuery = useSearchStore((state) => state.setQuery)
@@ -60,6 +62,7 @@ export function QuizToolbar() {
         onApply={handleApplyFilters}
         onReset={handleResetFilters}
         filter={filter}
+        categories={categories}
       />
     </>
   )

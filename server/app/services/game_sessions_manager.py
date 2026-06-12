@@ -24,12 +24,14 @@ class Player:
     is_ready: bool = False
     team_id: Optional[str] = None  # к какой команде присоединился (для team-режима)
     is_leader: bool = False        # лидер команды (создатель)
+    team_joined_at: Optional[datetime] = None  # момент вступления в команду (порядок наследования капитанства)
     score: int = 0
     correct_count: int = 0
     is_banned: bool = False  # забанен анти-читом
     last_seen: datetime = field(default_factory=datetime.utcnow)  # для heartbeat
     answers: Dict[int, dict] = field(default_factory=dict)  # {question_id: {answer_ids, time_spent}}
     answered_indices: set = field(default_factory=set)  # индексы вопросов, на которые игрок ответил
+    votes: Dict[int, list] = field(default_factory=dict)  # {question_index: [option_indices]} — голоса (team)
     # Финальный результат прохождения (для таблицы результатов по сессии)
     has_finished: bool = False
     result_score: int = 0
@@ -68,6 +70,9 @@ class GameSessionMemory:
     # Команды внутри лобби: {team_id: team_name}
     teams: Dict[str, str] = field(default_factory=dict)
     max_team_members: int = 10
+    # Счёт команд (источник истины для командных результатов):
+    # {team_id: {"score": int, "max": int, "correct": int, "counted": set}}
+    team_scores: Dict[str, dict] = field(default_factory=dict)
 
     # Лимиты времени по каждому вопросу (для общего серверного отсчёта)
     question_time_limits: list = field(default_factory=list)
@@ -98,14 +103,36 @@ class GameSessionMemory:
         return all(player.is_ready for player in active)
 
     def all_answered_current(self) -> bool:
-        """Все ли активные игроки ответили на текущий вопрос (ранний переход).
-        Забаненные не учитываются — чтобы не блокировать остальных."""
+        """Все ли ответили на текущий вопрос (ранний переход).
+        Командный режим: достаточно ответа всех лидеров команд.
+        Остальные режимы: все активные игроки. Забаненные не учитываются."""
+        if self.game_mode == GameMode.TEAM:
+            leaders = [
+                p for p in self.players.values()
+                if not p.is_banned and p.is_leader
+            ]
+            if not leaders:
+                return False
+            return all(
+                self.current_question_index in p.answered_indices
+                for p in leaders
+            )
+
         active = [p for p in self.players.values() if not p.is_banned]
         if not active:
             return False
         return all(
             self.current_question_index in p.answered_indices for p in active
         )
+
+    def team_leader_answered(self, team_id: Optional[str]) -> bool:
+        """Ответил ли лидер указанной команды на текущий вопрос."""
+        if not team_id:
+            return False
+        for p in self.players.values():
+            if p.team_id == team_id and p.is_leader and not p.is_banned:
+                return self.current_question_index in p.answered_indices
+        return False
 
     def prune_empty_teams(self):
         """Удалить команды, в которых не осталось игроков."""
@@ -263,13 +290,42 @@ class GameSessionsManager:
             player.last_seen = datetime.utcnow()
 
     def ban_player(self, session_id: str, user_id: int) -> None:
-        """Забанить игрока анти-читом (только его, остальные продолжают)."""
+        """Забанить игрока анти-читом (только его, остальные продолжают).
+        В командном режиме при бане лидера капитанство переходит к самому
+        раннему по вступлению незабаненному участнику; если забанена вся
+        команда — она снимается с участия."""
         session = self.get_session(session_id)
         if not session:
             return
         player = session.get_player(user_id)
-        if player:
-            player.is_banned = True
+        if not player:
+            return
+
+        player.is_banned = True
+        if session.game_mode == GameMode.TEAM and player.team_id:
+            player.is_leader = False  # забаненный не может быть капитаном
+            self._ensure_team_leader(session, player.team_id)
+
+    def _ensure_team_leader(self, session: "GameSessionMemory", team_id: str) -> None:
+        """Гарантировать активного капитана у команды.
+        Нет незабаненных участников → команда снимается с участия."""
+        members = [
+            p for p in session.players.values()
+            if p.team_id == team_id and not p.is_banned
+        ]
+        if not members:
+            # Вся команда забанена — убираем из лобби и результатов
+            session.teams.pop(team_id, None)
+            session.team_scores.pop(team_id, None)
+            return
+        if any(p.is_leader for p in members):
+            return
+        # Капитанство — самому раннему по вступлению в команду
+        from datetime import datetime as _dt
+        members.sort(
+            key=lambda p: (p.team_joined_at or _dt.max, p.user_id)
+        )
+        members[0].is_leader = True
 
     def check_disconnects(self, session_id: str, timeout_seconds: int = 12) -> None:
         """Отвал по таймауту heartbeat. В фазе ЛОББИ: хост отвалился → отмена,
@@ -325,6 +381,54 @@ class GameSessionsManager:
             player.answered_indices.add(question_index)
         return True
 
+    def record_vote(
+        self, session_id: str, user_id: int,
+        question_index: int, answer_ids: list,
+    ) -> bool:
+        """Голос игрока за варианты текущего вопроса (команда видит аватары).
+        Перезапись = смена голоса (разрешена, пока лидер не зафиксировал ответ)."""
+        session = self.get_session(session_id)
+        if not session:
+            return False
+        player = session.get_player(user_id)
+        if not player:
+            return False
+        # Нельзя менять голос после ответа лидера команды
+        if session.team_leader_answered(player.team_id):
+            return False
+        player.votes[question_index] = list(answer_ids or [])
+        return True
+
+    def record_team_answer(
+        self, session_id: str, user_id: int, question_index: int,
+        answer_ids: list, points: int, max_possible: int, is_correct: bool,
+    ) -> bool:
+        """Финальный ответ команды (только лидер): фиксируем голос лидера,
+        отмечаем его ответившим и копим командный счёт (идемпотентно)."""
+        session = self.get_session(session_id)
+        if not session:
+            return False
+        player = session.get_player(user_id)
+        if not player or not player.is_leader or not player.team_id:
+            return False
+
+        # Голос лидера — чтобы его аватар тоже отображался на вариантах
+        player.votes[question_index] = list(answer_ids or [])
+        player.answered_indices.add(question_index)
+
+        agg = session.team_scores.setdefault(
+            player.team_id,
+            {"score": 0, "max": 0, "correct": 0, "counted": set()},
+        )
+        # Guard: один вопрос засчитывается команде один раз
+        if question_index not in agg["counted"]:
+            agg["counted"].add(question_index)
+            agg["score"] += int(points or 0)
+            if is_correct:
+                agg["correct"] += 1
+        agg["max"] = max(agg["max"], int(max_possible or 0))
+        return True
+
     def record_result(
         self,
         session_id: str,
@@ -360,29 +464,34 @@ class GameSessionsManager:
         ]
 
         # ---- Командный режим: одна строка на команду ----
+        # Источник истины — team_scores (ответ команды = ответ капитана),
+        # суммировать по участникам нельзя: счёт у всех одинаков и умножился бы.
         if session.game_mode == GameMode.TEAM:
-            teams = {}  # team_id -> агрегат
-            for p in finished:
-                tid = p.team_id
-                if not tid:
-                    continue
-                agg = teams.setdefault(tid, {
+            rows = []
+            for tid, agg in session.team_scores.items():
+                members = sum(1 for p in session.players.values() if p.team_id == tid)
+                # Длительность — по лидеру команды (если он записал результат)
+                duration = 0
+                for p in session.players.values():
+                    if p.team_id == tid and p.is_leader and p.has_finished:
+                        duration = p.result_duration
+                        break
+                rows.append({
                     "name": session.teams.get(tid, "Команда"),
-                    "score": 0, "max": 0, "members": 0, "duration": 0,
+                    "score": agg.get("score", 0),
+                    "max": agg.get("max", 0),
+                    "correct": agg.get("correct", 0),
+                    "members": members,
+                    "duration": duration,
                 })
-                agg["score"] += p.result_score
-                agg["max"] += p.result_max
-                agg["duration"] += p.result_duration
-                agg["members"] += 1
 
-            rows = list(teams.values())
-            # Сортировка: больше очков, при равенстве — меньше среднее время
-            rows.sort(key=lambda t: (-t["score"], t["duration"] / max(t["members"], 1)))
+            # Сортировка: больше очков, при равенстве — меньше время
+            rows.sort(key=lambda t: (-t["score"], t["duration"]))
 
             results = []
             for idx, t in enumerate(rows, 1):
                 percent = int(round(t["score"] / t["max"] * 100)) if t["max"] else 0
-                avg = t["duration"] // max(t["members"], 1)
+                dur = t["duration"]
                 results.append({
                     "place": idx,
                     "name": t["name"],
@@ -391,8 +500,9 @@ class GameSessionsManager:
                     "score": t["score"],
                     "max_score": t["max"],
                     "percent": percent,
+                    "correct": t["correct"],
                     "members": t["members"],
-                    "time": f"{avg // 60}:{avg % 60:02d}",
+                    "time": f"{dur // 60}:{dur % 60:02d}",
                 })
             return results
 
@@ -505,6 +615,7 @@ class GameSessionsManager:
             player.team_id = team_id
             player.is_leader = True
             player.is_ready = False
+            player.team_joined_at = datetime.utcnow()
 
         session.prune_empty_teams()  # старая команда игрока могла опустеть
         return team_id
@@ -528,6 +639,7 @@ class GameSessionsManager:
             player.team_id = team_id
             player.is_leader = False
             player.is_ready = False
+            player.team_joined_at = datetime.utcnow()
 
         session.prune_empty_teams()  # старая команда игрока могла опустеть
         return True
@@ -622,12 +734,30 @@ class GameSessionsManager:
                 for p in session.players.values()
                 if p.team_id == team_id
             ]
+            agg = session.team_scores.get(team_id) or {}
             teams.append({
                 'id': team_id,
                 'name': team_name,
                 'max_members': session.max_team_members,
                 'members': members,
+                'score': agg.get('score', 0),
+                'correct': agg.get('correct', 0),
+                'leader_answered': session.team_leader_answered(team_id),
             })
+
+        # Голоса по текущему вопросу (для оверлея аватаров в команде)
+        idx = session.current_question_index
+        current_votes = [
+            {
+                'user_id': p.user_id,
+                'nickname': p.nickname,
+                'photo_profile': p.photo_profile,
+                'team_id': p.team_id,
+                'answer_ids': p.votes.get(idx, []),
+            }
+            for p in session.players.values()
+            if p.votes.get(idx)
+        ]
 
         return {
             'session_id': session.session_id,
@@ -646,6 +776,7 @@ class GameSessionsManager:
             'cancelled': session.cancelled,
             'host_id': session.host_id,
             'teams': teams,
+            'current_votes': current_votes,
             'players': [
                 {
                     'user_id': player.user_id,
@@ -654,8 +785,19 @@ class GameSessionsManager:
                     'is_ready': player.is_ready,
                     'team_id': player.team_id,
                     'is_leader': player.is_leader,
+                    'is_banned': player.is_banned,
                     'score': player.score,
                     'correct_count': player.correct_count,
+                    # ответил/проголосовал на текущем вопросе
+                    'answered_current': (
+                        idx in player.answered_indices
+                        or bool(player.votes.get(idx))
+                    ),
+                    # на связи (heartbeat за последние 10 сек)
+                    'online': (
+                        (datetime.utcnow() - player.last_seen).total_seconds()
+                        <= 10
+                    ),
                 }
                 for player in session.players.values()
             ],
