@@ -49,9 +49,12 @@ class RedisKeys:
     USER_ANSWER = "user:answer:"  # user:answer:{session_id}:{question_id}
     SESSION_ANSWERS = "session:answers:"  # session:answers:{session_id}
 
-    # Приватные лобби
-    PRIVATE_LOBBY = "lobby:private:"  # lobby:private:{lobby_id}
+    # Лобби
+    PRIVATE_LOBBY = "lobby:private:"  # lobby:private:{private_lobby_id}
+    PUBLIC_LOBBY = "lobby:public:"  # lobby:public:{public_lobby_id}
     USER_LOBBY = "user:lobby:"  # user:lobby:{user_id}
+
+    PUBLIC_LOBBIES_INDEX = "lobbies:public"
 
     # Лидерборды
     QUIZ_LEADERBOARD = "quiz:leaderboard:"  # quiz:leaderboard:{quiz_id}
@@ -95,6 +98,14 @@ class RedisKeys:
     @classmethod
     def public_lobbies_index(cls) :
         pass
+
+    @staticmethod
+    def public_lobby(lobby_id: str) -> str:
+        return f"lobby:public:{lobby_id}"
+
+    @staticmethod
+    def public_lobbies_index() -> str:
+        return "lobbies:public"
 
 
 # Время жизни данных (в секундах)
