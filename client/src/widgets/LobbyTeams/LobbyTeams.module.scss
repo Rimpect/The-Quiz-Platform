@@ -41,7 +41,7 @@
   grid-template-columns: 1fr 320px;
   gap: 24px;
 
-  // Сайдбар уезжает под основной контент на планшете/мобиле
+  /* Сайдбар уезжает под основной контент на планшете/мобиле*/
   @include tablet {
     grid-template-columns: 1fr;
   }
@@ -60,12 +60,6 @@
   margin-bottom: 8px;
   font-size: 14px;
   color: #6b7280;
-}
-
-.playersGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
 }
 
 .sidebar {

@@ -68,62 +68,6 @@
   margin: 0;
 }
 
-.levelBadge {
-  background: linear-gradient(
-    135deg,
-    var(--color-blue-gradient-start),
-    var(--color-violet-icon)
-  );
-  color: var(--color-light);
-  padding: 0.25rem 0.75rem;
-  border-radius: var(--border-radius-full);
-  font-size: 0.75rem;
-  font-weight: 600;
-  display: inline-block;
-}
-
-.userEmail {
-  font-size: 0.875rem;
-  color: var(--color-gray-text);
-  margin-bottom: 0.75rem;
-}
-
-.xpSection {
-  max-width: 20rem;
-}
-
-.xpLabels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  color: var(--color-gray-text);
-  margin-bottom: 0.25rem;
-}
-
-.progressBar {
-  height: 0.5rem;
-  background-color: var(--color-border-light);
-  border-radius: var(--border-radius-full);
-  overflow: hidden;
-}
-
-.progressFill {
-  height: 100%;
-  background: linear-gradient(
-    135deg,
-    var(--color-blue-gradient-start),
-    var(--color-violet-icon)
-  );
-  border-radius: var(--border-radius-full);
-  transition: width var(--transition-duration) ease;
-}
-
-.xpRemaining {
-  font-size: 0.75rem;
-  color: var(--color-gray-text);
-  margin-top: 0.25rem;
-}
-
 .actionButtons {
   display: flex;
   flex-direction: column;
@@ -133,25 +77,6 @@
   @media (min-width: 640px) {
     flex-direction: row;
     width: auto;
-  }
-}
-
-.btnOutline {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--color-border-light);
-  background: var(--color-light);
-  border-radius: var(--border-radius-md);
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition-duration);
-
-  &:hover {
-    background-color: var(--color-gray-bg);
-    border-color: var(--color-border-hover);
   }
 }
 

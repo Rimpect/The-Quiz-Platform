@@ -40,10 +40,7 @@ export { getMotivation } from './quiz-finish'
 
 export { ProfileInfo } from './edit-profile'
 
-export { JoinTeamButton } from './join-team'
 export { CreateTeamModal } from './create-team-modal'
-export { LeaveTeamButton } from './leave-team'
-export { LobbyTimer } from './lobby-timer'
 
 // фичи для Quiz
 export {

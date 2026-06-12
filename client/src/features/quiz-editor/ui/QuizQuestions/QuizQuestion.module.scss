@@ -29,26 +29,6 @@
   margin: 0;
 }
 
-.addQuestionBtn {
-  padding: 8px 16px;
-  background: var(--primary, #3b82f6);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #2563eb;
-  }
-
-  @media (max-width: 640px) {
-    width: 100%;
-  }
-}
-
 .questionCard {
   background: #f8fafc;
   border-radius: 12px;
@@ -76,77 +56,6 @@
   color: var(--foreground, #0f172a);
 }
 
-.deleteQuestionBtn {
-  padding: 6px 12px;
-  background: #fee2e2;
-  color: #dc2626;
-  border: 1px solid #fecaca;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: all 0.2s;
-
-  &:hover:not(:disabled) {
-    background: #fecaca;
-    border-color: #dc2626;
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-}
-
-.questionSettings {
-  display: flex;
-  gap: 24px;
-  margin-bottom: 20px;
-
-  @media (max-width: 640px) {
-    flex-direction: column;
-    gap: 16px;
-  }
-}
-
-.typeSelector {
-  flex: 2;
-}
-
-.typeButtons {
-  display: flex;
-  gap: 12px;
-}
-
-.typeBtn {
-  flex: 1;
-  padding: 8px 16px;
-  border: 1px solid var(--border, #e2e8f0);
-  background: white;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 14px;
-
-  &:hover {
-    border-color: var(--primary, #3b82f6);
-    background: #eff6ff;
-  }
-}
-
-.typeBtnActive {
-  background: var(--primary, #3b82f6);
-  border-color: var(--primary, #3b82f6);
-  color: white;
-}
-
-.pointsField {
-  flex: 1;
-}
-
-.pointsInput {
-  width: 100%;
-}
-
 .mediaSection {
   margin-bottom: 20px;
 }
@@ -155,20 +64,6 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-}
-
-.mediaBtn {
-  padding: 8px 16px;
-  border: 1px dashed var(--border, #e2e8f0);
-  background: white;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: var(--primary, #3b82f6);
-    background: #eff6ff;
-  }
 }
 
 .questionTextField {
@@ -233,21 +128,6 @@
   }
 }
 
-.addAnswerBtn {
-  padding: 6px 12px;
-  background: var(--primary, #3b82f6);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #2563eb;
-  }
-}
-
 .answersList {
   display: flex;
   flex-direction: column;
@@ -305,27 +185,6 @@
 
   font-size: 14px;
   transition: border-color 0.2s ease;
-}
-
-.removeAnswerBtn {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover:not(:disabled) {
-    background: #fee2e2;
-    border-color: #ef4444;
-    color: #ef4444;
-  }
-
-  &:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
 }
 
 .correctMarker {

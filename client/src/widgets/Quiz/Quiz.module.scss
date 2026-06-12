@@ -13,7 +13,7 @@
   }
 }
 
-// Хедер
+/* Хедер*/
 .quizHeader {
   background: var(--color-light);
   border-radius: var(--border-radius) var(--border-radius) 0 0;
@@ -55,7 +55,7 @@
   font-size: 16px;
 }
 
-// Контент
+/* Контент*/
 .questionContainer {
   background: var(--color-light);
   padding: 30px;
@@ -87,20 +87,7 @@
   font-weight: 500;
 }
 
-.actions {
-  display: flex;
-  gap: 15px;
-  margin: 20px 0;
-  flex-wrap: wrap;
-  justify-content: center;
-
-  & > * {
-    flex: 1;
-    min-width: 200px;
-  }
-}
-
-// Античит предупреждение
+/* Античит предупреждение*/
 .antiCheatWarning {
   position: fixed;
   top: 80px;
@@ -151,7 +138,7 @@
   animation: pulse 1s infinite;
 }
 
-// Блокировка квиза
+/* Блокировка квиза*/
 .blockedContainer {
   display: flex;
   align-items: center;
@@ -205,73 +192,9 @@
   }
 }
 
-// Стартовый экран
-.startContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
-}
+/* Стартовый экран*/
 
-.startCard {
-  background: white;
-  border-radius: 24px;
-  padding: 40px;
-  max-width: 500px;
-  text-align: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.5s ease;
-
-  h2 {
-    font-size: 28px;
-    margin-bottom: 16px;
-    color: #1f2937;
-  }
-
-  p {
-    color: #6b7280;
-    margin-bottom: 24px;
-  }
-}
-
-.rulesPreview {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 32px 0;
-  text-align: left;
-
-  li {
-    padding: 12px;
-    margin-bottom: 8px;
-    background: #f3f4f6;
-    border-radius: 8px;
-    color: #4b5563;
-    font-size: 14px;
-  }
-}
-
-.startButton {
-  width: 100%;
-  padding: 14px;
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #2563eb;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  }
-}
-
-// Загрузка и ошибка
+/* Загрузка и ошибка*/
 .loadingContainer {
   display: flex;
   flex-direction: column;
@@ -325,82 +248,11 @@
   }
 }
 
-// Лидерборд
-.leaderboardPreview {
-  background: var(--color-light);
-  border-radius: var(--border-radius);
-  padding: 25px;
-  margin-top: 20px;
+/* Лидерборд*/
 
-  h3 {
-    color: var(--color-quiz-title);
-    margin-bottom: 10px;
-  }
+/* Результаты*/
 
-  p {
-    color: var(--color-gray-text);
-    margin-bottom: 20px;
-  }
-}
-
-.leaderboardPlaceholder {
-  background: var(--color-quiz-bg);
-  border-radius: 10px;
-  padding: 40px;
-  text-align: center;
-  color: var(--color-quiz-placeholder-text);
-  border: 2px dashed var(--color-quiz-placeholder-border);
-}
-
-// Результаты
-.resultsContainer {
-  background: var(--color-light);
-  border-radius: var(--border-radius);
-  padding: 40px;
-  margin: 20px 0;
-  text-align: center;
-}
-
-.scoreCircle {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  background: var(--gradient-score);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 30px;
-  box-shadow: var(--shadow-score);
-}
-
-.scorePercent {
-  font-size: 36px;
-  font-weight: bold;
-  color: var(--color-light);
-}
-
-.scoreDetails {
-  margin-bottom: 30px;
-
-  h3 {
-    color: var(--color-quiz-title);
-    margin-bottom: 15px;
-  }
-}
-
-.scoreText {
-  font-size: 28px;
-  font-weight: bold;
-  color: #764ba2;
-  margin-bottom: 10px;
-}
-
-.correctCount {
-  font-size: 18px;
-  color: var(--color-gray-text);
-}
-
-// Анимации
+/* Анимации*/
 @keyframes slideInRight {
   from {
     transform: translateX(100%);
@@ -439,7 +291,7 @@
   }
 }
 
-// Медиа запросы
+/* Медиа запросы*/
 @media (max-width: 768px) {
   .quizContainer {
     padding: 10px;

@@ -4,7 +4,7 @@
   justify-content: space-between;
   gap: 12px;
 
-  // Липкая шапка: кнопки сохранения всегда под рукой при скролле
+  /* Липкая шапка: кнопки сохранения всегда под рукой при скролле*/
   position: sticky;
   top: 0;
   z-index: 100;
@@ -17,13 +17,4 @@
   gap: 20px;
   justify-content: space-between;
   flex-shrink: 0;
-}
-.overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }

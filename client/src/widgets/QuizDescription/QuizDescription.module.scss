@@ -89,28 +89,6 @@
   opacity: 0.9;
 }
 
-.badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: var(--border-radius-full);
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.easy {
-  background-color: var(--green-100);
-  color: var(--green-800);
-}
-
-.medium {
-  background-color: var(--yellow-100);
-  color: var(--yellow-800);
-}
-
-.hard {
-  background-color: var(--red-100);
-  color: var(--red-800);
-}
-
 .title {
   font-size: 1.875rem;
   font-weight: 700;
@@ -134,7 +112,7 @@
   opacity: 0.9;
 }
 
-// Две колонки
+/* Две колонки*/
 .columns {
   display: grid;
   grid-template-columns: 1fr;
@@ -146,7 +124,7 @@
   }
 }
 
-// Левая колонка
+/* Левая колонка*/
 .infoTitle {
   font-size: 1.25rem;
   font-weight: 600;
@@ -185,7 +163,7 @@
   padding: 0.25rem 0;
 }
 
-// Правая колонка
+/* Правая колонка*/
 .statsTitle {
   font-size: 1.25rem;
   font-weight: 600;
@@ -244,26 +222,7 @@
   color: var(--gray-900);
 }
 
-// Кнопка старта
-.startBtn {
-  display: inline-block;
-  width: 100%;
-  padding: var(--spacing-md);
-  background-color: var(--blue-600);
-  color: var(--color-light);
-  border: none;
-  border-radius: var(--border-radius-md);
-  font-weight: 500;
-  font-size: 1rem;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  @include transition;
-
-  &:hover {
-    background-color: var(--blue-700);
-  }
-}
+/* Кнопка старта*/
 
 .leaderboardLink {
   display: block;

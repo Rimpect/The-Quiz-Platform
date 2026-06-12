@@ -107,28 +107,6 @@
   }
 }
 
-.submitButton {
-  width: 100%;
-  padding: 12px;
-  background-color: var(--color-blue);
-  color: var(--color-light);
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color var(--transition-duration);
-  margin-top: 8px;
-
-  &:hover {
-    background-color: var(--color-blue-hover);
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-}
-
 .authFooter {
   width: 100%;
   text-align: center;

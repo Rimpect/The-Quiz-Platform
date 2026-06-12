@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 
+import { useAuthStore } from '../../user/model/useAuthStore'
 import { getQuizzes, getQuizById } from '../api/quizApi.js'
 
 export function useQuizzes() {
   const [quizzes, setQuizzes] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  // Перезапрашиваем список при смене авторизации (login/logout),
+  // т.к. доступные квизы зависят от пользователя
+  const token = useAuthStore((s) => s.token)
 
   useEffect(() => {
     let canceled = false
@@ -35,7 +39,7 @@ export function useQuizzes() {
     return () => {
       canceled = true
     }
-  }, [])
+  }, [token])
 
   return { quizzes, loading, error }
 }
