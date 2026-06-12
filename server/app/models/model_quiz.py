@@ -18,7 +18,7 @@ class Quiz(Base) :
     title = Column(String(200), nullable=False)
     category_id = Column(Integer, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True, index=True)
     description = Column(Text, nullable=False)
-    cover_url = Column(String(500), nullable=True)
+    profile_url = Column(String(500), nullable=True)
     is_public = Column(Boolean, default=True, nullable=False)  # Одобренный квиз
     quiz_mode = Column(SQLEnum(QuizMode), default=QuizMode.SINGLE, nullable=False)
 
@@ -26,7 +26,7 @@ class Quiz(Base) :
     author_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # Связи
     author = relationship("User", back_populates="quizzes")

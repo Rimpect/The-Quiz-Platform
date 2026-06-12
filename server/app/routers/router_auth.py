@@ -192,12 +192,6 @@ def logout(
         db: Session = Depends(get_db),
         current_user: model_user.User = Depends(get_current_user)
 ) :
-    user = get_user(db, current_user.id)
-    if user:
-        user.is_active=False
-        user.updated_at = datetime.utcnow()
-        db.commit()
-        db.refresh(user)
 
     """
     Выход пользователя - удаление refresh токена из cookie и отзыв токенов в БД

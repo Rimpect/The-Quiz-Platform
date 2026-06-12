@@ -14,7 +14,7 @@ class Answer(Base):
     answer_text = Column(Text, nullable=False)  # Текст ответа
     is_correct = Column(Boolean, default=False, nullable=False)  # Правильный ли ответ
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата создания
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)  # Дата изменения
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(),onupdate=func.now(), nullable=False)  # Дата изменения
 
     # Связи
     question = relationship("Question", back_populates="answers")

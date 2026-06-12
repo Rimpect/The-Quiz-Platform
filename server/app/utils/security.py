@@ -1,7 +1,7 @@
 """
 Модуль безопасности: JWT токены, хеширование паролей, аутентификация
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any, Type
 
 from fastapi import Depends, HTTPException, status, Request
@@ -220,7 +220,7 @@ def get_current_guest(
             detail="Guest session not found"
         )
 
-    if guest.expires_at < datetime.utcnow():
+    if guest.expires_at < datetime.now(timezone.utc):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Guest session has expired"

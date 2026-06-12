@@ -31,13 +31,11 @@ def create_category(
         current_user: User = Depends(get_current_user)
 ) :
     """Создание новой категории (только для админов)"""
-    # ✅ Проверка прав
     if current_user.role != UserRole.ADMIN :
         return ResponseFactory.forbidden(
             message="Only admins can create categories"
         )
 
-    # ✅ Проверка на дубликат
     existing = crud_categories.get_category_by_type(db, category_data.category_type)
     if existing :
         return ResponseFactory.conflict(
@@ -46,7 +44,7 @@ def create_category(
 
     new_category = crud_categories.create_category(db, category_data.category_type)
     return ResponseFactory.created(
-        data=CategoryResponse.model_validate(new_category).model_dump(),
+        data=CategoryResponse.model_validate(new_category, from_attributes=True).model_dump(),
         message="Category created successfully"
     )
 
