@@ -2,9 +2,11 @@ import { create } from 'zustand'
 
 const createQuestion = () => ({
   id: Date.now(),
-
   questionText: '',
-
+  questionType: 'single',
+  timeLimitSeconds: 0,
+  points: 10,
+  mediaUrl: '',
   answers: [
     {
       id: 1,
@@ -20,12 +22,17 @@ const createQuestion = () => ({
 })
 
 export const useQuizStore = create((set) => ({
+  editQuizId: null,
   quiz: {
     title: '',
     description: '',
-    category: '',
+    categoryId: '',
     difficulty: '',
+    quizMode: 'single',
     duration: 10,
+    lobbyWaitTimeSeconds: 30,
+    maxTeamMembers: 10,
+    coverUrl: '',
 
     questions: [createQuestion()],
   },
@@ -147,4 +154,91 @@ export const useQuizStore = create((set) => ({
         }),
       },
     })),
+
+  // Переключить правильность ответа (для множественного выбора)
+  toggleCorrectAnswer: (questionId, answerId) =>
+    set((state) => ({
+      quiz: {
+        ...state.quiz,
+        questions: state.quiz.questions.map((q) => {
+          if (q.id !== questionId) return q
+          return {
+            ...q,
+            answers: q.answers.map((a) =>
+              a.id === answerId ? { ...a, isCorrect: !a.isCorrect } : a,
+            ),
+          }
+        }),
+      },
+    })),
+
+  // Сменить тип вопроса; при переходе на одиночный оставляем один правильный
+  setQuestionType: (questionId, type) =>
+    set((state) => ({
+      quiz: {
+        ...state.quiz,
+        questions: state.quiz.questions.map((q) => {
+          if (q.id !== questionId) return q
+
+          let answers = q.answers
+          if (type === 'single') {
+            let kept = false
+            answers = q.answers.map((a) => {
+              if (a.isCorrect && !kept) {
+                kept = true
+                return a
+              }
+              return { ...a, isCorrect: false }
+            })
+          }
+          return { ...q, questionType: type, answers }
+        }),
+      },
+    })),
+
+  loadQuiz: (data) =>
+    set({
+      editQuizId: data.id || null,
+      quiz: {
+        title: data.title || '',
+        description: data.description || '',
+        categoryId: data.categoryId || '',
+        difficulty: data.difficulty || '',
+        quizMode: data.quizMode || 'single',
+        duration: 10,
+        lobbyWaitTimeSeconds: data.lobbyWaitTimeSeconds || 30,
+        maxTeamMembers: data.maxTeamMembers || 10,
+        coverUrl: data.coverUrl || '',
+        questions: (data.questions || []).map((q) => ({
+          id: q.id || Date.now() + Math.random(),
+          questionText: q.questionText || '',
+          questionType: q.questionType || 'single',
+          timeLimitSeconds: q.timeLimitSeconds || 0,
+          points: q.points || 10,
+          mediaUrl: q.mediaUrl || '',
+          answers: (q.answers || []).map((a) => ({
+            id: a.id || Math.random(),
+            text: a.text || '',
+            isCorrect: a.isCorrect || false,
+          })),
+        })),
+      },
+    }),
+
+  resetQuiz: () =>
+    set({
+      editQuizId: null,
+      quiz: {
+        title: '',
+        description: '',
+        categoryId: '',
+        difficulty: '',
+        quizMode: 'single',
+        duration: 10,
+        lobbyWaitTimeSeconds: 30,
+        maxTeamMembers: 10,
+        coverUrl: '',
+        questions: [createQuestion()],
+      },
+    }),
 }))

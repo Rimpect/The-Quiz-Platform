@@ -5,9 +5,11 @@ export const quizSchema = z.object({
 
   description: z.string(),
 
-  category: z.string().min(1, 'Выберите категорию'),
+  categoryId: z.string().min(1, 'Выберите категорию'),
 
   difficulty: z.string().min(1, 'Выберите сложность'),
+
+  quizMode: z.string().optional(),
 
   duration: z.number().min(1, 'Минимум 1 минута'),
 
@@ -15,6 +17,8 @@ export const quizSchema = z.object({
     .array(
       z.object({
         questionText: z.string().min(1, 'Введите вопрос'),
+
+        timeLimitSeconds: z.number().min(0).optional(),
 
         answers: z
           .array(

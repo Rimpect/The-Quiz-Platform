@@ -25,11 +25,16 @@ class Question(Base):
     quiz_id = Column(Integer, ForeignKey("quizzes.id", ondelete="CASCADE"), nullable=False, index=True)  # ID квиза
     time_limit_seconds = Column(Integer, nullable=True)  # Время ожидания ответа (в секундах)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)  # Дата создания
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=False)  # Дата изменения
+    updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now(), nullable=False)  # Дата изменения
 
     # Связи
     answers = relationship("Answer", back_populates="question", cascade="all, delete-orphan")
     quiz = relationship("Quiz", back_populates="questions")
+
+    @property
+    def media_url(self):
+        """Алиас для схемы QuestionResponse (поле media_url)"""
+        return self.question_media_url
 
     @property
     def images(self):

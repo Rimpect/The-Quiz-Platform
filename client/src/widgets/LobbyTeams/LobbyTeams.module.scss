@@ -1,7 +1,13 @@
+@use '/src/app/GlobalStyles/media' as *;
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
+
+  @include mobile {
+    padding: 14px;
+  }
 }
 
 .header {
@@ -18,12 +24,27 @@
     font-weight: 700;
     color: #1f2937;
   }
+
+  @include mobile {
+    margin-bottom: 20px;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    h1 {
+      font-size: 22px;
+    }
+  }
 }
 
 .content {
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: 24px;
+
+  // Сайдбар уезжает под основной контент на планшете/мобиле
+  @include tablet {
+    grid-template-columns: 1fr;
+  }
 }
 
 .teams {
@@ -39,6 +60,12 @@
   margin-bottom: 8px;
   font-size: 14px;
   color: #6b7280;
+}
+
+.playersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
 }
 
 .sidebar {
@@ -67,4 +94,13 @@
   strong {
     color: #16a34a;
   }
+}
+
+.lobbyTimer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-orange, #f59e0b);
 }

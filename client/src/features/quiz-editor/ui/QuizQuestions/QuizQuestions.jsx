@@ -1,11 +1,15 @@
 import React from 'react'
 
-import { Input, Textarea, Button } from '@shared'
-import { Plus, Trash2, Image, Video, Music, X } from 'lucide-react'
+import { Input, Textarea, Button, Select } from '@shared'
+import { Plus, Trash2, X, Clock, Award } from 'lucide-react'
+import { toast } from 'sonner'
 
 import { useQuizStore } from '../../model/quiz.store'
 
+import { QuestionMedia } from './QuestionMedia'
 import styles from './QuizQuestion.module.scss'
+
+const MAX_ANSWERS = 10
 
 export function QuizQuestions() {
   const questions = useQuizStore((state) => state.quiz.questions)
@@ -24,19 +28,28 @@ export function QuizQuestions() {
 
   const setCorrectAnswer = useQuizStore((state) => state.setCorrectAnswer)
 
-  // Функция для обработки выбора правильного ответа с возможностью отмены
+  const toggleCorrectAnswer = useQuizStore((state) => state.toggleCorrectAnswer)
+
+  const setQuestionType = useQuizStore((state) => state.setQuestionType)
+
   const handleCorrectAnswerToggle = (
     questionId,
     answerId,
     isCurrentlyCorrect,
   ) => {
     if (isCurrentlyCorrect) {
-      // Если ответ уже правильный - отменяем выбор (передаём null)
       setCorrectAnswer(questionId, null)
     } else {
-      // Если ответ не правильный - выбираем его
       setCorrectAnswer(questionId, answerId)
     }
+  }
+
+  const handleAddAnswer = (question) => {
+    if (question.answers.length >= MAX_ANSWERS) {
+      toast.error(`Максимум ${MAX_ANSWERS} вариантов`)
+      return
+    }
+    addAnswer(question.id)
   }
 
   return (
@@ -57,7 +70,11 @@ export function QuizQuestions() {
 
       <div className={styles.quizBuilder}>
         {questions.map((question, index) => (
-          <div key={question.id} className={styles.questionCard}>
+          <div
+            key={question.id}
+            id={`quiz-question-${index}`}
+            className={styles.questionCard}
+          >
             <div className={styles.questionCardHeader}>
               <div className={styles.questionNumber}>Вопрос {index + 1}</div>
 
@@ -70,35 +87,10 @@ export function QuizQuestions() {
               />
             </div>
 
-            <div className={styles.mediaSection}>
-              <div className={styles.fieldLabel}>Добавить медиа</div>
-
-              <div className={styles.mediaButtons}>
-                <Button
-                  variant="white"
-                  size="medium"
-                  icon={<Image size={20} />}
-                >
-                  картинка
-                </Button>
-
-                <Button
-                  variant="white"
-                  size="medium"
-                  icon={<Video size={20} />}
-                >
-                  Видео
-                </Button>
-
-                <Button
-                  variant="white"
-                  size="medium"
-                  icon={<Music size={20} />}
-                >
-                  Аудио
-                </Button>
-              </div>
-            </div>
+            <QuestionMedia
+              mediaUrl={question.mediaUrl}
+              onUpload={(url) => updateQuestion(question.id, 'mediaUrl', url)}
+            />
 
             <div className={styles.questionTextField}>
               <div className={styles.fieldLabel}>Текст вопроса *</div>
@@ -113,6 +105,62 @@ export function QuizQuestions() {
               />
             </div>
 
+            <div className={styles.questionTextField}>
+              <div className={styles.fieldLabel}>Тип ответа</div>
+
+              <Select
+                value={question.questionType || 'single'}
+                onChange={(e) => setQuestionType(question.id, e.target.value)}
+              >
+                <option value="single">Одиночный выбор</option>
+                <option value="multiple">Множественный выбор</option>
+              </Select>
+            </div>
+
+            <div className={styles.timeLimitRow}>
+              <Clock size={16} className={styles.timeLimitIcon} />
+              <span className={styles.timeLimitLabel}>
+                Время на ответ (сек):
+              </span>
+              <Input
+                type="number"
+                value={question.timeLimitSeconds}
+                min={0}
+                max={300}
+                step={5}
+                placeholder="0 = без лимита"
+                className={styles.timeLimitInput}
+                onChange={(e) =>
+                  updateQuestion(
+                    question.id,
+                    'timeLimitSeconds',
+                    Number(e.target.value),
+                  )
+                }
+              />
+            </div>
+
+            <div className={styles.timeLimitRow}>
+              <Award size={16} className={styles.timeLimitIcon} />
+              <span className={styles.timeLimitLabel}>
+                Баллов за правильный ответ:
+              </span>
+              <Input
+                type="number"
+                value={question.points}
+                min={1}
+                max={100}
+                className={styles.timeLimitInput}
+                onChange={(e) =>
+                  updateQuestion(
+                    question.id,
+                    'points',
+                    Number(e.target.value) || 1,
+                  )
+                }
+              />
+            </div>
+
             <div className={styles.answersSection}>
               <div className={styles.answersHeader}>
                 <div className={styles.fieldLabel}>Варианты ответов *</div>
@@ -122,7 +170,8 @@ export function QuizQuestions() {
                   size="medium"
                   icon={<Plus size={20} />}
                   type="button"
-                  onClick={() => addAnswer(question.id)}
+                  disabled={question.answers.length >= MAX_ANSWERS}
+                  onClick={() => handleAddAnswer(question)}
                 >
                   Добавить вариант
                 </Button>
@@ -137,22 +186,34 @@ export function QuizQuestions() {
                     }`}
                   >
                     <div className={styles.correctMarker}>
-                      <label className={styles.radioControl}>
-                        <input
-                          type="radio"
-                          name={`question-${question.id}`}
-                          checked={answer.isCorrect}
-                          onChange={() =>
-                            handleCorrectAnswerToggle(
-                              question.id,
-                              answer.id,
-                              answer.isCorrect,
-                            )
-                          }
-                        />
-
-                        <span className={styles.radioCustom} />
-                      </label>
+                      {question.questionType === 'multiple' ? (
+                        <label className={styles.checkboxControl}>
+                          <input
+                            type="checkbox"
+                            checked={answer.isCorrect}
+                            onChange={() =>
+                              toggleCorrectAnswer(question.id, answer.id)
+                            }
+                          />
+                          <span className={styles.checkboxCustom} />
+                        </label>
+                      ) : (
+                        <label className={styles.radioControl}>
+                          <input
+                            type="radio"
+                            name={`question-${question.id}`}
+                            checked={answer.isCorrect}
+                            onChange={() =>
+                              handleCorrectAnswerToggle(
+                                question.id,
+                                answer.id,
+                                answer.isCorrect,
+                              )
+                            }
+                          />
+                          <span className={styles.radioCustom} />
+                        </label>
+                      )}
                     </div>
 
                     <div className={styles.answerIndex}>{answerIndex + 1}</div>

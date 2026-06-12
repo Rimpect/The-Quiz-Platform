@@ -13,10 +13,11 @@
 .stats {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
 
   > div {
-    flex: 1;
+    flex: 1 1 180px;
     min-width: 0;
   }
 }
@@ -39,6 +40,19 @@
   background: #ffffff;
   border-radius: 14px;
   border: 1px solid #d1d5db;
+}
+
+.durationDisplay {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
 }
 
 .fieldGroup {

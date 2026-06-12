@@ -2,32 +2,42 @@
 Конфигурация Redis
 Управление подключением к Redis и ключами
 """
-import redis
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
+try:
+    import redis
+    REDIS_AVAILABLE = True
+except ImportError:
+    redis = None
+    REDIS_AVAILABLE = False
+
 # Настройки Redis
 REDIS_HOST = os.getenv("REDIS_HOST")
-REDIS_PORT = int(os.getenv("REDIS_PORT"))
-REDIS_DB = int(os.getenv("REDIS_DB"))
+REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+REDIS_DB = os.getenv("REDIS_DB", "0")
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
 
 # Создание пула соединений
-redis_pool = redis.ConnectionPool(
-    host=REDIS_HOST,
-    port=REDIS_PORT,
-    db=REDIS_DB,
-    password=REDIS_PASSWORD,
-    decode_responses=True,  # Автоматически декодировать строки
-    max_connections=50
-)
+redis_pool = None
+if REDIS_AVAILABLE and REDIS_HOST:
+    redis_pool = redis.ConnectionPool(
+        host=REDIS_HOST,
+        port=int(REDIS_PORT),
+        db=int(REDIS_DB),
+        password=REDIS_PASSWORD,
+        decode_responses=True,  # Автоматически декодировать строки
+        max_connections=50
+    )
 
 
 def get_redis():
     """Получение соединения с Redis"""
-    return redis.Redis(connection_pool=redis_pool)
+    if REDIS_AVAILABLE and redis_pool:
+        return redis.Redis(connection_pool=redis_pool)
+    return None
 
 
 # Префиксы для ключей (организация данных в Redis)

@@ -1,11 +1,10 @@
 import { loginSchema } from '@features'
+import { authService } from '@shared'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-import { loginUser } from './api/authApi.js'
-import { validateUser } from './userSchema'
-
 const initialState = {
+  token: null,
   user: null,
   loading: false,
   isAuthenticated: false,
@@ -28,46 +27,41 @@ export const useAuthStore = create(
         set({ loading: true, error: null })
 
         try {
-          const users = await loginUser({ email, password })
+          const response = await authService.login({ email, password })
+          // Server wraps response in { data: { access_token, user_id, nickname, role } }
+          const data = response?.data ?? response
 
-          if (users && users.length > 0) {
-            const { password, ...userData } = users[0]
-            void password
-
-            const normalizedUser = {
-              ...userData,
-              id:
-                typeof userData.id === 'string' && /^\d+$/.test(userData.id)
-                  ? parseInt(userData.id, 10)
-                  : userData.id,
-            }
-
-            const userValidation = validateUser(normalizedUser)
-            if (!userValidation.isValid) {
-              throw new Error(userValidation.error)
-            }
-
-            set({
-              user: userValidation.data,
-              isAuthenticated: true,
-              loading: false,
-              error: null,
-            })
-
-            return { success: true, user: userValidation.data }
-          } else {
-            set({ loading: false, error: 'Неверный email или пароль' })
-            return { success: false, error: 'Неверный email или пароль' }
+          const user = {
+            id: data.user_id,
+            name: data.nickname,
+            nickname: data.nickname,
+            role: data.role,
           }
+
+          set({
+            token: data.access_token,
+            user,
+            isAuthenticated: true,
+            loading: false,
+            error: null,
+          })
+
+          return { success: true, user }
         } catch (error) {
-          console.error('Login error:', error)
-          set({ loading: false, error: error.message })
-          return { success: false, error: error.message }
+          const message = error.message || 'Неверный email или пароль'
+          set({ loading: false, error: message })
+          return { success: false, error: message }
         }
       },
 
-      logout: () => {
-        set(initialState)
+      logout: async () => {
+        try {
+          await authService.logout()
+        } catch {
+          // ignore server errors on logout
+        } finally {
+          set(initialState)
+        }
       },
 
       clearError: () => {
@@ -78,6 +72,7 @@ export const useAuthStore = create(
       name: 'auth-storage',
       getStorage: () => localStorage,
       partialize: (state) => ({
+        token: state.token,
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),

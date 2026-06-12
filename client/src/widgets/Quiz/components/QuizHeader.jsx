@@ -6,7 +6,13 @@ import { Link } from 'react-router-dom'
 
 import styles from '../Quiz.module.scss'
 
-export const QuizHeader = ({ title, category, timerKey }) => {
+export const QuizHeader = ({
+  title,
+  category,
+  timerKey,
+  onTimeEnd,
+  timeLimitSeconds,
+}) => {
   return (
     <div className={styles.quizHeader}>
       <div className={styles.quizInfo}>
@@ -16,7 +22,13 @@ export const QuizHeader = ({ title, category, timerKey }) => {
         <div className={styles.quizTitle}>{title || 'Квиз'}</div>
         <div className={styles.quizCategory}>{category || 'Общий'}</div>
       </div>
-      <QuizTimer key={timerKey} duration={30} />
+      {timeLimitSeconds > 0 && (
+        <QuizTimer
+          key={timerKey}
+          duration={timeLimitSeconds}
+          onTimeEnd={onTimeEnd}
+        />
+      )}
     </div>
   )
 }

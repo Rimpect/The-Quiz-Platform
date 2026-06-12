@@ -11,9 +11,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from .config_redis.redis_config import get_redis, redis_pool
-# Сервисы
-from .config_redis.redis_service import cleanup_expired_sessions
+# Redis (опционально)
+try:
+    from .config_redis.redis_config import get_redis, redis_pool
+    from .config_redis.redis_service import cleanup_expired_sessions
+    REDIS_AVAILABLE = True
+except ImportError:
+    redis_pool = None
+    get_redis = None
+    cleanup_expired_sessions = None
+    REDIS_AVAILABLE = False
 # CRUD
 from .crud.crud_guest import Guest as guest_crud
 # База данных
@@ -24,10 +31,19 @@ from .middleware.logging_middleware import LoggingMiddleware
 from .middleware.rate_limit_middleware import RateLimitMiddleware
 from .middleware.response_middleware import ResponseFormatterMiddleware
 from .utils.logger import get_logger
+# Модели (для автоматического создания таблиц)
+from .models import (
+    User, Quiz, Question, Answer, Category, UserAchievement,
+    QuizResult, UserAnswer, MediaEntity, Guest, PendingQuiz,
+    GameSession, TeamMember, JWTToken
+)
+
 # Роутеры
 from .routers import (
+    achievements_router,
     admin_router,
     auth_router,
+    game_router,
     users_router,
     guest_router,
     quizzes_router,
@@ -63,6 +79,11 @@ async def lifespan(app: FastAPI):
     await asyncio.to_thread(Base.metadata.create_all, bind=engine)
     logger.info("Database tables created")
 
+    # Структура папок для медиа (media/...)
+    from .utils.media_utils import ensure_media_dirs
+    ensure_media_dirs()
+    logger.info("Media directories ensured")
+
     # 2. Проверяем подключение, также в отдельном потоке, с таймаутом
     try:
         # asyncio.to_thread позволяет выполнить синхронную функцию test_connection в потоке
@@ -78,20 +99,22 @@ async def lifespan(app: FastAPI):
         logger.error("PostgresSQL connection timed out after 10 seconds")
     except Exception as e:
         logger.error(f"PostgresSQL connection failed: {e}")
-        # 3. Проверка подключения к Redis
-        try:
-
-            # Таймаут 5 секунд на подключение к Redis
-            redis_client = await asyncio.wait_for(
-                asyncio.to_thread(get_redis),
-                timeout=5.0
-            )
-            redis_client.ping()
-            logger.info("Redis connection established")
-        except asyncio.TimeoutError:
-            logger.warning("Redis connection timeout - continuing without Redis")
-        except Exception as e:
-            logger.warning(f"Redis connection failed: {e}")
+        # 3. Проверка подключения к Redis (если доступен)
+        if REDIS_AVAILABLE and get_redis:
+            try:
+                # Таймаут 5 секунд на подключение к Redis
+                redis_client = await asyncio.wait_for(
+                    asyncio.to_thread(get_redis),
+                    timeout=5.0
+                )
+                redis_client.ping()
+                logger.info("Redis connection established")
+            except asyncio.TimeoutError:
+                logger.warning("Redis connection timeout - continuing without Redis")
+            except Exception as e:
+                logger.warning(f"Redis connection failed: {e}")
+        else:
+            logger.warning("Redis not available - continuing without Redis")
 
         # 4. Создание директорий
         os.makedirs("media_files", exist_ok=True)
@@ -145,9 +168,10 @@ async def lifespan(app: FastAPI):
         close_db_connections()
         logger.info("PostgreSQL connections closed")
 
-        # 2. Закрытие Redis соединений
-        redis_pool.disconnect()
-        logger.info("Redis connections closed")
+        # 2. Закрытие Redis соединений (если доступен)
+        if REDIS_AVAILABLE and redis_pool:
+            redis_pool.disconnect()
+            logger.info("Redis connections closed")
 
     except Exception as e:
         logger.error(f"Shutdown error: {e}")
@@ -165,10 +189,21 @@ app = FastAPI(
     docs_url="/api/docs",
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
-    openapi_version="3.1.0"
+    openapi_version="3.1.0",
+    redirect_slashes=False,
 )
 
-# ========== CORS НАСТРОЙКИ (должны быть первыми) ==========
+# ========== ПОДКЛЮЧЕНИЕ MIDDLEWARE (порядок важен!) ==========
+# Starlette добавляет каждый новый middleware поверх предыдущих.
+# Последний add_middleware = самый внешний слой = обрабатывает ответ последним.
+# CORS должен быть последним (самым внешним), чтобы его заголовки не перезаписывались.
+
+app.add_middleware(ResponseFormatterMiddleware)
+app.add_middleware(LoggingMiddleware)
+app.add_middleware(RateLimitMiddleware)
+app.add_middleware(ErrorHandlerMiddleware)
+
+# CORS — последний = самый внешний, добавляет заголовки поверх всех остальных middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -176,7 +211,6 @@ app.add_middleware(
         "http://localhost:5173",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
-        "*"  # Для разработки, в production заменить на конкретные домены
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -188,28 +222,16 @@ app.add_middleware(
         "X-Requested-With"
     ],
     expose_headers=["X-Request-ID", "X-Process-Time"],
-    max_age=3600  # Кэширование preflight запросов на 1 час
+    max_age=3600,
 )
-
-# ========== ПОДКЛЮЧЕНИЕ MIDDLEWARE (порядок важен!) ==========
-
-# # 1. Response Formatter (форматирует все ответы в единый шаблон)
-app.add_middleware(ResponseFormatterMiddleware)
-#
-# # 2. Logging (логирует все запросы)
-app.add_middleware(LoggingMiddleware)
-#
-# # 3. Rate Limit (ограничивает количество запросов)
-app.add_middleware(RateLimitMiddleware)
-#
-# # 4. Error Handler (должен быть последним, перехватывает все ошибки)
-app.add_middleware(ErrorHandlerMiddleware)
 #
 # # ========== СТАТИЧЕСКИЕ ФАЙЛЫ ==========
 # app.mount("/media", StaticFiles(directory="media_files"), name="media")
 
 # ========== ПОДКЛЮЧЕНИЕ РОУТЕРОВ ==========
+app.include_router(achievements_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
+app.include_router(game_router, prefix="/api")
 app.include_router(users_router, prefix="/api")
 app.include_router(guest_router, prefix="/api")
 app.include_router(quizzes_router, prefix="/api")

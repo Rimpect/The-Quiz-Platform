@@ -43,7 +43,7 @@ class User(Base):
     jwt_tokens = relationship("JWTToken", back_populates="user", cascade="all, delete-orphan")
     quiz_results = relationship("QuizResult", back_populates="user", cascade="all, delete-orphan")
     quizzes = relationship("Quiz",back_populates="author")
-    #achievements = relationship("UserAchievement", back_populates="user", cascade="all, delete-orphan")
+    achievements = relationship("UserAchievement", back_populates="user", cascade="all, delete-orphan")
 
     @property
     def profile_image_url(self) -> Optional[str]:

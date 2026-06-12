@@ -8,6 +8,7 @@ export function QuizHistory({
   recentQuizzes = [],
   myQuizzes = [],
   achievements = [],
+  onDeleteQuiz,
 }) {
   const [historyPage, setHistoryPage] = useState(1)
   const [myQuizzesPage, setMyQuizzesPage] = useState(1)
@@ -70,6 +71,7 @@ export function QuizHistory({
             currentPage={myQuizzesPage}
             totalPages={myQuizzesTotalPages}
             onPageChange={setMyQuizzesPage}
+            onDelete={onDeleteQuiz}
           />
         )}
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
+import { useQuiz } from '@entities'
 import {
   AnswerList,
   QuizProgress,
@@ -8,6 +9,7 @@ import {
   AnswerResult,
 } from '@features'
 import { useAntiCheatContext } from '@features/anti-cheating'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import { AntiCheatWarning } from './components/AntiCheatWarning'
 import { QuizBlocked } from './components/QuizBlocked'
@@ -18,8 +20,11 @@ import { useQuizLogic } from './hooks/useQuizLogic'
 import styles from './Quiz.module.scss'
 
 export const QuizContent = ({ quizId }) => {
+  const navigate = useNavigate()
+  const location = useLocation()
   const [showBlockedMessage, setShowBlockedMessage] = useState(false)
   const { violationsCount, isBlocked } = useAntiCheatContext()
+  const { quiz, loading: quizLoading } = useQuiz(quizId)
 
   const {
     questions,
@@ -45,7 +50,7 @@ export const QuizContent = ({ quizId }) => {
     }
   }, [isBlocked])
 
-  if (loading) return <QuizLoading />
+  if (loading || quizLoading) return <QuizLoading />
   if (error) return <QuizError error={error} />
   if (!questions.length) return <QuizError error="Вопросы не найдены" />
   if (showBlockedMessage)
@@ -56,9 +61,11 @@ export const QuizContent = ({ quizId }) => {
       <AntiCheatWarning violationsCount={violationsCount} />
 
       <QuizHeader
+        title={quiz?.title}
         category={currentQ?.category}
         onTimeEnd={handleTimeEnd}
         timerKey={currentQuestion}
+        timeLimitSeconds={currentQ?.timeLimitSeconds ?? null}
       />
 
       <QuizProgress

@@ -19,6 +19,11 @@ class ResponseFormatterMiddleware(BaseHTTPMiddleware):
         if request.url.path.startswith("/media") or request.url.path.startswith("/static"):
             return response
 
+        # Skip OpenAPI schema / docs — иначе оборачивание ломает Swagger UI
+        if request.url.path in ("/api/openapi.json", "/api/docs", "/api/redoc") \
+                or request.url.path.endswith("openapi.json"):
+            return response
+
         # Skip non-JSON responses
         if response.headers.get("content-type") != "application/json":
             return response

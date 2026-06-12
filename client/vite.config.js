@@ -9,6 +9,18 @@ export default defineConfig({
     sourcemap: false,
     cssCodeSplit: true,
   },
+  server: {
+    host: true, // слушать 0.0.0.0 — доступно для туннеля/локальной сети
+    allowedHosts: true, // принимать запросы с любого хоста (devtunnels.ms и т.п.)
+    proxy: {
+      // Запросы фронта на /api проксируются на локальный бэкенд.
+      // Со второго устройства всё идёт с одного origin — CORS не нужен.
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+    },
+  },
   plugins: [react()],
   resolve: {
     alias: {

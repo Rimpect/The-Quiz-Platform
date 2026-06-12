@@ -1,12 +1,17 @@
 import { API_URL } from '../config/env'
 
 export const client = async (endpoint, options = {}) => {
-  const token = localStorage.getItem('token')
+  const authStorage = localStorage.getItem('auth-storage')
+  const token = authStorage ? JSON.parse(authStorage)?.state?.token : null
+
+  // Для FormData НЕ ставим Content-Type — браузер сам выставит multipart с boundary
+  const isFormData = options.body instanceof FormData
 
   const response = await fetch(`${API_URL}${endpoint}`, {
     ...options,
+    credentials: 'include',
     headers: {
-      'Content-Type': 'application/json',
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
@@ -15,8 +20,9 @@ export const client = async (endpoint, options = {}) => {
   const data = await response.json()
 
   if (!response.ok) {
-    throw new Error(data?.message || 'API Error')
+    throw new Error(data?.message || data?.detail || 'API Error')
   }
 
-  return data
+  // Сервер оборачивает все ответы в { data, status_code, message } через ResponseFormatterMiddleware
+  return data?.data !== undefined ? data.data : data
 }

@@ -21,11 +21,11 @@ export function QuestionSection({ question }) {
             />
           )}
 
-          {question.mediaAudio === 'audio' && (
+          {question.mediaType === 'audio' && (
             <audio
               src={question.mediaUrl}
               controls
-              className={styles.mediaImage}
+              className={styles.mediaAudio}
             />
           )}
         </div>

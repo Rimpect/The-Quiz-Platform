@@ -1,55 +1,43 @@
-import { useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { PlayerCard } from '@entities'
-import { LobbyTimer } from '@features'
+import { useGameLobby } from '@features/game-lobby/model/useGameLobby'
 import { Button, ROUTES } from '@shared'
-import { Trophy } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Trophy, Clock } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 import styles from './LobbyRating.module.scss'
 
-export function LobbyRating({ quiz }) {
-  const [players, setPlayers] = useState([
-    {
-      id: 1,
-      name: 'Вы',
-      avatar: '',
-      isReady: false,
-    },
-    {
-      id: 2,
-      name: 'Максим',
-      avatar: '',
-      isReady: true,
-    },
-    {
-      id: 3,
-      name: 'Максим',
-      avatar: '',
-      isReady: true,
-    },
-    {
-      id: 4,
-      name: 'Максим',
-      avatar: '',
-      isReady: false,
-    },
-    {
-      id: 5,
-      name: 'Максим',
-      avatar: '',
-      isReady: true,
-    },
-  ])
-  const currentPlayers = players.length
-  const readyPlayers = players.filter((player) => player.isReady).length
-  const updateReadyStatus = () => {
-    setPlayers((prevPlayers) =>
-      prevPlayers.map((player) =>
-        player.id === 1 ? { ...player, isReady: !player.isReady } : player,
-      ),
-    )
-  }
+export function LobbyRating({ quiz, quizId }) {
+  const navigate = useNavigate()
+  const startedRef = useRef(false)
+  const {
+    sessionId,
+    players,
+    lobbyStarted,
+    lobbyTimeLeft,
+    loading,
+    myReady,
+    readyCount,
+    markReady,
+  } = useGameLobby(quizId, 'competitive')
+
+  // Когда лобби стартовало (все готовы или истёк общий таймер) — переходим к квизу
+  useEffect(() => {
+    if (lobbyStarted && !startedRef.current) {
+      startedRef.current = true
+      toast.success('Начинаем квиз!')
+      navigate(`/quiz/${quizId}`, { state: { fromLobby: true, sessionId } })
+    }
+  }, [lobbyStarted, quizId, navigate, sessionId])
+
+  const uiPlayers = players.map((p) => ({
+    id: p.user_id,
+    name: p.nickname,
+    avatar: p.photo_profile || '',
+    isReady: p.is_ready,
+  }))
 
   return (
     <div className={styles.container}>
@@ -59,20 +47,24 @@ export function LobbyRating({ quiz }) {
         </div>
         <div>{quiz.title}</div>
         <div>Cоревновательный режим</div>
-        <LobbyTimer
-          initialTime={60}
-          onTimeEnd={() => console.log('Time ended!')}
-          variant="centered"
-        />
+        <div className={styles.lobbyTimer}>
+          <Clock size={20} />
+          <span>
+            {lobbyTimeLeft !== null
+              ? `Старт через ${lobbyTimeLeft} сек`
+              : 'Ожидание...'}
+          </span>
+        </div>
       </div>
       <div className={styles.playersInfo}>
-        <div>Игроки {currentPlayers} </div>
+        <div>Игроки {uiPlayers.length} </div>
         <div className={styles.playersReady}>
-          {readyPlayers}/{currentPlayers} готовы
+          {readyCount}/{uiPlayers.length} готовы
         </div>
       </div>
       <div className={styles.playersGrid}>
-        {players.map((player) => (
+        {loading && <div>Подключение к лобби...</div>}
+        {uiPlayers.map((player) => (
           <PlayerCard
             key={player.id}
             player={player}
@@ -96,13 +88,10 @@ export function LobbyRating({ quiz }) {
       </div>
       <div className={styles.actions}>
         <Link to={ROUTES.main}>
-          <Button fullWidth>кнопка покинуть лобби</Button>
+          <Button fullWidth>Покинуть лобби</Button>
         </Link>
-        {/* @TODO пока что хардкод с id игрока что бы проверить на работоспособность */}
-        <Button fullWidth onClick={updateReadyStatus}>
-          {players.find((p) => p.id === 1)?.isReady
-            ? 'Отменить готовность'
-            : 'Готов к игре'}
+        <Button fullWidth onClick={markReady} disabled={myReady}>
+          {myReady ? 'Ожидаем остальных...' : 'Готов к игре'}
         </Button>
       </div>
     </div>

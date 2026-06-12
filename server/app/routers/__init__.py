@@ -1,8 +1,9 @@
-#from .router_achievements import router
+from .router_achievements import router as achievements_router
 from .router_admin import router as admin_router
 from .router_answers import router as answers_router
 from .router_auth import router as auth_router
 from .router_categories import router as categories_router
+from .router_game import router as game_router
 from .router_guest import router as guest_router
 from .router_lobby import router as lobby_router
 from .router_media import router as media_router

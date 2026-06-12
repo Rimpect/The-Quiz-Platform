@@ -1,6 +1,6 @@
 import { useAuthStore } from '@entities'
-import { Button, ROUTES } from '@shared'
-import { User, LogOut } from 'lucide-react'
+import { Button, ROUTES, Avatar } from '@shared'
+import { LogOut } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -22,7 +22,7 @@ export function UserMenu() {
   if (!isAuthenticated) {
     return (
       <div className={styles.user}>
-        <User />
+        <Avatar size={36} />
         <span>Гость</span>
         <Link to={ROUTES.auth}>
           <Button variant="white" size="medium">
@@ -35,8 +35,8 @@ export function UserMenu() {
 
   return (
     <div className={styles.user}>
-      <User />
-      <span>{user?.name}</span>
+      <Avatar src={user?.photo_profile} alt={user?.nickname} size={36} />
+      <span>{user?.nickname || user?.name}</span>
 
       <div className={styles.actions}>
         <Link to={ROUTES.profile}>

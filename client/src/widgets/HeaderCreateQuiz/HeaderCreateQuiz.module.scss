@@ -1,12 +1,22 @@
 .header {
   display: flex;
-  margin-top: 20px;
+  align-items: center;
   justify-content: space-between;
+  gap: 12px;
+
+  // Липкая шапка: кнопки сохранения всегда под рукой при скролле
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-white, #ffffff);
+  padding: 16px 0;
+  border-bottom: 1px solid var(--gray-200, #e5e7eb);
 }
 .buttons {
   display: flex;
   gap: 20px;
   justify-content: space-between;
+  flex-shrink: 0;
 }
 .overlay {
   position: fixed;

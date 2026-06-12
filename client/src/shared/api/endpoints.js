@@ -18,10 +18,15 @@ export const endpoints = {
 
   quizzes: {
     base: '/quizzes',
+    bulk: '/quizzes/bulk',
     categories: '/quizzes/categories',
     full: (id) => `/quizzes/${id}/full`,
     byId: (id) => `/quizzes/${id}`,
     leaderboard: (id) => `/quizzes/${id}/leaderboard`,
+  },
+
+  categories: {
+    base: '/categories',
   },
 
   questions: {
@@ -43,6 +48,11 @@ export const endpoints = {
     update: (id) => `/media/${id}`,
     delete: (id) => `/media/${id}`,
     deleteEntity: (type, id) => `/media/entity/${type}/${id}`,
+  },
+
+  achievements: {
+    base: '/achievements',
+    unlock: (id) => `/achievements/${id}/unlock`,
   },
 
   results: {

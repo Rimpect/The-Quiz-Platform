@@ -2,6 +2,18 @@ import { client } from '../client'
 import { endpoints } from '../endpoints'
 
 export const mediaService = {
+  // Простая загрузка: файл -> URL (без привязки к id сущности)
+  uploadSimple: (target, file) => {
+    const formData = new FormData()
+    formData.append('target', target)
+    formData.append('file', file)
+
+    return client('/media/upload-simple', {
+      method: 'POST',
+      body: formData,
+    })
+  },
+
   uploadMedia: (entityType, entityId, file) => {
     const formData = new FormData()
     formData.append('file', file)

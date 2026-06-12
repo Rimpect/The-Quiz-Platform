@@ -1,6 +1,7 @@
 import { Badge, Button, Pagination, ROUTES } from '@shared'
 import { FileText, Plus, Edit, Trash2 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 import styles from './MyQuizzesTab.module.scss'
 
@@ -10,11 +11,28 @@ export function MyQuizzesTab({
   currentPage,
   totalPages,
   onPageChange,
+  onDelete,
 }) {
+  const navigate = useNavigate()
+
   const statusLabels = {
-    approved: 'Одобрен',
+    approved: 'Опубликован',
     pending: 'На модерации',
-    rejected: 'Отклонен',
+    rejected: 'Отклонён',
+  }
+
+  const handleEdit = (quiz) => {
+    navigate(ROUTES.createQuiz, { state: { editQuizId: quiz.id } })
+  }
+
+  const handleDelete = async (quiz) => {
+    if (!window.confirm(`Удалить квиз "${quiz.title}"?`)) return
+    try {
+      await onDelete(quiz.id)
+      toast.success('Квиз удалён')
+    } catch {
+      toast.error('Не удалось удалить квиз')
+    }
   }
 
   return (
@@ -34,9 +52,11 @@ export function MyQuizzesTab({
         <div className={styles.emptyState}>
           <FileText className={styles.emptyIcon} />
           <p className={styles.emptyText}>У вас пока нет созданных квизов</p>
-          <Button onClick={onCreateQuiz} icon={<Plus size={16} />}>
-            Создать первый квиз
-          </Button>
+          <Link to={ROUTES.createQuiz}>
+            <Button onClick={onCreateQuiz} icon={<Plus size={16} />}>
+              Создать первый квиз
+            </Button>
+          </Link>
         </div>
       ) : (
         <>
@@ -51,27 +71,35 @@ export function MyQuizzesTab({
                         {statusLabels[quiz.status] || quiz.status}
                       </Badge>
                     </div>
-                    <p className={styles.quizCategory}>{quiz.category}</p>
+                    <p className={styles.quizCategory}>
+                      {quiz.category || 'Без категории'}
+                    </p>
                     <div className={styles.quizMeta}>
-                      <span>Участников: {quiz.participants}</span>
-                      {quiz.status === 'approved' && (
-                        <>
-                          <span>•</span>
-                          <span>Рейтинг: {quiz.rating}</span>
-                        </>
-                      )}
+                      <span>Вопросов: {quiz.total_questions || 0}</span>
+                      <span>•</span>
+                      <span>Участников: {quiz.participants || 0}</span>
                       <span>•</span>
                       <span>{quiz.createdAt}</span>
                     </div>
                   </div>
                   <div className={styles.quizActions}>
-                    <Button icon={<Edit size={16} />} variant="transparent" />
-                    <Button icon={<Trash2 size={16} />} variant="transparent" />
+                    <Button
+                      icon={<Edit size={16} />}
+                      variant="transparent"
+                      title="Редактировать"
+                      onClick={() => handleEdit(quiz)}
+                    />
+                    <Button
+                      icon={<Trash2 size={16} />}
+                      variant="transparent"
+                      title="Удалить"
+                      onClick={() => handleDelete(quiz)}
+                    />
                   </div>
                 </div>
                 {quiz.status === 'rejected' && (
                   <div className={styles.rejectionMessage}>
-                    Причина отклонения: Недостаточно уникальных вопросов
+                    Квиз отклонён администратором
                   </div>
                 )}
               </div>

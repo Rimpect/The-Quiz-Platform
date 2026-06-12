@@ -10,6 +10,7 @@ export { ModalHelp } from './ui/Modal'
 
 export { QuizCard } from './ui/QuizCard'
 export { Badge } from './ui/Badge/Badge'
+export { Avatar } from './ui/Avatar/Avatar'
 export { Input } from './ui/Input'
 export { Textarea } from './ui/Textarea'
 export { Select } from './ui/Select'
@@ -19,10 +20,10 @@ export { CoverUpload } from './ui/CoverUpload'
 
 export { useCurrentUser } from './hooks/useCurrentUser'
 
-export { ROUTES } from './config'
-export { createRoute } from './config'
+export { ROUTES, createRoute } from './config'
 
 export { request } from './api/request'
+export { client } from './api/client'
 export { API_URL } from './config/env'
 export { endpoints } from './api/endpoints'
 
@@ -43,4 +44,7 @@ export {
   getQuizRoute,
   getQuizDescriptionRoute,
   getFinishQuizRoute,
+  getLeaderboardRatingRoute,
+  getLobbyRatingRoute,
+  getLobbyTeamsRoute,
 } from './config/routes/paths.js'

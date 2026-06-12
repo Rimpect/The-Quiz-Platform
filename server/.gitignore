@@ -1,0 +1,44 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# ===== Виртуальные окружения =====
+venv/
+.venv/
+env/
+ENV/
+{virt_name}/
+
+# ===== Секреты / конфиг =====
+.env
+.env.*
+!.env.example
+
+# ===== Логи =====
+logs/
+*.log
+
+# ===== Загруженные медиа =====
+media/
+media_files/
+
+# ===== Кэш / тесты =====
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ===== IDE / редакторы =====
+.idea/
+.vscode/
+*.swp
+
+# ===== ОС =====
+.DS_Store
+Thumbs.db

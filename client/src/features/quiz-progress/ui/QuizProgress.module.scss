@@ -1,7 +1,13 @@
+@use '/src/app/GlobalStyles/media' as *;
+
 .progressContainer {
   background: var(--color-light);
   padding: 0 20px 20px;
   position: relative;
+
+  @include mobile {
+    padding: 0 14px 14px;
+  }
 }
 
 .progressBar {

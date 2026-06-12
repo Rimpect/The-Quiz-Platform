@@ -10,8 +10,10 @@ export const request = async (endpoint, options = {}) => {
   })
 
   if (!response.ok) {
-    throw new Error('Request failed')
+    const data = await response.json().catch(() => ({}))
+    throw new Error(data?.message || data?.detail || 'Request failed')
   }
 
-  return response.json()
+  const data = await response.json()
+  return data?.data !== undefined ? data.data : data
 }

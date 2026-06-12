@@ -1,6 +1,12 @@
+@use '/src/app/GlobalStyles/media' as *;
+
 .mediaContainer {
   margin-bottom: 25px;
   text-align: center;
+
+  @include mobile {
+    margin-bottom: 16px;
+  }
 }
 
 .mediaImage,
@@ -11,18 +17,31 @@
   max-width: 100%;
   max-height: 400px;
   border-radius: 10px;
+
+  @include mobile {
+    max-height: 240px;
+  }
 }
 
 .mediaAudio {
   background: var(--color-quiz-bg);
   padding: 20px;
   border-radius: 10px;
+
+  @include mobile {
+    padding: 12px;
+    width: 100%;
+  }
 }
 
 .questionTitle {
   font-size: 24px;
   color: var(--color-quiz-title);
   margin-bottom: 10px;
+
+  @include mobile {
+    font-size: 19px;
+  }
 }
 // .questionType {
 //   display: inline-flex;

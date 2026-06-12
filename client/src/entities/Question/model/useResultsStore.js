@@ -1,5 +1,9 @@
 import { resultsService } from '@shared'
+import { client } from '@shared/api/client'
 import { create } from 'zustand'
+
+const checkAchievements = () =>
+  client('/achievements/check', { method: 'POST' }).catch(() => null)
 
 export const useResultsStore = create((set) => ({
   results: [],
@@ -77,6 +81,8 @@ export const useResultsStore = create((set) => ({
         results: state.results.map((r) => (r.id === resultId ? result : r)),
         isLoading: false,
       }))
+      // Проверяем достижения после завершения квиза (fire-and-forget)
+      checkAchievements()
       return result
     } catch (err) {
       set({ error: err.message, isLoading: false })

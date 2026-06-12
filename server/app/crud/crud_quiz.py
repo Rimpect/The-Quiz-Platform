@@ -80,27 +80,27 @@ def get_quiz_categories(db: Session) -> List[str]:
 
 def create_quiz_full(
         db: Session,
-        quiz_data: QuizBulkCreate
+        quiz_data: QuizBulkCreate,
+        author_id: int,
+        status: str = "approved"
 ) -> Dict[str, Any]:
-    """
-    Массовое создание квиза с вопросами и ответами
+    """Массовое создание квиза с вопросами и ответами за один запрос"""
 
-    Args:
-        db: Сессия БД
-        quiz_data: Данные квиза с вопросами и ответами
+    is_public = status == "approved"
 
-    Returns:
-        Словарь с созданным квизом, количеством вопросов и ответов
-    """
-
-    # 1. Создаем квиз
-    db_quiz: Quiz = Quiz(
+    # 1. Создаём квиз
+    db_quiz = Quiz(
         title=quiz_data.title,
-        category=quiz_data.category,
+        category_id=quiz_data.category_id,
         description=quiz_data.description,
         cover_url=quiz_data.cover_url,
-        is_public=quiz_data.is_public,
-        quiz_mode=quiz_data.quiz_mode
+        is_public=is_public,
+        quiz_mode=quiz_data.quiz_mode,
+        difficulty=quiz_data.difficulty,
+        status=status,
+        author_id=author_id,
+        lobby_wait_time_seconds=quiz_data.lobby_wait_time_seconds or 30,
+        max_team_members=quiz_data.max_team_members or 10,
     )
     db.add(db_quiz)
     db.commit()
@@ -108,51 +108,78 @@ def create_quiz_full(
 
     questions_created = 0
     answers_created = 0
+    total_seconds = 0
 
-    # 2. Создаем вопросы и ответы
-    for idx, q_data in enumerate(quiz_data.questions):
-        # Создаем вопрос
+    # 2. Создаём вопросы и ответы
+    for q_data in quiz_data.questions:
         db_question = Quest(
             quiz_id=db_quiz.id,
             answer_type=q_data.answer_type,
             points=q_data.points,
             question_text=q_data.question_text,
-            media_url=q_data.media_url,
+            question_media_url=q_data.media_url,
             time_limit_seconds=q_data.time_limit_seconds,
-            order_number=idx
         )
         db.add(db_question)
         db.flush()
         questions_created += 1
+        total_seconds += q_data.time_limit_seconds or 0
 
-        # Создаем ответы для вопроса
         for ans_idx, a_data in enumerate(q_data.answers):
             db_answer = Answer(
                 question_id=db_question.id,
                 answer_text=a_data.answer_text,
                 is_correct=a_data.is_correct,
-                order_number=a_data.order_number or ans_idx
+                order_number=a_data.order_number or ans_idx,
             )
             db.add(db_answer)
             answers_created += 1
 
     db.commit()
 
-    # Загружаем полный квиз со всеми связями
-    result = db.query(Quiz).options(
-        joinedload(Quiz.questions).joinedload(Quest.answers)
-    ).filter(db_quiz.id == Quiz.id).first()
-
-    # Обновляем количество вопросов в квизе
-    db_quiz.total_questions = questions_created
-    db.commit()
-
     return {
-        "quiz": result,
+        "quiz_id": db_quiz.id,
+        "title": db_quiz.title,
         "questions_created": questions_created,
         "answers_created": answers_created,
-        "total_time_limit_minutes": db_quiz.duration_minutes
+        "total_time_limit_minutes": total_seconds // 60,
     }
+
+def get_quizzes_by_status(db: Session, status: str, skip: int = 0, limit: int = 100):
+    """Получение квизов по статусу модерации"""
+    from ..models.model_user import User as UserModel
+    return (
+        db.query(Quiz)
+        .options(joinedload(Quiz.category_ref), joinedload(Quiz.author))
+        .filter(Quiz.status == status)
+        .order_by(Quiz.created_at.desc())
+        .offset(skip).limit(limit).all()
+    )
+
+
+def approve_quiz(db: Session, quiz_id: int, moderator_id: int):
+    """Одобрить квиз: is_public=True, status='approved'"""
+    quiz = get_quiz(db, quiz_id)
+    if not quiz:
+        return None
+    quiz.is_public = True
+    quiz.status = "approved"
+    db.commit()
+    db.refresh(quiz)
+    return quiz
+
+
+def reject_quiz(db: Session, quiz_id: int, moderator_id: int):
+    """Отклонить квиз: status='rejected'"""
+    quiz = get_quiz(db, quiz_id)
+    if not quiz:
+        return None
+    quiz.is_public = False
+    quiz.status = "rejected"
+    db.commit()
+    db.refresh(quiz)
+    return quiz
+
 
 def get_available_quizzes_for_user(
         db: Session,
@@ -169,7 +196,7 @@ def get_available_quizzes_for_user(
             Quiz.quiz_mode == "single"
         )
     else:
-        query.filter(Quiz.is_public == True)
+        query = query.filter(Quiz.is_public == True)
 
     return query.offset(skip).limit(limit).all()
 
@@ -364,12 +391,147 @@ def delete_pending_quiz(db: Session, pending_id: int, user_id: int, is_admin: bo
 
 # ========== ДОПОЛНИТЕЛЬНЫЕ ФУНКЦИИ ==========
 
-def get_user_quizzes(db: Session, user_id: int) -> Dict[str, Any]:
-    """Получение всех квизов пользователя (опубликованных и на модерации)"""
-    published = get_quizzes(db, author_id=user_id, is_public=True)
-    pending = get_pending_quizzes(db, author_id=user_id, status=PendingQuizStatus.PENDING)
+def update_quiz_full(
+        db: Session,
+        quiz_id: int,
+        quiz_data: QuizBulkCreate,
+        user_id: int,
+        is_admin: bool = False,
+) -> Optional[Dict[str, Any]]:
+    """Полное обновление квиза (заголовок + все вопросы с ответами). Для обычных пользователей сбрасывает статус на pending."""
+    db_quiz = get_quiz(db, quiz_id)
+    if not db_quiz:
+        return None
+    if not is_admin and db_quiz.author_id != user_id:
+        return None
+
+    new_status = "approved" if is_admin else "pending"
+    is_public = new_status == "approved"
+
+    db_quiz.title = quiz_data.title
+    db_quiz.description = quiz_data.description
+    db_quiz.category_id = quiz_data.category_id
+    db_quiz.quiz_mode = quiz_data.quiz_mode
+    db_quiz.difficulty = quiz_data.difficulty
+    db_quiz.status = new_status
+    db_quiz.is_public = is_public
+    db_quiz.lobby_wait_time_seconds = quiz_data.lobby_wait_time_seconds or 30
+    db_quiz.max_team_members = quiz_data.max_team_members or 10
+    db_quiz.updated_at = datetime.utcnow()
+
+    # Delete old questions and their answers (cascade via FK ondelete)
+    db.query(Quest).filter(Quest.quiz_id == quiz_id).delete(synchronize_session=False)
+    db.flush()
+
+    questions_created = 0
+    answers_created = 0
+    total_seconds = 0
+
+    for q_data in quiz_data.questions:
+        db_question = Quest(
+            quiz_id=db_quiz.id,
+            answer_type=q_data.answer_type,
+            points=q_data.points,
+            question_text=q_data.question_text,
+            question_media_url=q_data.media_url,
+            time_limit_seconds=q_data.time_limit_seconds,
+        )
+        db.add(db_question)
+        db.flush()
+        questions_created += 1
+        total_seconds += q_data.time_limit_seconds or 0
+
+        for ans_idx, a_data in enumerate(q_data.answers):
+            db_answer = Answer(
+                question_id=db_question.id,
+                answer_text=a_data.answer_text,
+                is_correct=a_data.is_correct,
+                order_number=a_data.order_number or ans_idx,
+            )
+            db.add(db_answer)
+            answers_created += 1
+
+    db.commit()
 
     return {
-        "published": published,
-        "pending": pending
+        "quiz_id": db_quiz.id,
+        "title": db_quiz.title,
+        "status": new_status,
+        "questions_created": questions_created,
+        "answers_created": answers_created,
+        "total_time_limit_minutes": total_seconds // 60,
     }
+
+
+def get_user_quizzes(db: Session, user_id: int) -> Dict[str, Any]:
+    """Получение всех квизов пользователя из основной таблицы по статусу"""
+    quizzes = (
+        db.query(Quiz)
+        .options(joinedload(Quiz.category_ref))
+        .filter(Quiz.author_id == user_id)
+        .order_by(Quiz.created_at.desc())
+        .all()
+    )
+    return {
+        "approved": [q for q in quizzes if q.status == "approved"],
+        "pending": [q for q in quizzes if q.status == "pending"],
+        "rejected": [q for q in quizzes if q.status == "rejected"],
+    }
+
+
+def get_quiz_leaderboard(db: Session, quiz_id: int, limit: int = 100) -> List[Dict[str, Any]]:
+    """Получение таблицы лидеров для квиза (по результатам)"""
+    try:
+        from ..models.model_quiz_result import QuizResult
+        from ..models.model_user import User as UserModel
+
+        # Сортируем по лучшему результату (счёт ↓, затем время ↑).
+        # Лимит применяем ПОСЛЕ дедупликации, поэтому здесь не ограничиваем.
+        results = (
+            db.query(QuizResult, UserModel.nickname, UserModel.photo_profile, UserModel.id)
+            .join(UserModel, QuizResult.user_id == UserModel.id)
+            .filter(QuizResult.quiz_id == quiz_id)
+            .order_by(
+                QuizResult.score.desc(),
+                (QuizResult.completed_at - QuizResult.started_at).asc(),
+            )
+            .all()
+        )
+
+        leaderboard = []
+        seen_users = set()
+        for result, nickname, photo_profile, user_id in results:
+            # Оставляем только лучший результат на пользователя.
+            # Так как список уже отсортирован, первое вхождение — лучшее.
+            if user_id in seen_users:
+                continue
+            seen_users.add(user_id)
+
+            if result.max_score and result.max_score > 0:
+                percent = int(round((result.score / result.max_score * 100)))
+            else:
+                percent = 0
+
+            duration = result.duration_seconds or 0
+            minutes = duration // 60
+            seconds = duration % 60
+            time_str = f"{minutes}:{seconds:02d}"
+
+            leaderboard.append({
+                "place": len(leaderboard) + 1,
+                "user_id": user_id,
+                "name": nickname or "Игрок",
+                "avatar": photo_profile or "",
+                "score": result.score,
+                "max_score": result.max_score,
+                "percent": percent,
+                "time": time_str,
+            })
+
+            if len(leaderboard) >= limit:
+                break
+
+        return leaderboard
+    except Exception as e:
+        print(f"Error in get_quiz_leaderboard: {e}")
+        return []

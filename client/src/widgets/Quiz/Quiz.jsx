@@ -1,16 +1,59 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { AntiCheatProvider } from '@features/anti-cheating'
-import { useNavigate, useParams } from 'react-router-dom'
+import { client } from '@shared/api/client'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 
 import { QuizContent } from './QuizContent'
+import { SyncedQuizContent } from './SyncedQuizContent'
 
 export function Quiz() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+  const [loading, setLoading] = useState(true)
+
+  // Сессия из лобби → синхронизированное прохождение (командный/рейтинговый)
+  const sessionId = location.state?.sessionId || null
+
+  // Проверяем режим квиза ПЕРЕД рендерингом
+  useEffect(() => {
+    if (!id || location.state?.fromLobby) {
+      setLoading(false)
+      return
+    }
+
+    const checkQuizMode = async () => {
+      try {
+        const response = await client(`/quizzes/${id}`)
+        const quizData = response?.data ?? response
+
+        // Если это team или competitive, перенаправляем на лобби сразу
+        if (
+          quizData.quiz_mode === 'team' ||
+          quizData.quiz_mode === 'competitive'
+        ) {
+          navigate(`/quiz/${id}/lobby`)
+          return
+        }
+      } catch (err) {
+        console.error('Error checking quiz mode:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    checkQuizMode()
+  }, [id, navigate, location.state])
 
   const handleDecline = () => {
     navigate(-1)
+  }
+
+  if (loading) {
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center' }}>Загрузка...</div>
+    )
   }
 
   return (
@@ -24,7 +67,11 @@ export function Quiz() {
         blockDevTools: true,
       }}
     >
-      <QuizContent quizId={id} />
+      {sessionId ? (
+        <SyncedQuizContent quizId={id} sessionId={sessionId} />
+      ) : (
+        <QuizContent quizId={id} />
+      )}
     </AntiCheatProvider>
   )
 }

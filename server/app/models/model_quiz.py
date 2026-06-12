@@ -21,6 +21,10 @@ class Quiz(Base) :
     cover_url = Column(String(500), nullable=True)
     is_public = Column(Boolean, default=True, nullable=False)  # Одобренный квиз
     quiz_mode = Column(SQLEnum(QuizMode), default=QuizMode.SINGLE, nullable=False)
+    difficulty = Column(String(20), default='easy', nullable=False, server_default='easy')
+    status = Column(String(20), default='approved', nullable=False, server_default='approved')
+    lobby_wait_time_seconds = Column(Integer, default=30, nullable=False)  # Время ожидания в лобби
+    max_team_members = Column(Integer, default=10, nullable=False)  # Макс. игроков в команде (team-режим)
 
     # Кто создал
     author_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
@@ -43,6 +47,22 @@ class Quiz(Base) :
         return len(self.questions) if self.questions else 0
 
     @property
+    def media_types(self) -> list:
+        """Какие типы медиа есть у вопросов квиза (для фильтра 'содержит медиа')."""
+        types = set()
+        for q in (self.questions or []):
+            url = q.question_media_url
+            if not url:
+                continue
+            if "/quest_audio/" in url:
+                types.add("audio")
+            elif "/quest_video/" in url:
+                types.add("video")
+            else:
+                types.add("image")
+        return list(types)
+
+    @property
     def duration_minutes(self) -> int :
         if not self.questions :
             return 0
@@ -51,7 +71,10 @@ class Quiz(Base) :
 
     @property
     def times_taken(self) -> int :
-        return len(self.results) if self.results else 0
+        # Количество уникальных пользователей, прошедших квиз
+        if not self.quiz_results :
+            return 0
+        return len({r.user_id for r in self.quiz_results})
 
     def __repr__(self) :
         return f"<Quiz {self.title}>"

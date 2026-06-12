@@ -265,6 +265,12 @@
   }
 }
 
+.leaderboardLink {
+  display: block;
+  margin-top: var(--spacing-sm);
+  text-decoration: none;
+}
+
 @media (max-width: 640px) {
   .container {
     padding: var(--spacing-md);

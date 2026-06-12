@@ -8,6 +8,12 @@ export const quizzesService = {
       body: JSON.stringify(data),
     }),
 
+  createQuizBulk: (data) =>
+    client(endpoints.quizzes.bulk, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
   getQuizzes: () =>
     client(endpoints.quizzes.base, {
       method: 'GET',

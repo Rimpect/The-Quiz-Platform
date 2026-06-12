@@ -1,16 +1,30 @@
+import { useEffect, useState } from 'react'
+
+import { useUser } from '@entities'
 import { ChangePassword, DangerZone, ProfileInfo } from '@features'
 import { Button, ROUTES } from '@shared'
+import { client } from '@shared/api/client'
 import { Link } from 'react-router-dom'
 
 import styles from './ProfileSettingsPage.module.scss'
 
-const mockUser = {
-  name: 'Максим',
-  email: 'example@gmail.com',
-  // avatar: '',
-}
-
 export function ProfileSettingsPage() {
+  const storeUser = useUser()
+  const [email, setEmail] = useState('')
+
+  useEffect(() => {
+    client('/users/me')
+      .then((data) => {
+        if (data?.email) setEmail(data.email)
+      })
+      .catch(() => {})
+  }, [])
+
+  const user = {
+    name: storeUser?.name || storeUser?.nickname || '',
+    email,
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
@@ -21,10 +35,8 @@ export function ProfileSettingsPage() {
           </Link>
         </div>
         <div className={styles.content}>
-          <ProfileInfo user={mockUser} />
-
+          <ProfileInfo user={user} />
           <ChangePassword />
-
           <DangerZone />
         </div>
       </div>

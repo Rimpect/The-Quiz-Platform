@@ -1,11 +1,9 @@
+import { useUser } from '@entities'
+import { useAchievements } from '@entities/achievement/model/useAchievements'
+import { useMyQuizzes } from '@entities/myQuizzes/model/useMyQuizzes'
+import { useQuizHistory } from '@entities/quizHistory/model/useQuizHistory'
+import { useProfileStats } from '@entities/user/model/useProfileStats'
 import { ProfileStats, QuizHistory } from '@widgets'
-
-import {
-  mockUser,
-  recentQuizzes,
-  myQuizzes,
-  achievements,
-} from '../../MockData'
 
 import styles from './PersonalAccount.module.scss'
 
@@ -13,20 +11,24 @@ export function PersonalAccount({
   onBackToHome,
   onCreateQuiz,
   onOpenSettings,
-  user,
 }) {
+  const storeUser = useUser()
+  const { stats } = useProfileStats()
+
   const userData = {
-    name: user?.name || mockUser.name,
-    email: user?.email || mockUser.email,
-    avatar: user?.avatar || mockUser.avatar,
-    level: user?.level || mockUser.level,
-    xp: user?.xp || mockUser.xp,
-    nextLevelXp: user?.nextLevelXp || mockUser.nextLevelXp,
-    totalQuizzes: user?.totalQuizzes || mockUser.totalQuizzes,
-    averageScore: user?.averageScore || mockUser.averageScore,
-    bestScore: user?.bestScore || mockUser.bestScore,
-    totalTime: user?.totalTime || mockUser.totalTime,
+    name: storeUser?.name || storeUser?.nickname || '',
+    email: storeUser?.email || '',
+    avatar: storeUser?.avatar || null,
+    level: storeUser?.level || 1,
+    totalQuizzes: stats.totalQuizzes,
+    averageScore: stats.averageScore,
+    bestScore: stats.bestResult,
+    totalTime: stats.totalMinutes,
   }
+
+  const { history } = useQuizHistory()
+  const { myQuizzes, deleteQuiz } = useMyQuizzes()
+  const { achievements } = useAchievements()
 
   return (
     <div className={styles.profilePage}>
@@ -38,9 +40,10 @@ export function PersonalAccount({
         />
         <QuizHistory
           onCreateQuiz={onCreateQuiz}
-          recentQuizzes={recentQuizzes}
+          recentQuizzes={history}
           myQuizzes={myQuizzes}
           achievements={achievements}
+          onDeleteQuiz={deleteQuiz}
         />
       </div>
     </div>

@@ -1,7 +1,21 @@
+@use '/src/app/GlobalStyles/media' as *;
+
 .container {
   display: flex;
   justify-content: space-between;
-  margin: auto;
+  align-items: center;
+  gap: 16px;
+  margin: 20px auto 0;
   max-width: 1280px;
-  margin-top: 20px;
+  padding: 0 16px;
+
+  @include tablet {
+    margin-top: 16px;
+  }
+
+  @include mobile {
+    margin-top: 12px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
 }

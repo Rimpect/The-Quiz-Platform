@@ -7,14 +7,26 @@ export const AntiCheatContext = createContext(null)
 
 export const AntiCheatProvider = ({
   children,
-
+  quizId,
   config = {},
   onDecline,
 }) => {
   const [violations, setViolations] = useState([])
   const [isBlocked, setIsBlocked] = useState(false)
   const [quizStarted, setQuizStarted] = useState(false)
-  const [showRules, setShowRules] = useState(true)
+
+  // Проверяем согласился ли уже пользователь на этот квиз (в рамках вкладки).
+  // sessionStorage, а не localStorage — флаг не должен жить вечно между сессиями.
+  const hasAgreedKey = `agreed_quiz_${quizId}`
+  const hasAlreadyAgreed = sessionStorage.getItem(hasAgreedKey)
+  const [showRules, setShowRules] = useState(!hasAlreadyAgreed)
+
+  // Если уже согласился раньше, сразу начинаем квиз
+  useEffect(() => {
+    if (hasAlreadyAgreed) {
+      setQuizStarted(true)
+    }
+  }, [hasAlreadyAgreed])
 
   const defaultConfig = {
     maxWarnings: 3,
@@ -48,6 +60,8 @@ export const AntiCheatProvider = ({
     setQuizStarted(true)
     setViolations([])
     setIsBlocked(false)
+    // Сохраняем что пользователь согласился на этот квиз (в рамках вкладки)
+    sessionStorage.setItem(hasAgreedKey, 'true')
   }
 
   // Отмена квиза

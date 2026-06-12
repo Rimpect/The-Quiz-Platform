@@ -1,30 +1,38 @@
 import React, { useState, useEffect } from 'react'
 
 import { Button, Input } from '@shared'
+import { client } from '@shared/api/client'
 import { Save } from 'lucide-react'
+import { toast } from 'sonner'
 
 import styles from './ProfileForm.module.scss'
 
 export function ProfileForm({ user }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!user) return
-
     setName(user.name || '')
     setEmail(user.email || '')
   }, [user])
-  const handleSave = () => {
-    // TODO: api request
 
-    console.log({
-      name,
-      email,
-    })
-
-    alert('Профиль обновлен')
+  const handleSave = async () => {
+    try {
+      setLoading(true)
+      await client('/users/me', {
+        method: 'PUT',
+        body: JSON.stringify({ nickname: name, email }),
+      })
+      toast.success('Профиль обновлён')
+    } catch (e) {
+      toast.error(e.message || 'Ошибка сохранения')
+    } finally {
+      setLoading(false)
+    }
   }
+
   return (
     <div>
       <div className={styles.field}>
@@ -47,8 +55,13 @@ export function ProfileForm({ user }) {
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
-      <Button variant="white" icon={<Save />} onClick={handleSave}>
-        Сохранить изменения
+      <Button
+        variant="white"
+        icon={<Save />}
+        onClick={handleSave}
+        disabled={loading}
+      >
+        {loading ? 'Сохранение...' : 'Сохранить изменения'}
       </Button>
     </div>
   )

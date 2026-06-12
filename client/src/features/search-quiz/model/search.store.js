@@ -5,10 +5,10 @@ const createInitialFilters = () => ({
   difficulty: null,
   typeQuestions: [],
   mediaType: [],
-  numberOfQuestionsFrom: 1,
-  numberOfQuestionsTo: 100,
-  durationFrom: 5,
-  durationTo: 180,
+  numberOfQuestionsFrom: 0,
+  numberOfQuestionsTo: null,
+  durationFrom: 0,
+  durationTo: null,
   typeQuiz: null,
 })
 

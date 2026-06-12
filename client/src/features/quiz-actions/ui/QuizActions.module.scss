@@ -1,5 +1,13 @@
+@use '/src/app/GlobalStyles/media' as *;
+
 .container {
   display: flex;
   justify-content: space-between;
   gap: 20px;
+
+  // На мобиле кнопки друг под другом: «Ответить» сверху, «Пропустить» снизу
+  @include mobile {
+    flex-direction: column;
+    gap: 12px;
+  }
 }

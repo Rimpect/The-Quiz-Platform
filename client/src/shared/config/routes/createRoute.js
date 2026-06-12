@@ -1,5 +1,17 @@
+import {
+  getQuizRoute,
+  getQuizDescriptionRoute,
+  getFinishQuizRoute,
+  getLobbyRatingRoute,
+  getLobbyTeamsRoute,
+  getLeaderboardRatingRoute,
+} from './paths'
+
 export const createRoute = {
-  quiz: (id) => `/QuizPage/${id}`,
-  quizDescription: (id) => `/QuizDescription/${id}`,
-  finishQuiz: (id) => `/FinishQuizPage/${id}`,
+  quiz: getQuizRoute,
+  quizDescription: getQuizDescriptionRoute,
+  finishQuiz: getFinishQuizRoute,
+  lobbyRating: getLobbyRatingRoute,
+  lobbyTeams: getLobbyTeamsRoute,
+  leaderboardRating: getLeaderboardRatingRoute,
 }

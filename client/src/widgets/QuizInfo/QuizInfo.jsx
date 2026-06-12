@@ -5,9 +5,18 @@ import styles from './QuizInfo.module.scss'
 
 export function QuizInfo({ quiz, onApprove, onReject, onView }) {
   const difficultyMap = {
+    easy: 'easy',
+    medium: 'medium',
+    hard: 'hard',
     Легкий: 'easy',
     Средний: 'medium',
     Сложный: 'hard',
+  }
+
+  const difficultyLabels = {
+    easy: 'Лёгкий',
+    medium: 'Средний',
+    hard: 'Сложный',
   }
 
   const statusLabels = {
@@ -35,20 +44,26 @@ export function QuizInfo({ quiz, onApprove, onReject, onView }) {
             <span className={styles.metaItem}>Категория: {quiz.category}</span>
             <Dot />
             <span className={styles.metaItem}>
-              Вопросов: {quiz.questionCount}
+              Вопросов: {quiz.total_questions ?? quiz.questionCount ?? 0}
             </span>
             <Dot />
             <span className={styles.metaItem}>
               Сложность:
               <Badge
-                variant={difficultyMap[quiz.difficulty] || 'medium'}
+                variant={difficultyMap[quiz.difficulty] || 'easy'}
                 size="sm"
               >
-                {quiz.difficulty}
+                {difficultyLabels[quiz.difficulty] ||
+                  quiz.difficulty ||
+                  'Лёгкий'}
               </Badge>
             </span>
             <Dot />
-            <span className={styles.metaItem}> {quiz.createdAt}</span>
+            <span className={styles.metaItem}>
+              {quiz.created_at
+                ? new Date(quiz.created_at).toLocaleDateString('ru-RU')
+                : quiz.createdAt || ''}
+            </span>
           </div>
         </div>
 

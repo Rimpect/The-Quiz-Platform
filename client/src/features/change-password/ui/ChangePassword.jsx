@@ -1,11 +1,50 @@
 import { useState } from 'react'
 
 import { Button, Input } from '@shared'
+import { client } from '@shared/api/client'
+import { Eye, EyeOff } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { changePasswordSchema } from '../model/schema/changePasswordSchema'
 
 import styles from './ChangePassword.module.scss'
+
+function PasswordField({ label, value, onChange }) {
+  const [show, setShow] = useState(false)
+  return (
+    <div className={styles.field}>
+      <label>{label}</label>
+      <div style={{ position: 'relative' }}>
+        <Input
+          type={show ? 'text' : 'password'}
+          value={value}
+          onChange={onChange}
+          style={{ paddingRight: '2.5rem' }}
+        />
+        <button
+          type="button"
+          onClick={() => setShow((s) => !s)}
+          style={{
+            position: 'absolute',
+            right: '0.75rem',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: 0,
+            display: 'flex',
+            alignItems: 'center',
+            color: 'var(--color-text-secondary, #888)',
+          }}
+          tabIndex={-1}
+        >
+          {show ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </div>
+    </div>
+  )
+}
 
 export function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState('')
@@ -14,7 +53,6 @@ export function ChangePassword() {
   const [loading, setLoading] = useState(false)
 
   const handleChangePassword = async () => {
-    // 1. Валидация через Zod
     const result = changePasswordSchema.safeParse({
       currentPassword,
       newPassword,
@@ -22,36 +60,23 @@ export function ChangePassword() {
     })
 
     if (!result.success) {
-      const errors = result.error.flatten().fieldErrors
-
       const firstError = Object.values(result.error.flatten().fieldErrors)
         .flat()
         .find(Boolean)
-
-      if (firstError) {
-        toast.error(firstError)
-        return
-      }
+      if (firstError) toast.error(firstError)
       return
     }
 
     try {
       setLoading(true)
-
-      // 2. MOCK логика (имитация бэка)
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // пример "неверного пароля"
-          if (currentPassword !== '123') {
-            reject(new Error('Неверный текущий пароль'))
-          } else {
-            resolve(true)
-          }
-        }, 800)
+      await client('/users/me/change-password', {
+        method: 'POST',
+        body: JSON.stringify({
+          current_password: currentPassword,
+          new_password: newPassword,
+        }),
       })
-
       toast.success('Пароль успешно изменён')
-
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
@@ -66,32 +91,21 @@ export function ChangePassword() {
     <div className={styles.card}>
       <h2 className={styles.title}>Изменение пароля</h2>
 
-      <div className={styles.field}>
-        <label>Текущий пароль</label>
-        <Input
-          type="password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-        />
-      </div>
-
-      <div className={styles.field}>
-        <label>Новый пароль</label>
-        <Input
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
-      </div>
-
-      <div className={styles.field}>
-        <label>Подтвердите пароль</label>
-        <Input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
-      </div>
+      <PasswordField
+        label="Текущий пароль"
+        value={currentPassword}
+        onChange={(e) => setCurrentPassword(e.target.value)}
+      />
+      <PasswordField
+        label="Новый пароль"
+        value={newPassword}
+        onChange={(e) => setNewPassword(e.target.value)}
+      />
+      <PasswordField
+        label="Подтвердите пароль"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      />
 
       <Button
         variant="white"

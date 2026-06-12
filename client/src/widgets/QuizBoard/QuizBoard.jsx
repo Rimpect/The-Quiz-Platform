@@ -16,33 +16,33 @@ export function QuizBoard({ currentPage, onPageChange }) {
   const [open, setOpen] = useState(false)
   const { quizzes, loading, error } = useQuizzes()
 
-  const approvedQuizzes = quizzes.filter((quiz) => quiz.status === 'approved')
-
   const { paginatedQuizList, totalPages, activePage, filteredQuizList } =
-    useQuizBoard(approvedQuizzes, currentPage)
+    useQuizBoard(quizzes, currentPage)
 
   return (
     <div className={styles.containerBoard}>
-      <div className={styles.dashboardQuiz}>
-        {loading && <div>Загрузка квизов...</div>}
-        {error && <div className={styles.error}>{error}</div>}
-        {!loading && !error && filteredQuizList.length === 0 && (
-          <div>Квизы не найдены.</div>
-        )}
-        {!loading &&
-          !error &&
-          paginatedQuizList.map((quiz) => (
+      {loading && <div className={styles.statusMsg}>Загрузка квизов...</div>}
+      {error && <div className={styles.statusMsg}>{error}</div>}
+      {!loading && !error && filteredQuizList.length === 0 && (
+        <div className={styles.statusMsg}>Квизы не найдены.</div>
+      )}
+
+      {!loading && !error && paginatedQuizList.length > 0 && (
+        <div className={styles.dashboardQuiz}>
+          {paginatedQuizList.map((quiz) => (
             <Link key={quiz.id} to={getQuizDescriptionRoute(quiz.id)}>
               <QuizCard {...quiz} />
             </Link>
           ))}
+        </div>
+      )}
 
-        {open && (
-          <ModalNotifications open={open} onClose={() => setOpen(false)}>
-            буковки
-          </ModalNotifications>
-        )}
-      </div>
+      {open && (
+        <ModalNotifications open={open} onClose={() => setOpen(false)}>
+          буковки
+        </ModalNotifications>
+      )}
+
       <Pagination
         variant="main"
         pageInfo="hidden"

@@ -39,7 +39,8 @@ def create_user(db: Session, user: UserCreate) -> User:
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    #achievement_crud.initialize_user_achievements(db, db_user.id)
+    from . import crud_achievement as achievement_crud
+    achievement_crud.initialize_user_achievements(db, db_user.id)
     return db_user
 
 
@@ -66,19 +67,35 @@ def delete_user(db: Session, user_id: int) -> bool:
 
 def get_user_statistics(db: Session, user_id: int) -> dict:
     """Статистика пользователя"""
-    total_quizzes = db.query(quiz_result).filter(
+    completed = db.query(quiz_result).filter(
         quiz_result.user_id == user_id,
         quiz_result.is_completed == True
-    ).count()
+    ).all()
 
-    avg_score = db.query(func.avg(quiz_result.score)).filter(
-        quiz_result.user_id == user_id,
-        quiz_result.is_completed == True
-    ).scalar() or 0
+    total_quizzes = len(completed)
+
+    percentages = [
+        round(r.score / r.max_score * 100, 1)
+        for r in completed
+        if r.max_score and r.max_score > 0
+    ]
+
+    avg_score = round(sum(percentages) / len(percentages), 1) if percentages else 0
+    best_result = max(percentages) if percentages else 0
+
+    total_seconds = 0
+    for r in completed:
+        try:
+            total_seconds += r.duration_seconds or 0
+        except Exception:
+            pass
+    total_minutes = round(total_seconds / 60)
 
     return {
         "total_quizzes_completed": total_quizzes,
-        "average_score": float(avg_score)
+        "average_score": avg_score,
+        "best_result": best_result,
+        "total_minutes": total_minutes,
     }
 
 

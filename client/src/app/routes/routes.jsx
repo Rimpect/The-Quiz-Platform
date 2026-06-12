@@ -55,15 +55,15 @@ export const router = createBrowserRouter(
           element: <CreateQuizPage />,
         },
         {
-          path: ROUTES.leaderboardRating,
+          path: `${ROUTES.leaderboardRating}/:quizId`,
           element: <LeaderboardRatingPage />,
         },
         {
-          path: ROUTES.lobbyTeams,
+          path: `${ROUTES.lobbyTeams}/:quizId`,
           element: <LobbyTeamsPage />,
         },
         {
-          path: ROUTES.lobbyRating,
+          path: `${ROUTES.lobbyRating}/:id`,
           element: <LobbyRatingPage />,
         },
       ],
@@ -80,6 +80,10 @@ export const router = createBrowserRouter(
           element: <QuizDescriptionPage />,
         },
       ],
+    },
+    {
+      path: `${ROUTES.quiz}/:quizId/lobby`,
+      element: <LobbyTeamsPage />,
     },
     {
       path: `${ROUTES.quiz}/:id`,

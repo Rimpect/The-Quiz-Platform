@@ -12,7 +12,7 @@ from ..models.model_user import User, UserRole
 router = APIRouter(prefix="/categories", tags=["categories"])
 
 
-@router.get("/")
+@router.get("")
 def get_all_categories(
         db: Session = Depends(get_db),
 ) :
@@ -24,7 +24,7 @@ def get_all_categories(
     )
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 def create_category(
         category_data: CategoryCreate,
         db: Session = Depends(get_db),

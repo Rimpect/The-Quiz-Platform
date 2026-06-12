@@ -27,3 +27,4 @@ class AnswerResponse(AnswerBase):
 
     class Config:
         from_attributes = True
+        # order_number не является колонкой в модели — используется default из AnswerBase

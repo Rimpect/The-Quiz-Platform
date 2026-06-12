@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { useQuizzes } from '@entities/quiz'
+import { useAdminQuizzes } from '@entities/quiz/model/useAdminQuizzes'
 import { QuizSearch, useAdminSearch } from '@features'
 import { RejectQuizDialog, ViewQuizDialog } from '@shared'
 import { AdminPanelHeader, QuizTabs, StatsCards } from '@widgets'
@@ -15,23 +15,33 @@ export function AdminPanel({ onBack }) {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [filterStatus, setFilterStatus] = useState('pending')
   const [currentPage, setCurrentPage] = useState(1)
-  const { quizzes } = useQuizzes()
 
-  const searchedQuizzes = useAdminSearch(quizzes, searchQuery)
+  const {
+    allQuizzes,
+    pending,
+    approved,
+    rejected,
+    loading,
+    error,
+    handleApprove: doApprove,
+    handleReject: doReject,
+    fetchAll,
+  } = useAdminQuizzes()
+
+  const searchedQuizzes = useAdminSearch(allQuizzes, searchQuery)
 
   const handleFilterChange = (newStatus) => {
     setFilterStatus(newStatus)
     setCurrentPage(1)
   }
 
-  const pendingCount = quizzes.filter((q) => q.status === 'pending').length
-  const approvedCount = quizzes.filter((q) => q.status === 'approved').length
-  const rejectedCount = quizzes.filter((q) => q.status === 'rejected').length
-
-  const handleApprove = () => {
-    toast.success('Квиз одобрен', {
-      description: 'Эта функция еще не доработана',
-    })
+  const handleApprove = async (quiz) => {
+    try {
+      await doApprove(quiz)
+      toast.success('Квиз одобрен и опубликован')
+    } catch {
+      toast.error('Не удалось одобрить квиз')
+    }
   }
 
   const handleRejectClick = (quiz) => {
@@ -44,14 +54,24 @@ export function AdminPanel({ onBack }) {
     setIsViewDialogOpen(true)
   }
 
-  const handleRejectConfirm = () => {
+  const handleRejectConfirm = async () => {
     if (!selectedQuiz) return
-    toast.success('Квиз отклонен', {
-      description: 'Эта функция еще не доработана',
-    })
+    try {
+      await doReject(selectedQuiz)
+      toast.success('Квиз отклонён')
+    } catch {
+      toast.error('Не удалось отклонить квиз')
+    }
     setIsRejectDialogOpen(false)
     setSelectedQuiz(null)
   }
+
+  const handleDeleteQuiz = async () => {
+    await fetchAll()
+  }
+
+  if (loading) return <div style={{ padding: 32 }}>Загрузка...</div>
+  if (error) return <div style={{ padding: 32, color: 'red' }}>{error}</div>
 
   return (
     <div className={styles.adminPanel}>
@@ -59,9 +79,9 @@ export function AdminPanel({ onBack }) {
         <AdminPanelHeader onBack={onBack} />
 
         <StatsCards
-          pendingCount={pendingCount}
-          approvedCount={approvedCount}
-          rejectedCount={rejectedCount}
+          pendingCount={pending.length}
+          approvedCount={approved.length}
+          rejectedCount={rejected.length}
         />
 
         <QuizSearch query={searchQuery} onQueryChange={setSearchQuery} />
@@ -84,6 +104,7 @@ export function AdminPanel({ onBack }) {
         onClose={() => setIsViewDialogOpen(false)}
         onApprove={handleApprove}
         onRejectClick={handleRejectClick}
+        onDelete={handleDeleteQuiz}
       />
 
       <RejectQuizDialog

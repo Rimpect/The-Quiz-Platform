@@ -5,11 +5,12 @@ const questionSchemaItem = z.object({
   quizId: z.number(),
   question: z.string(),
   questionType: z.enum(['single', 'multiple']),
-  mediaType: z.enum(['image', 'audio', 'video']).optional(),
-  mediaUrl: z.string().url().optional(),
   options: z.array(z.string()),
   correctAnswers: z.array(z.number()),
   points: z.number(),
+  mediaUrl: z.string().nullable().optional(),
+  mediaType: z.string().nullable().optional(),
+  timeLimitSeconds: z.number().nullable().optional(),
 })
 
 export const questionSchema = z.array(questionSchemaItem)

@@ -16,19 +16,24 @@ export const useAuthStore = create(
         set({ isLoading: true, error: null })
         try {
           const response = await authService.login({ email, password })
+          // Server wraps data in response.data (ResponseFactory format)
+          const data = response?.data ?? response
           set({
-            token: response.access_token,
-            refreshToken: response.refresh_token,
+            token: data.access_token,
+            user: {
+              id: data.user_id,
+              nickname: data.nickname,
+              role: data.role,
+              photo_profile: data.photo_profile || null,
+            },
             isAuthenticated: true,
             isLoading: false,
           })
-          return response
+          return { success: true }
         } catch (err) {
-          set({
-            error: err.message || 'Login failed',
-            isLoading: false,
-          })
-          throw err
+          const message = err.message || 'Ошибка входа'
+          set({ error: message, isLoading: false })
+          return { success: false, error: message }
         }
       },
 
@@ -36,6 +41,9 @@ export const useAuthStore = create(
         set({ isLoading: true })
         try {
           await authService.logout()
+        } catch (_) {
+          // ignore logout errors
+        } finally {
           set({
             token: null,
             refreshToken: null,
@@ -43,8 +51,6 @@ export const useAuthStore = create(
             isAuthenticated: false,
             isLoading: false,
           })
-        } catch (err) {
-          set({ error: err.message, isLoading: false })
         }
       },
 
@@ -52,6 +58,9 @@ export const useAuthStore = create(
         set({ isLoading: true })
         try {
           await authService.logoutAll()
+        } catch (_) {
+          // ignore
+        } finally {
           set({
             token: null,
             refreshToken: null,
@@ -59,16 +68,15 @@ export const useAuthStore = create(
             isAuthenticated: false,
             isLoading: false,
           })
-        } catch (err) {
-          set({ error: err.message, isLoading: false })
         }
       },
 
       refreshAccessToken: async () => {
         try {
           const response = await authService.refresh()
-          set({ token: response.access_token })
-          return response.access_token
+          const data = response?.data ?? response
+          set({ token: data.access_token })
+          return data.access_token
         } catch (err) {
           set({ token: null, isAuthenticated: false })
           throw err
@@ -92,3 +100,11 @@ export const useAuthStore = create(
     },
   ),
 )
+
+export const useUser = () => useAuthStore((state) => state.user)
+export const useIsAuthenticated = () =>
+  useAuthStore((state) => state.isAuthenticated)
+export const useIsAdmin = () =>
+  useAuthStore((state) => state.user?.role === 'admin')
+export const useAuthLoading = () => useAuthStore((state) => state.isLoading)
+export const useAuthError = () => useAuthStore((state) => state.error)

@@ -11,7 +11,7 @@ from ..utils.security import get_current_user
 router = APIRouter(prefix="/questions/{question_id}/answers", tags=["answers"])
 
 
-@router.post("/", response_model=AnswerBase, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=AnswerBase, status_code=status.HTTP_201_CREATED)
 def create_answer(
         question_id: int,
         answer: AnswerCreate,
@@ -36,7 +36,7 @@ def create_answers_bulk(
     return crud_answer.create_answers_bulk(db, answers, question_id)
 
 
-@router.get("/", response_model=List[AnswerBase])
+@router.get("", response_model=List[AnswerBase])
 def read_answers(
         question_id: int,
         db: Session = Depends(get_db)

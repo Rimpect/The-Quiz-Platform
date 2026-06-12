@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Badge, Button, ROUTES, getQuizRoute } from '@shared'
+import { Badge, Button, ROUTES, getQuizRoute, getLeaderboardRatingRoute } from '@shared'
 import { ArrowLeft, Users, Clock, Trophy, Star, Award } from 'lucide-react'
 import { useParams, Link } from 'react-router-dom'
 
@@ -10,6 +10,7 @@ import styles from './QuizDescription.module.scss'
 
 export function QuizDescription({ quiz }) {
   const { id } = useParams()
+  const isCompetitive = quiz?.quiz_mode === 'competitive'
   const quizData = {
     id: quiz?.id ?? 2,
     title: quiz?.title ?? 'Великие научные открытия',
@@ -176,6 +177,19 @@ export function QuizDescription({ quiz }) {
                   Начать квиз
                 </Button>
               </Link>
+
+              {isCompetitive && (
+                <Link
+                  to={getLeaderboardRatingRoute(id)}
+                  state={{ quizMode: 'competitive' }}
+                  className={styles.leaderboardLink}
+                >
+                  <Button variant="white" size="medium" fullWidth>
+                    <Trophy size={18} />
+                    Таблица лидеров
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>

@@ -92,10 +92,47 @@ async def upload_multiple_media(
     return {"uploaded_files": uploaded_files}
 
 
+# ========== Простая загрузка (файл -> URL, без привязки к id) ==========
+# target: quiz | quiz_description | profile | question_image | question_audio | question_video
+SIMPLE_TARGETS = {
+    "quiz": ("quiz", "image"),
+    "quiz_description": ("quiz_description", "image"),
+    "profile": ("profile", "image"),
+    "question_image": ("question", "image"),
+    "question_audio": ("question", "audio"),
+    "question_video": ("question", "video"),
+}
+
+
+@router.post("/upload-simple")
+async def upload_simple(
+        target: str = Form(...),
+        file: UploadFile = File(...),
+):
+    """Загрузить файл в нужную папку и вернуть только URL.
+    Используется при создании сущностей, у которых ещё нет id (квиз/вопрос)."""
+    if target not in SIMPLE_TARGETS:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid target. Allowed: {list(SIMPLE_TARGETS.keys())}"
+        )
+
+    entity_type, media_type = SIMPLE_TARGETS[target]
+    file_info = media_utils.save_media_file(file, entity_type, 0, media_type)
+
+    return {
+        "url": media_utils.get_file_url(file_info["file_path"]),
+        "file_name": file_info["file_name"],
+        "media_type": file_info["media_type"],
+    }
+
+
 # ========== Получение файлов ==========
 @router.get("/{file_path:path}")
 async def get_media(file_path: str):
     """Получение медиафайла по пути"""
+    import mimetypes
+
     full_path = Path(media_utils.BASE_MEDIA_DIR) / file_path
 
     if not full_path.exists() or not full_path.is_file():
@@ -104,11 +141,15 @@ async def get_media(file_path: str):
             detail="File not found"
         )
 
-    return FileResponse(
-        path=full_path,
-        filename=full_path.name,
-        media_type="application/octet-stream"  # Браузер сам определит тип
-    )
+    # Правильный content-type по расширению (важно для audio/video и webp)
+    media_type, _ = mimetypes.guess_type(str(full_path))
+    if not media_type:
+        if full_path.suffix.lower() == ".webp":
+            media_type = "image/webp"
+        else:
+            media_type = "application/octet-stream"
+
+    return FileResponse(path=full_path, media_type=media_type)
 
 
 @router.get("/entity/{entity_type}/{entity_id}")

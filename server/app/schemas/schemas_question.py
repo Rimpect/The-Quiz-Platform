@@ -33,7 +33,7 @@ class QuestionResponse(QuestionBase):
     id: int
     quiz_id: int
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None
     answers: List[AnswerResponse] = []
 
     class Config:

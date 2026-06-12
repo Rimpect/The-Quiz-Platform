@@ -1,8 +1,14 @@
+@use '/src/app/GlobalStyles/media' as *;
+
 .contentCard {
   background: white;
   border-radius: 0.75rem;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  @include mobile {
+    padding: 1rem;
+  }
 }
 
 .tabsList {
@@ -13,6 +19,11 @@
   background: #f3f4f6;
   padding: 0.25rem;
   border-radius: 0.75rem;
+
+  // 4 вкладки тесно на мобиле → 2×2
+  @include mobile {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .tabTrigger {

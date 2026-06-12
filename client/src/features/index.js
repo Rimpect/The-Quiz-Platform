@@ -51,6 +51,6 @@ export {
   useAntiCheatContext,
   WarningModal,
 } from './anti-cheating'
-export { RulesModal } from './rules'
+export { RulesModal, RulesGate } from './rules'
 // фичи для поиска
 export { useAdminSearch, useQuizSearch } from './search-quiz'

@@ -1,20 +1,49 @@
 import React from 'react'
 
-import { Input, Textarea, Select, CoverUpload } from '@shared'
+import { useCategories } from '@entities/category/model/useCategories'
+import { Textarea, Select, CoverUpload, Input } from '@shared'
+import { Clock } from 'lucide-react'
 
 import { useQuizStore } from '../../model/quiz.store'
 
 import styles from './QuizStats.module.scss'
 
+const DIFFICULTY_OPTIONS = [
+  { value: 'easy', label: 'Лёгкий' },
+  { value: 'medium', label: 'Средний' },
+  { value: 'hard', label: 'Сложный' },
+]
+
+const QUIZ_MODE_OPTIONS = [
+  { value: 'single', label: 'Одиночный' },
+  { value: 'competitive', label: 'Соревновательный' },
+  { value: 'team', label: 'Командный' },
+]
+
 export function QuizStats() {
   const quiz = useQuizStore((state) => state.quiz)
-
   const setField = useQuizStore((state) => state.setField)
+  const { categories, loading: categoriesLoading } = useCategories()
+
+  const totalSeconds = quiz.questions.reduce(
+    (sum, q) => sum + (q.timeLimitSeconds || 0),
+    0,
+  )
+  const totalMinutes = Math.ceil(totalSeconds / 60)
+  const durationLabel =
+    totalSeconds > 0
+      ? totalMinutes === 1
+        ? '~1 мин'
+        : `~${totalMinutes} мин`
+      : 'без лимита'
 
   return (
     <div className={styles.container}>
       <div>
-        <CoverUpload />
+        <CoverUpload
+          value={quiz.coverUrl}
+          onUpload={(url) => setField('coverUrl', url)}
+        />
 
         <div className={styles.fieldGroup}>
           <label htmlFor="quiz-title">Название квиза *</label>
@@ -48,14 +77,19 @@ export function QuizStats() {
           <span>Категория *</span>
 
           <Select
-            value={quiz.category}
-            onChange={(e) => setField('category', e.target.value)}
+            value={quiz.categoryId}
+            onChange={(e) => setField('categoryId', e.target.value)}
+            disabled={categoriesLoading}
           >
-            <option value="">Выберите опцию</option>
+            <option value="">Выберите категорию</option>
 
-            <option value="frontend">Frontend</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={String(cat.id)}>
+                {cat.category_type}
+              </option>
+            ))}
 
-            <option value="backend">Backend</option>
+            <option value="other">Другое</option>
           </Select>
         </div>
 
@@ -68,22 +102,71 @@ export function QuizStats() {
           >
             <option value="">Выберите сложность</option>
 
-            <option value="easy">Easy</option>
-
-            <option value="medium">Medium</option>
+            {DIFFICULTY_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </Select>
         </div>
 
         <div className={styles.label}>
-          <span>Длительность (мин)</span>
+          <span>Тип квиза</span>
 
-          <Input
-            type="number"
-            value={quiz.duration}
-            onChange={(e) => setField('duration', Number(e.target.value))}
-            min={1}
-            step={1}
-          />
+          <Select
+            value={quiz.quizMode}
+            onChange={(e) => setField('quizMode', e.target.value)}
+          >
+            {QUIZ_MODE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </Select>
+        </div>
+
+        {(quiz.quizMode === 'team' || quiz.quizMode === 'competitive') && (
+          <div className={styles.label}>
+            <label htmlFor="lobby-wait-time">
+              Время ожидания в лобби (сек)
+            </label>
+
+            <Input
+              id="lobby-wait-time"
+              type="number"
+              min="10"
+              max="300"
+              value={quiz.lobbyWaitTimeSeconds || 30}
+              onChange={(e) =>
+                setField('lobbyWaitTimeSeconds', parseInt(e.target.value) || 30)
+              }
+            />
+          </div>
+        )}
+
+        {quiz.quizMode === 'team' && (
+          <div className={styles.label}>
+            <label htmlFor="max-team-members">Макс. игроков в команде</label>
+
+            <Input
+              id="max-team-members"
+              type="number"
+              min="1"
+              max="50"
+              value={quiz.maxTeamMembers || 10}
+              onChange={(e) =>
+                setField('maxTeamMembers', parseInt(e.target.value) || 10)
+              }
+            />
+          </div>
+        )}
+
+        <div className={styles.label}>
+          <span>Длительность</span>
+          <div className={styles.durationDisplay}>
+            <Clock size={16} />
+            <span>{durationLabel}</span>
+          </div>
         </div>
       </div>
     </div>

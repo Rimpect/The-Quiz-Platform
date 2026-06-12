@@ -1,69 +1,108 @@
+import { useState } from 'react'
+
 import { LeaderboardList } from '@entities'
+import { useLeaderboard } from '@entities/leaderboard/model/useLeaderboard'
+import { useSessionResults } from '@entities/leaderboard/model/useSessionResults'
 import { ROUTES, Button, Badge } from '@shared'
-import { Trophy } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Trophy, Users } from 'lucide-react'
+import { useParams, useLocation, Link } from 'react-router-dom'
 
 import styles from './LeaderboardPage.module.scss'
 
-const mockData = [
-  {
-    place: 1,
-    name: 'Team 1',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-    percent: 90,
-    time: '2:00',
+const MODE_CONFIG = {
+  team: {
+    badge: 'Командный',
+    variant: 'team',
+    icon: Users,
+    iconColor: '#22c55e',
   },
-  {
-    place: 2,
-    name: 'Team 2',
-    avatar: 'https://i.pravatar.cc/150?img=2',
-    percent: 80,
-    time: '2:00',
+  competitive: {
+    badge: 'Рейтинг',
+    variant: 'competitive',
+    icon: Trophy,
+    iconColor: '#a855f7',
   },
-  {
-    place: 3,
-    name: 'Team 3',
-    avatar: 'https://i.pravatar.cc/150?img=3',
-    percent: 70,
-    time: '2:00',
-  },
-  {
-    place: 4,
-    name: 'Team 4',
-    avatar: 'https://i.pravatar.cc/150?img=4',
-    percent: 60,
-    time: '2:00',
-  },
-  {
-    place: 5,
-    name: 'Team 5',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-    percent: 50,
-    time: '2:00',
-  },
-]
+}
 
 export function LeaderboardRatingPage() {
+  const { quizId } = useParams()
+  const { state } = useLocation()
+  const sessionId = state?.sessionId || null
+
+  const {
+    leaderboard,
+    loading: gLoading,
+    error: gError,
+  } = useLeaderboard(Number(quizId))
+  const {
+    results,
+    loading: sLoading,
+    error: sError,
+  } = useSessionResults(sessionId)
+
+  // Если пришли с сессии — по умолчанию показываем результаты группы
+  const [view, setView] = useState(sessionId ? 'session' : 'global')
+
+  const mode = state?.quizMode === 'team' ? 'team' : 'competitive'
+  const config = MODE_CONFIG[mode]
+  const Icon = config.icon
+
+  const isSession = view === 'session'
+  const items = isSession ? results : leaderboard
+  const loading = isSession ? sLoading : gLoading
+  const error = isSession ? sError : gError
+  const title = isSession
+    ? 'Результаты группы'
+    : 'Таблица лидеров (общий рейтинг)'
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.title}>
-          <Trophy size={32} color="blue" />
-          <span>Таблица лидеров</span>
+          <Icon size={32} color={config.iconColor} />
+          <span>{title}</span>
         </div>
         <div className={styles.badge}>
-          <Badge size="medium" variant="team">
-            {/* @TODO Добавить в Badge поддержку иконок */}
-            Командный режим
+          <Badge size="medium" variant={config.variant}>
+            {config.badge}
           </Badge>
           <Link to={ROUTES.main}>
             <Button variant="white" size="medium">
-              Назад к квизу
+              Назад к квизам
             </Button>
           </Link>
         </div>
       </div>
-      <LeaderboardList items={mockData} />
+
+      {sessionId && (
+        <div className={styles.tabs}>
+          <Button
+            variant={isSession ? 'black' : 'white'}
+            size="medium"
+            onClick={() => setView('session')}
+          >
+            Результаты группы
+          </Button>
+          <Button
+            variant={!isSession ? 'black' : 'white'}
+            size="medium"
+            onClick={() => setView('global')}
+          >
+            Общий рейтинг
+          </Button>
+        </div>
+      )}
+
+      {loading && (
+        <div style={{ padding: '2rem', textAlign: 'center' }}>Загрузка...</div>
+      )}
+      {error && <div style={{ padding: '2rem', color: 'red' }}>{error}</div>}
+      {!loading && items.length === 0 && (
+        <div style={{ padding: '2rem', textAlign: 'center', color: '#666' }}>
+          Нет данных для отображения
+        </div>
+      )}
+      {!loading && items.length > 0 && <LeaderboardList items={items} />}
     </div>
   )
 }

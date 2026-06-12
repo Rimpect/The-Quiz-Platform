@@ -38,6 +38,10 @@ class MediaFile(Base):
     file_size = Column(Integer, nullable=False)  # Размер в байтах
     mime_type = Column(String(100), nullable=False)  # MIME тип (image/jpeg, etc.)
 
+    # Доп. метаданные
+    alt_text = Column(String(500), nullable=True)  # Альтернативный текст
+    order_number = Column(Integer, default=0, nullable=False)  # Порядок (для нескольких файлов)
+
     # Временные метки
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -47,8 +51,8 @@ class MediaFile(Base):
 
     @property
     def url(self) -> str:
-        """Полный URL для доступа к файлу"""
-        return f"/media/{self.file_path}"
+        """Полный URL для доступа к файлу (через /api, чтобы шёл через прокси)"""
+        return f"/api/media/{self.file_path}"
 
     @property
     def file_extension(self) -> str:
