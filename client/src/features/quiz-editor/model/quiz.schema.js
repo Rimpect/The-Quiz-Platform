@@ -3,7 +3,9 @@ import { z } from 'zod'
 export const quizSchema = z.object({
   title: z.string().min(3, 'Название слишком короткое'),
 
-  description: z.string(),
+  description: z.string().min(1, 'Добавьте описание квиза'),
+
+  coverUrl: z.string().min(1, 'Загрузите обложку квиза'),
 
   categoryId: z.string().min(1, 'Выберите категорию'),
 

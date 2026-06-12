@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from 'react'
 import { TeamCard, QuizInfoCard } from '@entities'
 import { CreateTeamModal } from '@features'
 import { useGameLobby } from '@features/game-lobby/model/useGameLobby'
-import { Button, ROUTES } from '@shared'
-import { Clock } from 'lucide-react'
+import { Button, ROUTES, Input } from '@shared'
+import { Clock, Copy, Users } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -14,12 +14,15 @@ export function LobbyTeams({ quiz, quizId }) {
   const navigate = useNavigate()
   const startedRef = useRef(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [codeInput, setCodeInput] = useState('')
   const {
     sessionId,
     players,
     teams,
     lobbyStarted,
     lobbyTimeLeft,
+    joinCode,
+    cancelled,
     loading,
     myReady,
     myTeamId,
@@ -27,7 +30,12 @@ export function LobbyTeams({ quiz, quizId }) {
     createTeam,
     joinTeam,
     leaveTeam,
+    createLobby,
+    joinByCode,
+    leaveLobby,
   } = useGameLobby(quizId, 'team')
+
+  const leftRef = useRef(false)
 
   // Когда лобби стартовало (все готовы или истёк общий таймер) — переходим к квизу
   useEffect(() => {
@@ -38,8 +46,75 @@ export function LobbyTeams({ quiz, quizId }) {
     }
   }, [lobbyStarted, quizId, navigate, sessionId])
 
+  // Хост вышел — лобби закрыто, всех выкидывает с ошибкой
+  useEffect(() => {
+    if (cancelled && !leftRef.current && !startedRef.current) {
+      leftRef.current = true
+      toast.error('Хост покинул лобби — оно закрыто')
+      navigate(ROUTES.main, { replace: true })
+    }
+  }, [cancelled, navigate])
+
+  const handleLeave = async () => {
+    leftRef.current = true
+    await leaveLobby()
+    navigate(ROUTES.main, { replace: true })
+  }
+
   const handleCreateTeam = (newTeam) => {
     createTeam(newTeam.name)
+  }
+
+  const copyCode = () => {
+    navigator.clipboard?.writeText(joinCode).then(
+      () => toast.success('Код скопирован'),
+      () => {},
+    )
+  }
+
+  // ----- Пре-лобби: создать своё лобби или войти по коду -----
+  if (!sessionId) {
+    return (
+      <div className={styles.preLobby}>
+        <div className={styles.preCard}>
+          <Users size={40} className={styles.preIcon} />
+          <h1>{quiz.title}</h1>
+          <p className={styles.preHint}>Командный режим</p>
+
+          <Button
+            variant="black"
+            fullWidth
+            onClick={createLobby}
+            disabled={loading}
+          >
+            Создать лобби
+          </Button>
+
+          <div className={styles.preDivider}>или войдите по коду</div>
+
+          <div className={styles.codeRow}>
+            <Input
+              type="text"
+              placeholder="Код приглашения"
+              value={codeInput}
+              maxLength={6}
+              onChange={(e) => setCodeInput(e.target.value.toUpperCase())}
+            />
+            <Button
+              variant="green"
+              onClick={() => joinByCode(codeInput)}
+              disabled={loading || codeInput.trim().length < 4}
+            >
+              Войти
+            </Button>
+          </div>
+
+          <Link to={ROUTES.main} className={styles.preBack}>
+            Назад
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   // Маппинг команд с сервера в формат TeamCard
@@ -61,13 +136,25 @@ export function LobbyTeams({ quiz, quizId }) {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>{quiz.title}</h1>
-        <div className={styles.lobbyTimer}>
-          <Clock size={20} />
-          <span>
-            {lobbyTimeLeft !== null
-              ? `Старт через ${lobbyTimeLeft} сек`
-              : 'Ожидание...'}
-          </span>
+        <div className={styles.headerRight}>
+          {joinCode && (
+            <button
+              type="button"
+              className={styles.codeBadge}
+              onClick={copyCode}
+            >
+              Код: <strong>{joinCode}</strong>
+              <Copy size={16} />
+            </button>
+          )}
+          <div className={styles.lobbyTimer}>
+            <Clock size={20} />
+            <span>
+              {lobbyTimeLeft !== null
+                ? `Старт через ${lobbyTimeLeft} сек`
+                : 'Ожидание...'}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -86,7 +173,6 @@ export function LobbyTeams({ quiz, quizId }) {
             </Button>
           </div>
 
-          {loading && <div>Подключение к лобби...</div>}
           {!loading && uiTeams.length === 0 && (
             <div>Пока нет команд. Создайте первую!</div>
           )}
@@ -117,11 +203,9 @@ export function LobbyTeams({ quiz, quizId }) {
             </div>
           )}
 
-          <Link to={ROUTES.main}>
-            <Button variant="white" fullWidth>
-              Покинуть лобби
-            </Button>
-          </Link>
+          <Button variant="white" fullWidth onClick={handleLeave}>
+            Покинуть лобби
+          </Button>
         </div>
       </div>
 

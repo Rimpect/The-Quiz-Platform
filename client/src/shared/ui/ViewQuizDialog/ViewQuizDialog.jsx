@@ -5,6 +5,8 @@ import { Eye, Check, X, Trash2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
+import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog'
+
 import styles from './ViewQuizDialog.module.scss'
 
 export function ViewQuizDialog({
@@ -18,6 +20,8 @@ export function ViewQuizDialog({
   const navigate = useNavigate()
   const [fullQuiz, setFullQuiz] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     if (isOpen && quiz?.id) {
@@ -44,27 +48,36 @@ export function ViewQuizDialog({
   }
 
   const handleDelete = async () => {
-    if (!window.confirm(`Удалить квиз "${quiz.title}"?`)) return
+    setDeleting(true)
     try {
       await client(`/admin/quizzes/${quiz.id}`, { method: 'DELETE' })
       toast.success('Квиз удалён')
+      setConfirmOpen(false)
       onClose()
       if (onDelete) onDelete(quiz.id)
     } catch (e) {
       toast.error(e.message || 'Не удалось удалить квиз')
+    } finally {
+      setDeleting(false)
     }
   }
 
   return (
     <div className={styles.dialogOverlay} onClick={onClose}>
-      <div className={styles.dialogContent} onClick={(e) => e.stopPropagation()}>
+      <div
+        className={styles.dialogContent}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className={styles.dialogHeader}>
           <h2 className={styles.dialogTitle}>Просмотр квиза</h2>
           <p className={styles.dialogDescription}>Детальная информация</p>
         </div>
 
         {loading ? (
-          <div className={styles.dialogBody} style={{ textAlign: 'center', padding: '2rem' }}>
+          <div
+            className={styles.dialogBody}
+            style={{ textAlign: 'center', padding: '2rem' }}
+          >
             Загрузка...
           </div>
         ) : (
@@ -98,17 +111,23 @@ export function ViewQuizDialog({
                 </div>
                 <div>
                   <p className={styles.detailLabel}>Вопросов</p>
-                  <p className={styles.detailValue}>{quiz.total_questions || 0}</p>
+                  <p className={styles.detailValue}>
+                    {quiz.total_questions || 0}
+                  </p>
                 </div>
                 <div>
                   <p className={styles.detailLabel}>Длительность</p>
                   <p className={styles.detailValue}>
-                    {quiz.duration_minutes ? `${quiz.duration_minutes} мин` : 'без лимита'}
+                    {quiz.duration_minutes
+                      ? `${quiz.duration_minutes} мин`
+                      : 'без лимита'}
                   </p>
                 </div>
                 <div>
                   <p className={styles.detailLabel}>Тип</p>
-                  <p className={styles.detailValue}>{quiz.quiz_mode || 'одиночный'}</p>
+                  <p className={styles.detailValue}>
+                    {quiz.quiz_mode || 'одиночный'}
+                  </p>
                 </div>
               </div>
 
@@ -121,29 +140,40 @@ export function ViewQuizDialog({
             {/* Вопросы и ответы */}
             {fullQuiz?.questions && fullQuiz.questions.length > 0 && (
               <div className={styles.questionsSection}>
-                <h4 className={styles.questionsTitle}>Вопросы и ответы (30 сек на проверку)</h4>
+                <h4 className={styles.questionsTitle}>
+                  Вопросы и ответы (30 сек на проверку)
+                </h4>
                 {fullQuiz.questions.map((question, qIdx) => (
                   <div key={question.id} className={styles.questionBlock}>
                     <div className={styles.questionHeader}>
-                      <span className={styles.questionNum}>Вопрос {qIdx + 1}</span>
-                      <span className={styles.timeLimit}>
-                        30 сек
+                      <span className={styles.questionNum}>
+                        Вопрос {qIdx + 1}
                       </span>
+                      <span className={styles.timeLimit}>30 сек</span>
                     </div>
-                    <p className={styles.questionText}>{question.question_text}</p>
+                    <p className={styles.questionText}>
+                      {question.question_text}
+                    </p>
                     <div className={styles.answersList}>
-                      {question.answers && question.answers.map((answer, aIdx) => (
-                        <div
-                          key={answer.id}
-                          className={`${styles.answerItem} ${
-                            answer.is_correct ? styles.answerCorrect : ''
-                          }`}
-                        >
-                          <span className={styles.answerNum}>{aIdx + 1}.</span>
-                          <span className={styles.answerText}>{answer.answer_text}</span>
-                          {answer.is_correct && <span className={styles.checkMark}>✓</span>}
-                        </div>
-                      ))}
+                      {question.answers &&
+                        question.answers.map((answer, aIdx) => (
+                          <div
+                            key={answer.id}
+                            className={`${styles.answerItem} ${
+                              answer.is_correct ? styles.answerCorrect : ''
+                            }`}
+                          >
+                            <span className={styles.answerNum}>
+                              {aIdx + 1}.
+                            </span>
+                            <span className={styles.answerText}>
+                              {answer.answer_text}
+                            </span>
+                            {answer.is_correct && (
+                              <span className={styles.checkMark}>✓</span>
+                            )}
+                          </div>
+                        ))}
                     </div>
                   </div>
                 ))}
@@ -173,16 +203,14 @@ export function ViewQuizDialog({
                 </>
               )}
 
-              {quiz.status === 'approved' && (
-                <Button
-                  variant="red"
-                  fullWidth
-                  icon={<Trash2 size={18} />}
-                  onClick={handleDelete}
-                >
-                  Удалить
-                </Button>
-              )}
+              <Button
+                variant="red"
+                fullWidth
+                icon={<Trash2 size={18} />}
+                onClick={() => setConfirmOpen(true)}
+              >
+                Удалить
+              </Button>
 
               <Button
                 variant="transparent"
@@ -205,6 +233,15 @@ export function ViewQuizDialog({
           </Button>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title="Удалить квиз?"
+        message={`Квиз "${quiz.title}" будет удалён безвозвратно.`}
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   )
 }

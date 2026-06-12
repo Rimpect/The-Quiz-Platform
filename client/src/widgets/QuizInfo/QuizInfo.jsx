@@ -1,9 +1,29 @@
-import { Badge, Button } from '@shared'
-import { Eye, Dot, Users, Check, X } from 'lucide-react'
+import { useState } from 'react'
+
+import { Badge, Button, client, ConfirmDialog } from '@shared'
+import { Eye, Dot, Users, Check, X, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 import styles from './QuizInfo.module.scss'
 
-export function QuizInfo({ quiz, onApprove, onReject, onView }) {
+export function QuizInfo({ quiz, onApprove, onReject, onView, onDelete }) {
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  const handleDelete = async () => {
+    setDeleting(true)
+    try {
+      await client(`/admin/quizzes/${quiz.id}`, { method: 'DELETE' })
+      toast.success('Квиз удалён')
+      setConfirmOpen(false)
+      onDelete?.(quiz.id)
+    } catch (e) {
+      toast.error(e.message || 'Не удалось удалить квиз')
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   const difficultyMap = {
     easy: 'easy',
     medium: 'medium',
@@ -96,8 +116,25 @@ export function QuizInfo({ quiz, onApprove, onReject, onView }) {
           >
             Просмотр
           </Button>
+          <Button
+            variant="red"
+            size="medium"
+            icon={<Trash2 size={20} />}
+            onClick={() => setConfirmOpen(true)}
+          >
+            Удалить
+          </Button>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title="Удалить квиз?"
+        message={`Квиз "${quiz.title}" будет удалён безвозвратно.`}
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   )
 }

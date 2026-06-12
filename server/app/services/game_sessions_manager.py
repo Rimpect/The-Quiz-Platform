@@ -26,6 +26,8 @@ class Player:
     is_leader: bool = False        # лидер команды (создатель)
     score: int = 0
     correct_count: int = 0
+    is_banned: bool = False  # забанен анти-читом
+    last_seen: datetime = field(default_factory=datetime.utcnow)  # для heartbeat
     answers: Dict[int, dict] = field(default_factory=dict)  # {question_id: {answer_ids, time_spent}}
     answered_indices: set = field(default_factory=set)  # индексы вопросов, на которые игрок ответил
     # Финальный результат прохождения (для таблицы результатов по сессии)
@@ -54,6 +56,11 @@ class GameSessionMemory:
     lobby_started: bool = False
     # Время ожидания в лобби (сек) — общий серверный отсчёт от created_at
     lobby_wait_seconds: int = 30
+    # Код приглашения (для командных хост-лобби)
+    join_code: str = ""
+    # Хост лобби и флаг отмены (хост вышел)
+    host_id: Optional[int] = None
+    cancelled: bool = False
 
     # Для командных игр
     team_id: Optional[str] = None
@@ -84,18 +91,20 @@ class GameSessionMemory:
         return self.players.get(user_id)
 
     def all_players_ready(self) -> bool:
-        """Все ли игроки нажали 'Готов' (минимум 1 игрок)"""
-        if not self.players:
+        """Все ли активные игроки нажали 'Готов' (минимум 1 игрок)"""
+        active = [p for p in self.players.values() if not p.is_banned]
+        if not active:
             return False
-        return all(player.is_ready for player in self.players.values())
+        return all(player.is_ready for player in active)
 
     def all_answered_current(self) -> bool:
-        """Все ли игроки ответили на текущий вопрос (для раннего перехода)."""
-        if not self.players:
+        """Все ли активные игроки ответили на текущий вопрос (ранний переход).
+        Забаненные не учитываются — чтобы не блокировать остальных."""
+        active = [p for p in self.players.values() if not p.is_banned]
+        if not active:
             return False
         return all(
-            self.current_question_index in p.answered_indices
-            for p in self.players.values()
+            self.current_question_index in p.answered_indices for p in active
         )
 
     def prune_empty_teams(self):
@@ -173,6 +182,7 @@ class GameSessionsManager:
         question_time_limits: Optional[list] = None,
         lobby_wait_seconds: int = 30,
         max_team_members: int = 10,
+        join_code: str = "",
     ) -> str:
         """Создать новую игровую сессию"""
         session_id = str(uuid.uuid4())
@@ -188,10 +198,97 @@ class GameSessionsManager:
             question_time_limits=question_time_limits or [],
             lobby_wait_seconds=lobby_wait_seconds or 30,
             max_team_members=max_team_members or 10,
+            join_code=join_code,
         )
 
         self.sessions[session_id] = session
         return session_id
+
+    def generate_join_code(self) -> str:
+        """Сгенерировать уникальный 6-значный код приглашения."""
+        import random
+        import string
+        alphabet = string.ascii_uppercase + string.digits
+        existing = {s.join_code for s in self.sessions.values() if s.join_code}
+        for _ in range(50):
+            code = "".join(random.choices(alphabet, k=6))
+            if code not in existing:
+                return code
+        return uuid.uuid4().hex[:6].upper()
+
+    def find_by_code(self, code: str) -> Optional[str]:
+        """Найти session_id открытого лобби по коду приглашения."""
+        if not code:
+            return None
+        code = code.strip().upper()
+        now = datetime.utcnow()
+        for sid, session in self.sessions.items():
+            if (now - session.created_at) > self.session_ttl:
+                continue
+            if (
+                session.join_code == code
+                and not session.lobby_started
+                and not session.is_finished()
+                and not session.cancelled
+            ):
+                return sid
+        return None
+
+    def leave_lobby(self, session_id: str, user_id: int) -> bool:
+        """Игрок покидает лобби. Если вышел ХОСТ и игра ещё не началась —
+        лобби отменяется для всех. Возвращает True, если лобби отменено."""
+        session = self.get_session(session_id)
+        if not session:
+            return False
+
+        is_host = session.host_id is not None and user_id == session.host_id
+        # Отмена только в фазе лобби: во время квиза выход хоста ничего не ломает
+        if is_host and not session.lobby_started:
+            session.cancelled = True
+            return True
+
+        # Обычный игрок — убираем из сессии и чистим пустые команды
+        if user_id in session.players:
+            del session.players[user_id]
+            session.prune_empty_teams()
+        return False
+
+    def touch_player(self, session_id: str, user_id: int) -> None:
+        """Heartbeat: отметить, что игрок на связи (на каждом опросе)."""
+        session = self.get_session(session_id)
+        if not session:
+            return
+        player = session.get_player(user_id)
+        if player:
+            player.last_seen = datetime.utcnow()
+
+    def ban_player(self, session_id: str, user_id: int) -> None:
+        """Забанить игрока анти-читом (только его, остальные продолжают)."""
+        session = self.get_session(session_id)
+        if not session:
+            return
+        player = session.get_player(user_id)
+        if player:
+            player.is_banned = True
+
+    def check_disconnects(self, session_id: str, timeout_seconds: int = 12) -> None:
+        """Отвал по таймауту heartbeat. В фазе ЛОББИ: хост отвалился → отмена,
+        обычный игрок → убираем. Во время квиза не трогаем (идёт по таймеру)."""
+        session = self.get_session(session_id)
+        if not session or session.lobby_started or session.cancelled:
+            return
+        now = datetime.utcnow()
+        dead = [
+            uid for uid, p in session.players.items()
+            if (now - p.last_seen).total_seconds() > timeout_seconds
+        ]
+        for uid in dead:
+            if session.host_id is not None and uid == session.host_id:
+                session.cancelled = True
+                return
+            del session.players[uid]
+        if dead:
+            session.prune_empty_teams()
 
     def sync_progress(self, session_id: str) -> None:
         """Двигает общий прогресс при опросе состояния:
@@ -251,15 +348,56 @@ class GameSessionsManager:
         return True
 
     def get_results(self, session_id: str) -> Optional[list]:
-        """Таблица результатов по сессии (только те, кто играл вместе сейчас)."""
+        """Таблица результатов по сессии (только те, кто играл вместе сейчас).
+        Командный режим — агрегат по командам, остальные — по игрокам."""
         session = self.get_session(session_id)
         if not session:
             return None
 
-        # Имена команд для team-режима
-        finished = [p for p in session.players.values() if p.has_finished]
-        finished.sort(key=lambda p: (-p.result_score, p.result_duration))
+        finished = [
+            p for p in session.players.values()
+            if p.has_finished and not p.is_banned
+        ]
 
+        # ---- Командный режим: одна строка на команду ----
+        if session.game_mode == GameMode.TEAM:
+            teams = {}  # team_id -> агрегат
+            for p in finished:
+                tid = p.team_id
+                if not tid:
+                    continue
+                agg = teams.setdefault(tid, {
+                    "name": session.teams.get(tid, "Команда"),
+                    "score": 0, "max": 0, "members": 0, "duration": 0,
+                })
+                agg["score"] += p.result_score
+                agg["max"] += p.result_max
+                agg["duration"] += p.result_duration
+                agg["members"] += 1
+
+            rows = list(teams.values())
+            # Сортировка: больше очков, при равенстве — меньше среднее время
+            rows.sort(key=lambda t: (-t["score"], t["duration"] / max(t["members"], 1)))
+
+            results = []
+            for idx, t in enumerate(rows, 1):
+                percent = int(round(t["score"] / t["max"] * 100)) if t["max"] else 0
+                avg = t["duration"] // max(t["members"], 1)
+                results.append({
+                    "place": idx,
+                    "name": t["name"],
+                    "avatar": "",          # у команд нет иконки
+                    "is_team": True,
+                    "score": t["score"],
+                    "max_score": t["max"],
+                    "percent": percent,
+                    "members": t["members"],
+                    "time": f"{avg // 60}:{avg % 60:02d}",
+                })
+            return results
+
+        # ---- По игрокам ----
+        finished.sort(key=lambda p: (-p.result_score, p.result_duration))
         results = []
         for idx, p in enumerate(finished, 1):
             percent = (
@@ -273,6 +411,7 @@ class GameSessionsManager:
                 "user_id": p.user_id,
                 "name": p.nickname or "Игрок",
                 "avatar": p.photo_profile or "",
+                "is_team": False,
                 "score": p.result_score,
                 "max_score": p.result_max,
                 "percent": percent,
@@ -304,6 +443,7 @@ class GameSessionsManager:
                 and session.game_mode == game_mode
                 and not session.lobby_started
                 and not session.is_finished()
+                and not session.cancelled
             ):
                 return sid
         return None
@@ -502,6 +642,9 @@ class GameSessionsManager:
             'is_finished': session.is_finished(),
             'lobby_started': session.lobby_started,
             'lobby_time_left': session.lobby_time_left(),
+            'join_code': session.join_code,
+            'cancelled': session.cancelled,
+            'host_id': session.host_id,
             'teams': teams,
             'players': [
                 {

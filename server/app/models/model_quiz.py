@@ -43,6 +43,10 @@ class Quiz(Base) :
         return self.category_ref.category_type if self.category_ref else None
 
     @property
+    def author_name(self) -> str :
+        return self.author.nickname if self.author else None
+
+    @property
     def total_questions(self) -> int :
         return len(self.questions) if self.questions else 0
 

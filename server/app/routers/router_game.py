@@ -34,6 +34,15 @@ class JoinLobbyRequest(BaseModel):
     game_mode: str  # "competitive", "team"
 
 
+class CreateLobbyRequest(BaseModel):
+    quiz_id: int
+    game_mode: str = "team"
+
+
+class JoinByCodeRequest(BaseModel):
+    code: str
+
+
 class AnsweredRequest(BaseModel):
     question_index: int
 
@@ -206,6 +215,109 @@ def join_lobby(
     return ResponseFactory.success(data=state, message="Joined lobby")
 
 
+@router.post("/lobby/create")
+def create_lobby(
+    request: CreateLobbyRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Создать новое хост-лобби с кодом приглашения (для командного режима)."""
+    quiz = quiz_crud.get_quiz(db, request.quiz_id)
+    if not quiz:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+
+    try:
+        game_mode = GameMode(request.game_mode)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid game mode")
+
+    time_limits = [q.time_limit_seconds for q in quiz.questions]
+    code = game_sessions_manager.generate_join_code()
+    session_id = game_sessions_manager.create_session(
+        quiz_id=request.quiz_id,
+        quiz_title=quiz.title,
+        total_questions=len(quiz.questions),
+        game_mode=game_mode,
+        question_time_limits=time_limits,
+        lobby_wait_seconds=getattr(quiz, "lobby_wait_time_seconds", 30) or 30,
+        max_team_members=getattr(quiz, "max_team_members", 10) or 10,
+        join_code=code,
+    )
+    game_crud.create_game_session(
+        db,
+        session_id=session_id,
+        quiz_id=request.quiz_id,
+        game_mode=request.game_mode,
+    )
+
+    # Назначаем создателя хостом лобби
+    host_session = game_sessions_manager.get_session(session_id)
+    if host_session:
+        host_session.host_id = current_user.id
+
+    game_sessions_manager.add_player(
+        session_id,
+        current_user.id,
+        current_user.nickname,
+        getattr(current_user, "photo_profile", "") or "",
+    )
+
+    state = game_sessions_manager.get_session_state(session_id)
+    return ResponseFactory.success(data=state, message="Lobby created")
+
+
+@router.post("/lobby/join-by-code")
+def join_by_code(
+    request: JoinByCodeRequest,
+    current_user: User = Depends(get_current_user),
+):
+    """Войти в лобби по коду приглашения."""
+    session_id = game_sessions_manager.find_by_code(request.code)
+    if not session_id:
+        raise HTTPException(status_code=404, detail="Лобби с таким кодом не найдено или уже началось")
+
+    game_sessions_manager.add_player(
+        session_id,
+        current_user.id,
+        current_user.nickname,
+        getattr(current_user, "photo_profile", "") or "",
+    )
+
+    state = game_sessions_manager.get_session_state(session_id)
+    return ResponseFactory.success(data=state, message="Joined lobby by code")
+
+
+@router.post("/sessions/{session_id}/leave")
+def leave_lobby(
+    session_id: str,
+    current_user: User = Depends(get_current_user),
+):
+    """Покинуть лобби. Если вышел хост — лобби закрывается для всех."""
+    session = game_sessions_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    cancelled = game_sessions_manager.leave_lobby(session_id, current_user.id)
+    return ResponseFactory.success(
+        data={"cancelled": cancelled}, message="Left lobby"
+    )
+
+
+@router.post("/sessions/{session_id}/banned")
+def report_banned(
+    session_id: str,
+    current_user: User = Depends(get_current_user),
+):
+    """Игрок забанен анти-читом. Бан per-player: остальные продолжают,
+    даже если забанен хост."""
+    session = game_sessions_manager.get_session(session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    game_sessions_manager.ban_player(session_id, current_user.id)
+    return ResponseFactory.success(data={"banned": True}, message="Player banned")
+
+
 @router.post("/sessions/{session_id}/teams/create")
 def create_team(
     session_id: str,
@@ -349,11 +461,15 @@ def get_session_state(
     session_id: str,
     current_user: User = Depends(get_current_user),
 ):
-    """Получить состояние игровой сессии (с авто-переходом по таймеру)"""
+    """Получить состояние игровой сессии (heartbeat + авто-переход по таймеру)"""
     session = game_sessions_manager.get_session(session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found")
 
+    # Heartbeat: этот игрок на связи
+    game_sessions_manager.touch_player(session_id, current_user.id)
+    # Отвалившиеся (нет heartbeat) — в фазе лобби: хост → отмена, игрок → выход
+    game_sessions_manager.check_disconnects(session_id)
     # Двигаем общий прогресс вопросов по серверному таймеру
     game_sessions_manager.sync_progress(session_id)
 

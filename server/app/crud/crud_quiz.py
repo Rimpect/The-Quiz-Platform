@@ -56,15 +56,6 @@ def update_quiz_cover(db: Session, quiz_id: int, cover_url: str) -> Optional[Qui
     return db_quiz
 
 
-def delete_quiz(db: Session, quiz_id: int) -> bool:
-    db_quiz = get_quiz(db, quiz_id)
-    if db_quiz:
-        db.delete(db_quiz)
-        db.commit()
-        return True
-    return False
-
-
 def get_quiz_with_details(db: Session, quiz_id: int) -> Optional[Quiz]:
     """Получение квиза со всеми вопросами и ответами"""
     return db.query(Quiz).options(

@@ -182,11 +182,14 @@ def delete_quiz(
         db: Session = Depends(get_db),
         current_user: User = Depends(get_current_user)
 ):
-    """Удаление квиза"""
-    if current_user.role == "admin":
-        if not crud_quiz.delete_quiz(db, quiz_id):
-            raise HTTPException(status_code=404, detail="Quiz not found")
-    raise HTTPException(status_code=404, detail="No admin or author rules")
+    """Удаление квиза. Админ — любой квиз, автор — только свой."""
+    is_admin = current_user.role == UserRole.ADMIN or current_user.role == "admin"
+    deleted = crud_quiz.delete_quiz(db, quiz_id, current_user.id, is_admin=is_admin)
+    if not deleted:
+        raise HTTPException(
+            status_code=404, detail="Квиз не найден или недостаточно прав"
+        )
+    return
 
 
 @router.get("/{quiz_id}/leaderboard")

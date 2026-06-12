@@ -10,6 +10,7 @@ const normalizeQuiz = (quiz) => ({
   duration: quiz.duration_minutes || 0,
   questionCount: quiz.total_questions || 0,
   mediaTypes: quiz.media_types || [],
+  author: quiz.author_name || null,
 })
 
 export const getQuizzes = async () => {

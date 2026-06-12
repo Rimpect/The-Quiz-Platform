@@ -1,12 +1,27 @@
 import React from 'react'
 
-import { Badge, Button, ROUTES, getQuizRoute, getLeaderboardRatingRoute } from '@shared'
+import {
+  Badge,
+  Button,
+  ROUTES,
+  getQuizRoute,
+  getLeaderboardRatingRoute,
+} from '@shared'
 import { ArrowLeft, Users, Clock, Trophy, Star, Award } from 'lucide-react'
 import { useParams, Link } from 'react-router-dom'
 
 import image1 from '../../assets/img/QuizCardTest/pic.jpg'
 
 import styles from './QuizDescription.module.scss'
+
+// Русская плюрализация: forms = [одна, несколько, много]
+const pluralRu = (n, forms) => {
+  const m10 = n % 10
+  const m100 = n % 100
+  if (m10 === 1 && m100 !== 11) return forms[0]
+  if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return forms[1]
+  return forms[2]
+}
 
 export function QuizDescription({ quiz }) {
   const { id } = useParams()
@@ -86,7 +101,12 @@ export function QuizDescription({ quiz }) {
                 <h3 className={styles.cardTitle}>Что вас ждет?</h3>
                 <ul className={styles.cardList}>
                   <li className={styles.cardItem}>
-                    • {quizData.questionCount} интересных вопросов
+                    • {quizData.questionCount}{' '}
+                    {pluralRu(quizData.questionCount, [
+                      'интересный вопрос',
+                      'интересных вопроса',
+                      'интересных вопросов',
+                    ])}
                   </li>
                   <li className={styles.cardItem}>
                     • Ограничение по времени на каждый вопрос

@@ -9,6 +9,7 @@ import {
 import { useAntiCheatContext } from '@features/anti-cheating'
 import { useSyncedQuiz } from '@features/synced-quiz/model/useSyncedQuiz'
 import { Button, ROUTES } from '@shared'
+import { client } from '@shared/api/client'
 import { Clock, Users } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -22,9 +23,17 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
   const { violationsCount, isBlocked } = useAntiCheatContext()
   const [showBlockedMessage, setShowBlockedMessage] = useState(false)
 
+  // Бан — per-player: сообщаем серверу, остальные (и хост) продолжают
   useEffect(() => {
-    if (isBlocked) setShowBlockedMessage(true)
-  }, [isBlocked])
+    if (isBlocked) {
+      setShowBlockedMessage(true)
+      if (sessionId) {
+        client(`/game/sessions/${sessionId}/banned`, { method: 'POST' }).catch(
+          () => {},
+        )
+      }
+    }
+  }, [isBlocked, sessionId])
 
   const {
     currentQ,

@@ -1,4 +1,6 @@
-import { Badge, Button, Pagination, ROUTES } from '@shared'
+import { useState } from 'react'
+
+import { Badge, Button, Pagination, ROUTES, ConfirmDialog } from '@shared'
 import { FileText, Plus, Edit, Trash2 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -14,6 +16,8 @@ export function MyQuizzesTab({
   onDelete,
 }) {
   const navigate = useNavigate()
+  const [confirmQuiz, setConfirmQuiz] = useState(null)
+  const [deleting, setDeleting] = useState(false)
 
   const statusLabels = {
     approved: 'Опубликован',
@@ -25,13 +29,17 @@ export function MyQuizzesTab({
     navigate(ROUTES.createQuiz, { state: { editQuizId: quiz.id } })
   }
 
-  const handleDelete = async (quiz) => {
-    if (!window.confirm(`Удалить квиз "${quiz.title}"?`)) return
+  const handleDelete = async () => {
+    if (!confirmQuiz) return
+    setDeleting(true)
     try {
-      await onDelete(quiz.id)
+      await onDelete(confirmQuiz.id)
       toast.success('Квиз удалён')
+      setConfirmQuiz(null)
     } catch {
       toast.error('Не удалось удалить квиз')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -93,7 +101,7 @@ export function MyQuizzesTab({
                       icon={<Trash2 size={16} />}
                       variant="transparent"
                       title="Удалить"
-                      onClick={() => handleDelete(quiz)}
+                      onClick={() => setConfirmQuiz(quiz)}
                     />
                   </div>
                 </div>
@@ -117,6 +125,19 @@ export function MyQuizzesTab({
           </div>
         </>
       )}
+
+      <ConfirmDialog
+        isOpen={!!confirmQuiz}
+        title="Удалить квиз?"
+        message={
+          confirmQuiz
+            ? `Квиз "${confirmQuiz.title}" будет удалён безвозвратно.`
+            : ''
+        }
+        loading={deleting}
+        onConfirm={handleDelete}
+        onCancel={() => setConfirmQuiz(null)}
+      />
     </div>
   )
 }

@@ -28,12 +28,17 @@ export function useSessionResults(sessionId) {
           items.map((item, idx) => ({
             place: item.place ?? idx + 1,
             name: item.name || 'Игрок',
-            avatar: item.avatar || '/placeholder-avatar.png',
+            // у команд иконки нет
+            avatar: item.is_team
+              ? null
+              : item.avatar || '/placeholder-avatar.png',
+            isTeam: !!item.is_team,
             percent: item.percent ?? 0,
             time: item.time || '0:00',
             score: item.score,
             maxScore: item.max_score,
             correct: item.correct,
+            members: item.members,
             teamName: item.team_name,
             userId: item.user_id,
           })),

@@ -21,6 +21,8 @@ export function useGameLobby(quizId, gameMode) {
   const [teams, setTeams] = useState([])
   const [lobbyStarted, setLobbyStarted] = useState(false)
   const [lobbyTimeLeft, setLobbyTimeLeft] = useState(null)
+  const [joinCode, setJoinCode] = useState('')
+  const [cancelled, setCancelled] = useState(false)
   const [loading, setLoading] = useState(true)
   const pollRef = useRef(null)
 
@@ -32,11 +34,18 @@ export function useGameLobby(quizId, gameMode) {
     if (typeof state.lobby_time_left === 'number') {
       setLobbyTimeLeft(state.lobby_time_left)
     }
+    if (state.join_code) setJoinCode(state.join_code)
+    if (state.cancelled) setCancelled(true)
   }, [])
 
-  // Вход в общее лобби при монтировании
+  // Рейтинговый режим — авто-вход в общее лобби.
+  // Командный — ждём явного createLobby/joinByCode (хост-лобби по коду).
   useEffect(() => {
     if (!quizId || !gameMode) return
+    if (gameMode !== 'competitive') {
+      setLoading(false)
+      return
+    }
 
     let cancelled = false
 
@@ -82,6 +91,54 @@ export function useGameLobby(quizId, gameMode) {
     pollRef.current = setInterval(poll, POLL_INTERVAL_MS)
     return () => clearInterval(pollRef.current)
   }, [sessionId, applyState])
+
+  // Создать хост-лобби с кодом приглашения (командный режим)
+  const createLobby = useCallback(async () => {
+    setLoading(true)
+    try {
+      const state = await client('/game/lobby/create', {
+        method: 'POST',
+        body: JSON.stringify({ quiz_id: Number(quizId), game_mode: 'team' }),
+      })
+      setSessionId(state.session_id)
+      applyState(state)
+    } catch (err) {
+      toast.error(err.message || 'Не удалось создать лобби')
+    } finally {
+      setLoading(false)
+    }
+  }, [quizId, applyState])
+
+  // Войти в лобби по коду приглашения
+  const joinByCode = useCallback(
+    async (code) => {
+      if (!code?.trim()) return
+      setLoading(true)
+      try {
+        const state = await client('/game/lobby/join-by-code', {
+          method: 'POST',
+          body: JSON.stringify({ code: code.trim().toUpperCase() }),
+        })
+        setSessionId(state.session_id)
+        applyState(state)
+      } catch (err) {
+        toast.error(err.message || 'Лобби не найдено')
+      } finally {
+        setLoading(false)
+      }
+    },
+    [applyState],
+  )
+
+  // Покинуть лобби (хост → закрывает лобби для всех)
+  const leaveLobby = useCallback(async () => {
+    if (!sessionId) return
+    try {
+      await client(`/game/sessions/${sessionId}/leave`, { method: 'POST' })
+    } catch {
+      // не критично
+    }
+  }, [sessionId])
 
   const markReady = useCallback(async () => {
     if (!sessionId) return
@@ -165,6 +222,8 @@ export function useGameLobby(quizId, gameMode) {
     teams,
     lobbyStarted,
     lobbyTimeLeft,
+    joinCode,
+    cancelled,
     loading,
     myReady,
     myTeamId,
@@ -174,5 +233,8 @@ export function useGameLobby(quizId, gameMode) {
     createTeam,
     joinTeam,
     leaveTeam,
+    createLobby,
+    joinByCode,
+    leaveLobby,
   }
 }

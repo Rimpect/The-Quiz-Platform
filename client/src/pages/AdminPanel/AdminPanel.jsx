@@ -95,6 +95,7 @@ export function AdminPanel({ onBack }) {
           onApprove={handleApprove}
           onReject={handleRejectClick}
           onView={handleViewClick}
+          onDelete={handleDeleteQuiz}
         />
       </div>
 

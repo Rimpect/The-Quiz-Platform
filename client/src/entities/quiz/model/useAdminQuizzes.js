@@ -70,5 +70,6 @@ export function useAdminQuizzes() {
     handleApprove,
     handleReject,
     refetch: fetchAll,
+    fetchAll,
   }
 }

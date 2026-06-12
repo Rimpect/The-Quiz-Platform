@@ -39,7 +39,7 @@ export function LeaderboardItem({ place, name, avatar, percent, time }) {
         <div className={styles.left}>
           <div className={styles.placeIcon}>{renderPlaceIcon()}</div>
 
-          <img src={avatar} alt={name} className={styles.avatar} />
+          {avatar && <img src={avatar} alt={name} className={styles.avatar} />}
 
           <span className={styles.name}>{name}</span>
         </div>

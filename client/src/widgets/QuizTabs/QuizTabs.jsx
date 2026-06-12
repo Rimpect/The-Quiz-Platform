@@ -13,6 +13,7 @@ export function QuizTabs({
   onApprove,
   onReject,
   onView,
+  onDelete,
 }) {
   const allQuizzes =
     externalQuizzes && externalQuizzes.length > 0 ? externalQuizzes : []
@@ -83,6 +84,7 @@ export function QuizTabs({
                 onApprove={onApprove}
                 onReject={onReject}
                 onView={onView}
+                onDelete={onDelete}
               />
             ))}
 

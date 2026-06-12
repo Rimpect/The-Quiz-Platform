@@ -1,5 +1,84 @@
 @use '/src/app/GlobalStyles/media' as *;
 
+// ---- Пре-лобби (создать / войти по коду) ----
+.preLobby {
+  max-width: 460px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+.preCard {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  h1 {
+    margin: 0;
+    font-size: 22px;
+  }
+}
+.preIcon {
+  margin: 0 auto;
+  color: #22c55e;
+}
+.preHint {
+  margin: 0;
+  color: #6b7280;
+}
+.preDivider {
+  color: #9ca3af;
+  font-size: 14px;
+  margin: 6px 0;
+}
+.codeRow {
+  display: flex;
+  gap: 10px;
+
+  input {
+    flex: 1;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+  }
+}
+.preBack {
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  @include mobile {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+.codeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0fdf4;
+  border: 1px solid #22c55e;
+  color: #166534;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 15px;
+  cursor: pointer;
+
+  strong {
+    letter-spacing: 2px;
+  }
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;

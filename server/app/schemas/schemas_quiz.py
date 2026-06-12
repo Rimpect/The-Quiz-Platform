@@ -81,6 +81,8 @@ class QuizResponse(QuizBase) :
     lobby_wait_time_seconds: int = 30
     max_team_members: int = 10
     media_types: List[str] = []
+    category: Optional[str] = None
+    author_name: Optional[str] = None
     category_obj: Optional[Category] = None
 
     class Config :
