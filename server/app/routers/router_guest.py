@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from ..crud import crud_guest as guest_crud
 from ..database.database import get_db
+from ..models import UserRole
 from ..models.model_guest import Guest
 from ..schemas.schemas_response import ResponseFactory
 from ..utils.security import create_guest_access_token, get_current_guest
@@ -64,7 +65,7 @@ def get_guest_stats(
         current_user=Depends(get_current_user)
 ) :
     """Статистика по гостям (только для админов)"""
-    if current_user.role != "admin" :
+    if current_user.role != UserRole.ADMIN:
         return ResponseFactory.forbidden(
             message="Admin access required"
         )
