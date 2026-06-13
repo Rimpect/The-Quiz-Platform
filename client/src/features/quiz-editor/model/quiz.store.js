@@ -155,7 +155,6 @@ export const useQuizStore = create((set) => ({
       },
     })),
 
-  // Переключить правильность ответа (для множественного выбора)
   toggleCorrectAnswer: (questionId, answerId) =>
     set((state) => ({
       quiz: {
@@ -172,7 +171,6 @@ export const useQuizStore = create((set) => ({
       },
     })),
 
-  // Сменить тип вопроса; при переходе на одиночный оставляем один правильный
   setQuestionType: (questionId, type) =>
     set((state) => ({
       quiz: {

@@ -3,15 +3,10 @@ import { useEffect, useRef } from 'react'
 import { useAuthStore } from '@entities'
 
 /**
- * WebSocket-канал игровой сессии (замена HTTP-поллинга).
- * Сервер сам пушит состояние; на каждое сообщение вызывается onState(state).
- * Авто-реконнект с экспоненциальной задержкой, heartbeat раз в 3 c.
- *
  * @param {string|null} sessionId
  * @param {(state: object) => void} onState
  */
 export function useGameSocket(sessionId, onState) {
-  // держим актуальный колбэк без переподключения сокета
   const onStateRef = useRef(onState)
   useEffect(() => {
     onStateRef.current = onState
@@ -56,7 +51,6 @@ export function useGameSocket(sessionId, onState) {
       ws.onclose = () => {
         clearInterval(hbTimer)
         if (closedByUs) return
-        // реконнект с backoff (до 10 c)
         const delay = Math.min(1000 * 2 ** attempts, 10000)
         attempts += 1
         reconnectTimer = setTimeout(connect, delay)

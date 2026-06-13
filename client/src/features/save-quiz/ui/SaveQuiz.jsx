@@ -25,7 +25,6 @@ export function SaveQuiz() {
     if (!result.success) {
       const issue = result.error.issues[0]
       toast.error(issue.message)
-      // Прокручиваем к месту ошибки: к вопросу или наверх (общие поля)
       if (issue.path[0] === 'questions' && typeof issue.path[1] === 'number') {
         scrollToQuestion(issue.path[1])
       } else {
@@ -34,7 +33,6 @@ export function SaveQuiz() {
       return
     }
 
-    // У каждого вопроса должен быть отмечен правильный ответ
     const badIndex = quiz.questions.findIndex(
       (q) => !q.answers.some((a) => a.isCorrect),
     )

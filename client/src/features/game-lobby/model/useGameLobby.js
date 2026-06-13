@@ -37,8 +37,6 @@ export function useGameLobby(quizId, gameMode) {
     if (state.cancelled) setCancelled(true)
   }, [])
 
-  // Рейтинговый режим — авто-вход в общее лобби.
-  // Командный — ждём явного createLobby/joinByCode (хост-лобби по коду).
   useEffect(() => {
     if (!quizId || !gameMode) return
     if (gameMode !== 'competitive') {
@@ -74,11 +72,8 @@ export function useGameLobby(quizId, gameMode) {
     }
   }, [quizId, gameMode, applyState])
 
-  // Состояние сессии приходит по WebSocket (сервер пушит при изменениях)
   useGameSocket(sessionId, applyState)
 
-  // Создать хост-лобби с кодом приглашения (командный режим).
-  // lobbyWaitSeconds — настраиваемое хостом время ожидания игроков.
   const createLobby = useCallback(
     async (lobbyWaitSeconds) => {
       setLoading(true)
@@ -104,7 +99,6 @@ export function useGameLobby(quizId, gameMode) {
     [quizId, applyState],
   )
 
-  // Войти в лобби по коду приглашения
   const joinByCode = useCallback(
     async (code) => {
       if (!code?.trim()) return
@@ -125,13 +119,12 @@ export function useGameLobby(quizId, gameMode) {
     [applyState],
   )
 
-  // Покинуть лобби (хост → закрывает лобби для всех)
   const leaveLobby = useCallback(async () => {
     if (!sessionId) return
     try {
       await client(`/game/sessions/${sessionId}/leave`, { method: 'POST' })
     } catch {
-      // не критично
+      // заглушка
     }
   }, [sessionId])
 
@@ -147,7 +140,6 @@ export function useGameLobby(quizId, gameMode) {
     }
   }, [sessionId, applyState])
 
-  // Форс-старт по истечении таймера лобби
   const startLobby = useCallback(async () => {
     if (!sessionId) return
     try {

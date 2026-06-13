@@ -40,7 +40,6 @@ export function LeaderboardRatingPage() {
     error: sError,
   } = useSessionResults(sessionId)
 
-  // Если пришли с сессии — по умолчанию показываем результаты группы
   const [view, setView] = useState(sessionId ? 'session' : 'global')
 
   const mode = state?.quizMode === 'team' ? 'team' : 'competitive'

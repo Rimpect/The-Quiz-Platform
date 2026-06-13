@@ -18,7 +18,6 @@ export function ProfileInfo({ user }) {
         method: 'PUT',
         body: JSON.stringify({ photo_profile: res.url }),
       })
-      // Обновляем юзера в сторе, чтобы аватар сразу обновился в шапке
       setUser({ ...storeUser, photo_profile: res.url })
       toast.success('Фото профиля обновлено')
     } catch (e) {
