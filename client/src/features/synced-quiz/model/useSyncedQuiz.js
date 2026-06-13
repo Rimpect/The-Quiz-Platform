@@ -56,6 +56,8 @@ export function useSyncedQuiz(quizId, sessionId) {
   const me = players.find((p) => p.user_id === myId)
   const isTeam = gameModeRef.current === 'team'
   const isLeader = !!me?.is_leader
+  // Бан хранится на сервере — переживает перезагрузку/сворачивание вкладки
+  const meBanned = !!me?.is_banned
   const myTeamId = me?.team_id || null
   const myTeam = teams.find((t) => t.id === myTeamId)
   const leaderAnswered = !!myTeam?.leader_answered
@@ -146,6 +148,12 @@ export function useSyncedQuiz(quizId, sessionId) {
         }),
       }),
     ]).finally(() => {
+      // игра завершена — убираем сохранённую сессию (чтобы не «восстановить» её)
+      try {
+        sessionStorage.removeItem(`quizSession:${quizId}`)
+      } catch {
+        // no-op
+      }
       navigate(`/leaderboardRating/${quizId}`, { state: navState })
     })
   }, [
@@ -278,6 +286,7 @@ export function useSyncedQuiz(quizId, sessionId) {
     voters,
     hasVoted,
     leaderAnswered,
+    meBanned,
     players,
     teams,
   }

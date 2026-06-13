@@ -490,9 +490,21 @@ class GameSessionsManager:
         # Источник истины — team_scores (ответ команды = ответ капитана),
         # суммировать по участникам нельзя: счёт у всех одинаков и умножился бы.
         if session.game_mode == GameMode.TEAM:
+            # Показываем все команды, которые участвовали (есть завершившие
+            # игроки), даже если они не набрали очков — иначе при «никто не
+            # ответил» таблица была бы пустой.
+            team_ids = {p.team_id for p in finished if p.team_id}
+            team_ids |= set(session.team_scores.keys())
+
             rows = []
-            for tid, agg in session.team_scores.items():
-                members = sum(1 for p in session.players.values() if p.team_id == tid)
+            for tid in team_ids:
+                agg = session.team_scores.get(tid, {})
+                members = sum(
+                    1 for p in session.players.values()
+                    if p.team_id == tid and not p.is_banned
+                )
+                if members == 0:
+                    continue
                 # Длительность — по лидеру команды (если он записал результат)
                 duration = 0
                 for p in session.players.values():

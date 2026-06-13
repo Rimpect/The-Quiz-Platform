@@ -125,25 +125,6 @@ export function QuizStats() {
           </Select>
         </div>
 
-        {(quiz.quizMode === 'team' || quiz.quizMode === 'competitive') && (
-          <div className={styles.label}>
-            <label htmlFor="lobby-wait-time">
-              Время ожидания в лобби (сек)
-            </label>
-
-            <Input
-              id="lobby-wait-time"
-              type="number"
-              min="10"
-              max="300"
-              value={quiz.lobbyWaitTimeSeconds || 30}
-              onChange={(e) =>
-                setField('lobbyWaitTimeSeconds', parseInt(e.target.value) || 30)
-              }
-            />
-          </div>
-        )}
-
         {quiz.quizMode === 'team' && (
           <div className={styles.label}>
             <label htmlFor="max-team-members">Макс. игроков в команде</label>
