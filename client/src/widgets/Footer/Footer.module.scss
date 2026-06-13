@@ -1,3 +1,5 @@
+@use '/src/app/GlobalStyles/media' as *;
+
 .footerContainer {
   width: 100%;
   color: var(--color-light);
@@ -170,5 +172,45 @@
 
   p {
     margin: 0;
+  }
+}
+
+/* ---------- Адаптив ---------- */
+@include tablet {
+  .footerInner {
+    flex-direction: column;
+    gap: 12px;
+    padding: 1.5rem 1.25rem;
+    min-height: auto;
+  }
+  .description {
+    padding: 8px 10px;
+  }
+  .menu {
+    gap: 16px;
+  }
+  .list {
+    padding-left: 0;
+  }
+}
+
+@include mobile {
+  .menu {
+    flex-direction: column;
+    gap: 4px;
+  }
+  // на телефоне убираем жёсткие переносы — текст течёт по ширине экрана
+  .descriptionTitle br {
+    display: none;
+  }
+  .descriptionTitle {
+    line-height: 1.6;
+  }
+  .listItem:first-child {
+    padding: 12px 10px;
+  }
+  .copyright {
+    margin-top: 1.25rem;
+    padding: 1.25rem 1rem 2rem;
   }
 }
