@@ -182,15 +182,6 @@ export function QuizDescription({ quiz }) {
                   </div>
                   <span className={styles.statsValue}>{quizData.author}</span>
                 </li>
-                <li className={styles.statsItem}>
-                  <div className={styles.statsLeft}>
-                    <span className={styles.statsIcon}>
-                      <Award />
-                    </span>
-                    <span className={styles.statsLabel}>Язык:</span>
-                  </div>
-                  <span className={styles.statsValue}>{quizData.language}</span>
-                </li>
               </ul>
               <Link to={getQuizRoute(id)}>
                 <Button variant="black" size="medium" fullWidth>

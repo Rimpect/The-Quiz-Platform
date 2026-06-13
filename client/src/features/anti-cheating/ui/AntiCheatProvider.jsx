@@ -15,13 +15,10 @@ export const AntiCheatProvider = ({
   const [isBlocked, setIsBlocked] = useState(false)
   const [quizStarted, setQuizStarted] = useState(false)
 
-  // Проверяем согласился ли уже пользователь на этот квиз (в рамках вкладки).
-  // sessionStorage, а не localStorage — флаг не должен жить вечно между сессиями.
   const hasAgreedKey = `agreed_quiz_${quizId}`
   const hasAlreadyAgreed = sessionStorage.getItem(hasAgreedKey)
   const [showRules, setShowRules] = useState(!hasAlreadyAgreed)
 
-  // Если уже согласился раньше, сразу начинаем квиз
   useEffect(() => {
     if (hasAlreadyAgreed) {
       setQuizStarted(true)
@@ -54,23 +51,19 @@ export const AntiCheatProvider = ({
     [isAntiCheatActive, settings.maxWarnings],
   )
 
-  // Запуск квиза после согласия
   const startQuiz = () => {
     setShowRules(false)
     setQuizStarted(true)
     setViolations([])
     setIsBlocked(false)
-    // Сохраняем что пользователь согласился на этот квиз (в рамках вкладки)
     sessionStorage.setItem(hasAgreedKey, 'true')
   }
 
-  // Отмена квиза
   const cancelQuiz = () => {
     setShowRules(false)
     if (onDecline) onDecline()
   }
 
-  // Отслеживание переключения вкладок
   useEffect(() => {
     if (!isAntiCheatActive) return
 
@@ -86,7 +79,6 @@ export const AntiCheatProvider = ({
       document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [isAntiCheatActive, addViolation])
 
-  // Блокировка копирования/вставки
   useEffect(() => {
     if (!isAntiCheatActive || !settings.blockCopyPaste) return
 
@@ -107,7 +99,6 @@ export const AntiCheatProvider = ({
     }
   }, [isAntiCheatActive, settings.blockCopyPaste, addViolation])
 
-  // Блокировка клавиатурных сокращений
   useEffect(() => {
     if (!isAntiCheatActive || !settings.blockDevTools) return
 
@@ -130,7 +121,6 @@ export const AntiCheatProvider = ({
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isAntiCheatActive, settings.blockDevTools, addViolation])
 
-  // Детект DevTools
   useEffect(() => {
     if (!isAntiCheatActive || !settings.blockDevTools) return
 

@@ -1,3 +1,5 @@
+@use '/src/app/GlobalStyles/media' as *;
+
 .overlay {
   position: fixed;
   top: 0;
@@ -112,6 +114,11 @@
   bottom: 0;
   background: white;
   border-radius: 0 0 12px 12px;
+
+  @include mobile {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
 
 .section {

@@ -31,7 +31,6 @@ const matchesQuizFilter = (quiz, filter) => {
 
   if (filter.mediaType?.length > 0) {
     const quizMedia = quiz.mediaTypes || []
-    // квиз проходит, если содержит хотя бы один из выбранных типов медиа
     if (!filter.mediaType.some((t) => quizMedia.includes(t))) {
       return false
     }

@@ -7,18 +7,47 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { QuizContent } from './QuizContent'
 import { SyncedQuizContent } from './SyncedQuizContent'
 
+const SESSION_TTL_MS = 3 * 60 * 60 * 1000 // 3 часа — как TTL сессии на сервере
+
 export function Quiz() {
   const { id } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
   const [loading, setLoading] = useState(true)
 
-  // Сессия из лобби → синхронизированное прохождение (командный/рейтинговый)
-  const sessionId = location.state?.sessionId || null
+  const storageKey = `quizSession:${id}`
+
+  // Сессия из лобби; при перезагрузке вкладки (моб. сворачивание) location.state
+  // теряется — восстанавливаем sessionId из sessionStorage, чтобы не выпасть из
+  // synced-сессии (иначе серверный бан/состояние не применятся).
+  const [sessionId] = useState(() => {
+    if (location.state?.sessionId) return location.state.sessionId
+    try {
+      const raw = sessionStorage.getItem(storageKey)
+      if (raw) {
+        const { sessionId: sid, ts } = JSON.parse(raw)
+        if (sid && Date.now() - ts < SESSION_TTL_MS) return sid
+      }
+    } catch {
+      // повреждённое значение — игнорируем
+    }
+    return null
+  })
+
+  // Запоминаем сессию для переживания перезагрузки
+  useEffect(() => {
+    if (location.state?.sessionId) {
+      sessionStorage.setItem(
+        storageKey,
+        JSON.stringify({ sessionId: location.state.sessionId, ts: Date.now() }),
+      )
+    }
+  }, [storageKey, location.state])
 
   // Проверяем режим квиза ПЕРЕД рендерингом
   useEffect(() => {
-    if (!id || location.state?.fromLobby) {
+    // Сессия известна (из лобби или восстановлена) → сразу synced, без редиректа
+    if (!id || location.state?.fromLobby || sessionId) {
       setLoading(false)
       return
     }
@@ -42,7 +71,7 @@ export function Quiz() {
     }
 
     checkQuizMode()
-  }, [id, navigate, location.state])
+  }, [id, navigate, location.state, sessionId])
 
   const handleDecline = () => {
     navigate(-1)

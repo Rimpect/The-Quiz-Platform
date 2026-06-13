@@ -11,7 +11,7 @@ import { useSyncedQuiz } from '@features/synced-quiz/model/useSyncedQuiz'
 import { Button, ROUTES } from '@shared'
 import { client } from '@shared/api/client'
 import { Clock, Users } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { AntiCheatWarning } from './components/AntiCheatWarning'
 import { PlayersStatus } from './components/PlayersStatus'
@@ -22,6 +22,7 @@ import styles from './Quiz.module.scss'
 
 export const SyncedQuizContent = ({ quizId, sessionId }) => {
   const { violationsCount, isBlocked } = useAntiCheatContext()
+  const navigate = useNavigate()
 
   // Бан — per-player: сообщаем серверу, остальные (и хост) продолжают
   useEffect(() => {
@@ -51,6 +52,7 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
     voters,
     hasVoted,
     leaderAnswered,
+    meBanned,
     players,
     teams,
   } = useSyncedQuiz(quizId, sessionId)
@@ -59,7 +61,26 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
   const isVoter = isTeam && !isLeader
   const voteLocked = leaderAnswered || timeLeft === 0
 
-  if (isBlocked) return <QuizBlocked violationsCount={violationsCount} />
+  // Блокировка: локальный анти-чит ИЛИ серверный бан (переживает перезагрузку)
+  const blocked = isBlocked || meBanned
+
+  // С экрана бана авто-редирект на главную (и чистим сохранённую сессию),
+  // чтобы забаненный не мог вернуться в квиз сворачиванием/перезагрузкой
+  useEffect(() => {
+    if (!blocked) return
+    const t = setTimeout(() => {
+      try {
+        sessionStorage.removeItem(`quizSession:${quizId}`)
+      } catch {
+        // no-op
+      }
+      navigate(ROUTES.main, { replace: true })
+    }, 5000)
+    return () => clearTimeout(t)
+  }, [blocked, quizId, navigate])
+
+  if (blocked)
+    return <QuizBlocked violationsCount={Math.max(violationsCount, 3)} />
   if (loading) return <QuizLoading />
   if (error) return <QuizError error={error} />
   if (!currentQ) return <QuizLoading />

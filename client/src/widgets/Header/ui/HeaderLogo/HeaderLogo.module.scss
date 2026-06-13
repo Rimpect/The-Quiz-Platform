@@ -1,3 +1,5 @@
+@use '/src/app/GlobalStyles/media' as *;
+
 .logo {
   font-size: 20px;
   font-weight: bold;
@@ -7,6 +9,20 @@
   justify-content: center;
   text-align: center;
   gap: 15px;
+
+  @include mobile {
+    font-size: 17px;
+    gap: 10px;
+  }
+}
+
+.logoText {
+  white-space: nowrap;
+
+  // на узких экранах оставляем только иконку «Q»
+  @include mobile-s {
+    display: none;
+  }
 }
 
 .logoIcon {
@@ -21,4 +37,10 @@
   text-align: center;
   color: var(--color-light);
   font-weight: 700;
+  flex-shrink: 0;
+
+  @include mobile {
+    width: 34px;
+    height: 34px;
+  }
 }

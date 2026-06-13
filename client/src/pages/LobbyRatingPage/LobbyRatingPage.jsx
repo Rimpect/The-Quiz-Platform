@@ -31,10 +31,11 @@ export function LobbyRatingPage() {
       .finally(() => setLoading(false))
   }, [id])
 
-  if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Загрузка...</div>
+  if (loading)
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center' }}>Загрузка...</div>
+    )
 
-  // Лобби ожидания для рейтингового (competitive) квиза.
-  // Правила принимаются ДО входа в лобби через RulesGate.
   return (
     <RulesGate quizId={id}>
       <LobbyRating quiz={quiz || {}} quizId={id} />

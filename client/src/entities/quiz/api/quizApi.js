@@ -1,6 +1,5 @@
 import { client } from '@shared/api/client'
 
-// Преобразует серверный формат квиза в клиентский (QuizCard ожидает эти поля)
 const normalizeQuiz = (quiz) => ({
   ...quiz,
   img: quiz.cover_url || null,

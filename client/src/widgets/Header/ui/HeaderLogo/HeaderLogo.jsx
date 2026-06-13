@@ -10,7 +10,7 @@ export function HeaderLogo() {
         <div className={styles.logoIcon}>
           <Link to={ROUTES.main}>Q</Link>
         </div>
-        <div>QuizMaster</div>
+        <div className={styles.logoText}>QuizMaster</div>
       </div>
     </div>
   )

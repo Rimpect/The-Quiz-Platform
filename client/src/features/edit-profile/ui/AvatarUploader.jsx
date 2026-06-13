@@ -9,7 +9,7 @@ export function AvatarUploader({ onAvatarChange, initialAvatar = null }) {
   const [error, setError] = useState('')
   const fileInputRef = useRef(null)
 
-  const MAX_FILE_SIZE = 2 * 1024 * 1024 // 2MB
+  const MAX_FILE_SIZE = 2 * 1024 * 1024
   const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png']
 
   const handleFileSelect = () => {
@@ -27,7 +27,6 @@ export function AvatarUploader({ onAvatarChange, initialAvatar = null }) {
       return
     }
 
-    // Валидация размера файла
     if (file.size > MAX_FILE_SIZE) {
       setError('Размер файла не должен превышать 2МБ')
       console.error(
@@ -39,7 +38,6 @@ export function AvatarUploader({ onAvatarChange, initialAvatar = null }) {
 
     setError('')
 
-    // Вывод в консоль информации о загрузке
     console.log('Файл успешно загружен:', {
       name: file.name,
       type: file.type,
@@ -47,14 +45,12 @@ export function AvatarUploader({ onAvatarChange, initialAvatar = null }) {
       lastModified: new Date(file.lastModified).toLocaleString(),
     })
 
-    // Создание превью
     const reader = new FileReader()
     reader.onloadend = () => {
       const avatarData = reader.result
       setAvatar(avatarData)
       console.log('Аватар успешно установлен')
 
-      // Если передан колбэк, вызываем его с данными аватара
       if (onAvatarChange) {
         onAvatarChange(avatarData, file)
       }

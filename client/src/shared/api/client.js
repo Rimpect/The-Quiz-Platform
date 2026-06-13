@@ -5,8 +5,6 @@ const getToken = () => {
   return s ? JSON.parse(s)?.state?.token : null
 }
 
-// Обновляем токен прямо в persisted-localStorage (формат zustand persist),
-// не трогая инстанс стора — чтобы исключить любые конфликты модулей.
 const writeToken = (token) => {
   try {
     const s = localStorage.getItem('auth-storage')
@@ -19,14 +17,13 @@ const writeToken = (token) => {
   }
 }
 
-// Один общий refresh на все параллельные 401, чтобы не дёргать /refresh пачкой
 let refreshPromise = null
 
 const doRefresh = async () => {
   try {
     const res = await fetch(`${API_URL}/auth/refresh`, {
       method: 'POST',
-      credentials: 'include', // отправляет httpOnly refresh-cookie
+      credentials: 'include',
     })
     if (!res.ok) return null
     const json = await res.json()

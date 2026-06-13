@@ -10,12 +10,6 @@ import { useGameSocket } from '@features/game-lobby/model/useGameSocket'
 import { client } from '@shared/api/client'
 import { useNavigate } from 'react-router-dom'
 
-/**
- * Синхронизированное прохождение квиза (командный/рейтинговый режим).
- * Индекс текущего вопроса и таймер берутся с СЕРВЕРА через поллинг сессии,
- * поэтому у всех игроков одинаковое время и общий переход между вопросами.
- * Счёт считается локально и сохраняется при завершении (как в соло).
- */
 export function useSyncedQuiz(quizId, sessionId) {
   const navigate = useNavigate()
   const currentUser = useUser()
@@ -31,7 +25,6 @@ export function useSyncedQuiz(quizId, sessionId) {
   const [submittedIndex, setSubmittedIndex] = useState(-1)
   const [votedIndex, setVotedIndex] = useState(-1)
 
-  // Командное состояние из поллинга
   const [players, setPlayers] = useState([])
   const [teams, setTeams] = useState([])
   const [currentVotes, setCurrentVotes] = useState([])
@@ -51,17 +44,16 @@ export function useSyncedQuiz(quizId, sessionId) {
   const totalQuestions = questions.length
   const maxPossibleScore = questions.reduce((sum, q) => sum + q.points, 0)
 
-  // ----- Роли в командном режиме -----
   const myId = currentUser?.id
   const me = players.find((p) => p.user_id === myId)
   const isTeam = gameModeRef.current === 'team'
   const isLeader = !!me?.is_leader
+  const meBanned = !!me?.is_banned
   const myTeamId = me?.team_id || null
   const myTeam = teams.find((t) => t.id === myTeamId)
   const leaderAnswered = !!myTeam?.leader_answered
   myTeamIdRef.current = myTeamId
 
-  // Аватары проголосовавших по вариантам (только моя команда)
   const voters = {}
   if (isTeam && myTeamId) {
     for (const v of currentVotes) {
@@ -76,15 +68,13 @@ export function useSyncedQuiz(quizId, sessionId) {
     }
   }
 
-  // Лидер «ответил» (submittedIndex) либо рядовой проголосовал (votedIndex)
   const isAnswered = isTeam
     ? isLeader
       ? submittedIndex === serverIndex
-      : leaderAnswered // рядовому показываем результат, когда лидер решил
+      : leaderAnswered 
     : submittedIndex === serverIndex
   const hasVoted = votedIndex === serverIndex
 
-  // Загрузка вопросов (одинаковый порядок у всех игроков)
   useEffect(() => {
     if (quizId) fetchQuestions(quizId)
   }, [quizId, fetchQuestions])
@@ -97,8 +87,6 @@ export function useSyncedQuiz(quizId, sessionId) {
       (Date.now() - startTimeRef.current) / 1000,
     )
 
-    // Командный режим: счёт = результат капитана (берём из стейта команды),
-    // и он одинаков для всех участников команды. Иначе — личный счёт.
     let finalScore = totalScore
     let finalCorrect = correctCount
     if (gameModeRef.current === 'team') {
@@ -122,10 +110,9 @@ export function useSyncedQuiz(quizId, sessionId) {
       totalScore: finalScore,
       durationSeconds,
       quizMode: gameModeRef.current,
-      sessionId, // для таблицы результатов по группе
+      sessionId,
     }
 
-    // Результат в общий лидерборд (БД) + результат в сессию (таблица группы)
     Promise.allSettled([
       client('/quiz-results/save', {
         method: 'POST',
@@ -146,6 +133,11 @@ export function useSyncedQuiz(quizId, sessionId) {
         }),
       }),
     ]).finally(() => {
+      try {
+        sessionStorage.removeItem(`quizSession:${quizId}`)
+      } catch {
+        // no-op
+      }
       navigate(`/leaderboardRating/${quizId}`, { state: navState })
     })
   }, [
@@ -158,7 +150,6 @@ export function useSyncedQuiz(quizId, sessionId) {
     navigate,
   ])
 
-  // Состояние сессии приходит по WebSocket — источник истины для индекса/таймера
   const handleState = useCallback(
     (state) => {
       if (state.game_mode) gameModeRef.current = state.game_mode
@@ -177,21 +168,18 @@ export function useSyncedQuiz(quizId, sessionId) {
   )
   useGameSocket(sessionId, handleState)
 
-  // При смене вопроса сервером — сбрасываем выбор ответа и флаг голоса
   useEffect(() => {
     if (prevIndexRef.current !== serverIndex) {
       prevIndexRef.current = serverIndex
       resetAnswers()
       setVotedIndex(-1)
     }
-    // resetAnswers намеренно не в зависимостях (нестабильная ссылка)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serverIndex])
 
   const submitAnswer = useCallback(() => {
     if (!currentQ) return
 
-    // ---- Командный режим: рядовой только голосует (можно переголосовать) ----
     if (isTeam && !isLeader) {
       if (leaderAnswered || timeLeft === 0) return
       setVotedIndex(serverIndex)
@@ -218,7 +206,6 @@ export function useSyncedQuiz(quizId, sessionId) {
     if (fullyCorrect) setCorrectCount((p) => p + 1)
     setSubmittedIndex(serverIndex)
 
-    // ---- Командный лидер: фиксируем ответ команды + копим командный счёт ----
     if (isTeam && isLeader) {
       client(`/game/sessions/${sessionId}/team-answer`, {
         method: 'POST',
@@ -233,7 +220,6 @@ export function useSyncedQuiz(quizId, sessionId) {
       return
     }
 
-    // ---- Рейтинговый режим: сообщаем серверу о готовности к переходу ----
     client(`/game/sessions/${sessionId}/answered`, {
       method: 'POST',
       body: JSON.stringify({ question_index: serverIndex }),
@@ -272,12 +258,12 @@ export function useSyncedQuiz(quizId, sessionId) {
     timeLeft,
     toggleAnswer,
     submitAnswer,
-    // командный режим
     isTeam,
     isLeader,
     voters,
     hasVoted,
     leaderAnswered,
+    meBanned,
     players,
     teams,
   }
