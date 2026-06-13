@@ -99,58 +99,60 @@ async def lifespan(app: FastAPI):
         logger.error("PostgresSQL connection timed out after 10 seconds")
     except Exception as e:
         logger.error(f"PostgresSQL connection failed: {e}")
-        # 3. Проверка подключения к Redis (если доступен)
-        if REDIS_AVAILABLE and get_redis:
+
+    # 3. Проверка подключения к Redis (если доступен)
+    if REDIS_AVAILABLE and get_redis:
+        try:
+            # Таймаут 5 секунд на подключение к Redis
+            redis_client = await asyncio.wait_for(
+                asyncio.to_thread(get_redis),
+                timeout=5.0
+            )
+            redis_client.ping()
+            logger.info("Redis connection established")
+        except asyncio.TimeoutError:
+            logger.warning("Redis connection timeout - continuing without Redis")
+        except Exception as e:
+            logger.warning(f"Redis connection failed: {e}")
+    else:
+        logger.warning("Redis not available - continuing without Redis")
+
+    # 4. Создание директорий
+    os.makedirs("media_files", exist_ok=True)
+    os.makedirs("logs", exist_ok=True)
+    logger.info("Media and logs directories created")
+
+    # 5. Фоновая задача для очистки устаревших данных
+    async def background_cleanup():
+        """Периодическая очистка устаревших данных"""
+        while True:
+            await asyncio.sleep(3600)  # Каждый час
             try:
-                # Таймаут 5 секунд на подключение к Redis
-                redis_client = await asyncio.wait_for(
-                    asyncio.to_thread(get_redis),
-                    timeout=5.0
-                )
-                redis_client.ping()
-                logger.info("Redis connection established")
-            except asyncio.TimeoutError:
-                logger.warning("Redis connection timeout - continuing without Redis")
-            except Exception as e:
-                logger.warning(f"Redis connection failed: {e}")
-        else:
-            logger.warning("Redis not available - continuing without Redis")
-
-        # 4. Создание директорий
-        os.makedirs("media_files", exist_ok=True)
-        os.makedirs("logs", exist_ok=True)
-        logger.info("Media and logs directories created")
-
-        # 5. Фоновая задача для очистки устаревших данных
-        async def background_cleanup():
-            """Периодическая очистка устаревших данных"""
-            while True:
-                await asyncio.sleep(3600)  # Каждый час
+                # Очистка истекших гостей
+                db = next(get_db())
                 try:
-                    # Очистка истекших гостей
-                    db = next(get_db())
-                    try:
-                        deleted_guests = guest_crud.delete_expired_guests(db)
-                        if deleted_guests:
-                            logger.info(f"Cleaned up {deleted_guests} expired guests")
-                    finally:
-                        db.close()
+                    deleted_guests = guest_crud.delete_expired_guests(db)
+                    if deleted_guests:
+                        logger.info(f"Cleaned up {deleted_guests} expired guests")
+                finally:
+                    db.close()
 
-                    # Очистка истекших сессий в Redis
-                    deleted_redis = cleanup_expired_sessions()
-                    if deleted_redis:
-                        logger.info(f"Cleaned up {deleted_redis} expired Redis sessions")
+                # Очистка истекших сессий в Redis
+                deleted_redis = cleanup_expired_sessions()
+                if deleted_redis:
+                    logger.info(f"Cleaned up {deleted_redis} expired Redis sessions")
 
-                except Exception as exc:
-                    logger.error(f"Background cleanup error: {exc}")
+            except Exception as exc:
+                logger.error(f"Background cleanup error: {exc}")
 
-        # Запуск фоновой задачи
-        await asyncio.create_task(background_cleanup())
-        logger.info("Background cleanup task started")
+    # Фоновый тикер WebSocket командных игр (пуш состояния вместо поллинга)
+    from .services.ws_manager import game_ws_ticker
+    asyncio.create_task(game_ws_ticker())
+    logger.info("Game WebSocket ticker started")
 
-    except Exception as e:
-        logger.error(f"Startup failed: {e}")
-        raise
+    # Запуск фоновой задачи очистки (без await — не блокировать старт)
+    asyncio.create_task(background_cleanup())
+    logger.info("Background cleanup task started")
 
     logger.info("=" * 50)
     logger.info("APPLICATION STARTED SUCCESSFULLY")

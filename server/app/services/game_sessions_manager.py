@@ -197,6 +197,14 @@ class GameSessionsManager:
     def __init__(self, session_ttl_minutes: int = 180):
         self.sessions: Dict[str, GameSessionMemory] = {}
         self.session_ttl = timedelta(minutes=session_ttl_minutes)
+        # Redis-зеркало командных сессий (импорт здесь — чтобы не было цикла)
+        from .game_session_repo import RedisGameStore
+        self.store = RedisGameStore()
+
+    def _persist(self, session: Optional[GameSessionMemory]) -> None:
+        """Write-through: командные сессии зеркалируем в Redis (если он есть)."""
+        if session is not None and session.game_mode == GameMode.TEAM and self.store.enabled:
+            self.store.save(session)
 
     def create_session(
         self,
@@ -229,6 +237,7 @@ class GameSessionsManager:
         )
 
         self.sessions[session_id] = session
+        self._persist(session)
         return session_id
 
     def generate_join_code(self) -> str:
@@ -259,6 +268,19 @@ class GameSessionsManager:
                 and not session.cancelled
             ):
                 return sid
+
+        # Не нашли в памяти — пробуем Redis (после рестарта/другого процесса)
+        if self.store.enabled:
+            sid = self.store.find_by_code(code)
+            if sid:
+                session = self.get_session(sid)  # гидратирует в память
+                if (
+                    session
+                    and not session.lobby_started
+                    and not session.is_finished()
+                    and not session.cancelled
+                ):
+                    return sid
         return None
 
     def leave_lobby(self, session_id: str, user_id: int) -> bool:
@@ -449,6 +471,7 @@ class GameSessionsManager:
             player.result_max = max_score
             player.result_correct = correct
             player.result_duration = duration
+        self._persist(session)
         return True
 
     def get_results(self, session_id: str) -> Optional[list]:
@@ -534,6 +557,14 @@ class GameSessionsManager:
     def get_session(self, session_id: str) -> Optional[GameSessionMemory]:
         """Получить сессию"""
         session = self.sessions.get(session_id)
+
+        # Промах в памяти — пробуем восстановить командную сессию из Redis
+        # (например, после рестарта сервера).
+        if session is None and self.store.enabled:
+            restored = self.store.load(session_id)
+            if restored is not None:
+                self.sessions[session_id] = restored
+                session = restored
 
         # Проверить TTL
         if session and (datetime.utcnow() - session.created_at) > self.session_ttl:
@@ -712,6 +743,7 @@ class GameSessionsManager:
             return False
 
         session.ended_at = datetime.utcnow()
+        self._persist(session)
         return True
 
     def get_session_state(self, session_id: str) -> Optional[dict]:
@@ -719,6 +751,10 @@ class GameSessionsManager:
         session = self.get_session(session_id)
         if not session:
             return None
+
+        # Write-through: командные сессии зеркалируем в Redis. Этот метод
+        # вызывается в конце каждого эндпоинта, поэтому покрывает все изменения.
+        self._persist(session)
 
         # Сгруппировать игроков по командам (для team-режима)
         teams = []

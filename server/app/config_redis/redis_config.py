@@ -56,6 +56,10 @@ class RedisKeys:
     # Лидерборды
     QUIZ_LEADERBOARD = "quiz:leaderboard:"  # quiz:leaderboard:{quiz_id}
 
+    # Командные игровые сессии (in-memory менеджер с зеркалированием в Redis)
+    GAME_SESSION = "game:session:"   # game:session:{session_id}
+    GAME_CODE = "game:code:"         # game:code:{CODE} -> session_id
+
     @staticmethod
     def quiz_session(session_id: str) -> str:
         return f"quiz:session:{session_id}"
@@ -79,6 +83,14 @@ class RedisKeys:
     @staticmethod
     def quiz_leaderboard(quiz_id: int) -> str:
         return f"quiz:leaderboard:{quiz_id}"
+
+    @staticmethod
+    def game_session(session_id: str) -> str:
+        return f"game:session:{session_id}"
+
+    @staticmethod
+    def game_code(code: str) -> str:
+        return f"game:code:{code.strip().upper()}"
 
     @classmethod
     def public_lobbies_index(cls) :

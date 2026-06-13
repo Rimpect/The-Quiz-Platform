@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 import { useUser } from '@entities'
 import { client } from '@shared/api/client'
 import { toast } from 'sonner'
 
-const POLL_INTERVAL_MS = 1000
+import { useGameSocket } from './useGameSocket'
 
 /**
  * Реальная синхронизация лобби через HTTP-поллинг общей игровой сессии.
@@ -24,7 +24,6 @@ export function useGameLobby(quizId, gameMode) {
   const [joinCode, setJoinCode] = useState('')
   const [cancelled, setCancelled] = useState(false)
   const [loading, setLoading] = useState(true)
-  const pollRef = useRef(null)
 
   const applyState = useCallback((state) => {
     if (!state) return
@@ -75,22 +74,8 @@ export function useGameLobby(quizId, gameMode) {
     }
   }, [quizId, gameMode, applyState])
 
-  // Поллинг состояния сессии
-  useEffect(() => {
-    if (!sessionId) return
-
-    const poll = async () => {
-      try {
-        const state = await client(`/game/sessions/${sessionId}`)
-        applyState(state)
-      } catch {
-        // Сессия могла истечь — тихо игнорируем единичные ошибки поллинга
-      }
-    }
-
-    pollRef.current = setInterval(poll, POLL_INTERVAL_MS)
-    return () => clearInterval(pollRef.current)
-  }, [sessionId, applyState])
+  // Состояние сессии приходит по WebSocket (сервер пушит при изменениях)
+  useGameSocket(sessionId, applyState)
 
   // Создать хост-лобби с кодом приглашения (командный режим).
   // lobbyWaitSeconds — настраиваемое хостом время ожидания игроков.

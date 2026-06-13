@@ -67,6 +67,12 @@ export function LobbyTeams({ quiz, quizId }) {
     createTeam(newTeam.name)
   }
 
+  // Обратный отсчёт лобби: минуты:секунды, либо «N сек» при < 1 мин
+  const formatCountdown = (s) =>
+    s >= 60
+      ? `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} мин`
+      : `${s} сек`
+
   const copyCode = () => {
     navigator.clipboard?.writeText(joinCode).then(
       () => toast.success('Код скопирован'),
@@ -173,7 +179,7 @@ export function LobbyTeams({ quiz, quizId }) {
             <Clock size={20} />
             <span>
               {lobbyTimeLeft !== null
-                ? `Старт через ${lobbyTimeLeft} сек`
+                ? `Старт через ${formatCountdown(lobbyTimeLeft)}`
                 : 'Ожидание...'}
             </span>
           </div>
@@ -190,6 +196,12 @@ export function LobbyTeams({ quiz, quizId }) {
               variant="black"
               onClick={() => setIsModalOpen(true)}
               className={styles.createButton}
+              disabled={!!myTeamId}
+              title={
+                myTeamId
+                  ? 'Сначала покиньте текущую команду'
+                  : 'Создать новую команду'
+              }
             >
               Создать команду
             </Button>

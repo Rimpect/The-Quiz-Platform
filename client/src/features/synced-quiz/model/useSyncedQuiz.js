@@ -6,10 +6,9 @@ import {
   useAnswerSelection,
   checkAnswer,
 } from '@features'
+import { useGameSocket } from '@features/game-lobby/model/useGameSocket'
 import { client } from '@shared/api/client'
 import { useNavigate } from 'react-router-dom'
-
-const POLL_INTERVAL_MS = 1000
 
 /**
  * Синхронизированное прохождение квиза (командный/рейтинговый режим).
@@ -159,33 +158,24 @@ export function useSyncedQuiz(quizId, sessionId) {
     navigate,
   ])
 
-  // Поллинг состояния сессии — источник истины для индекса и таймера
-  useEffect(() => {
-    if (!sessionId) return
-
-    const poll = async () => {
-      try {
-        const state = await client(`/game/sessions/${sessionId}`)
-        if (state.game_mode) gameModeRef.current = state.game_mode
-        setTimeLeft(state.time_left ?? null)
-        setServerIndex(state.current_question_index ?? 0)
-        setPlayers(Array.isArray(state.players) ? state.players : [])
-        const t = Array.isArray(state.teams) ? state.teams : []
-        setTeams(t)
-        teamsRef.current = t
-        setCurrentVotes(
-          Array.isArray(state.current_votes) ? state.current_votes : [],
-        )
-        if (state.is_finished) handleFinish()
-      } catch {
-        // единичные ошибки поллинга игнорируем
-      }
-    }
-
-    poll()
-    const id = setInterval(poll, POLL_INTERVAL_MS)
-    return () => clearInterval(id)
-  }, [sessionId, handleFinish])
+  // Состояние сессии приходит по WebSocket — источник истины для индекса/таймера
+  const handleState = useCallback(
+    (state) => {
+      if (state.game_mode) gameModeRef.current = state.game_mode
+      setTimeLeft(state.time_left ?? null)
+      setServerIndex(state.current_question_index ?? 0)
+      setPlayers(Array.isArray(state.players) ? state.players : [])
+      const t = Array.isArray(state.teams) ? state.teams : []
+      setTeams(t)
+      teamsRef.current = t
+      setCurrentVotes(
+        Array.isArray(state.current_votes) ? state.current_votes : [],
+      )
+      if (state.is_finished) handleFinish()
+    },
+    [handleFinish],
+  )
+  useGameSocket(sessionId, handleState)
 
   // При смене вопроса сервером — сбрасываем выбор ответа и флаг голоса
   useEffect(() => {

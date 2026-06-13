@@ -1,16 +1,17 @@
 """
 API для игровых сессий (командные, рейтинговые квизы)
 """
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from ..database.database import get_db
 from ..models.model_user import User
-from ..utils.security import get_current_user
+from ..utils.security import get_current_user, verify_access_token
 from ..schemas.schemas_response import ResponseFactory
 from ..services.game_sessions_manager import game_sessions_manager, GameMode
+from ..services.ws_manager import ws_manager
 from ..crud import crud_game_sessions as game_crud
 from ..crud import crud_quiz as quiz_crud
 
@@ -655,3 +656,45 @@ def finish_game(
         },
         message="Game finished and result saved",
     )
+
+
+# ============ WebSocket ============
+@router.websocket("/ws/{session_id}")
+async def game_ws(websocket: WebSocket, session_id: str):
+    """Канал реального времени для игровой сессии (замена поллинга).
+
+    Аутентификация — JWT в query (?token=...), т.к. браузер не шлёт заголовки
+    при WS-рукопожатии. Сервер пушит состояние через фоновый тикер; входящие
+    сообщения используются как heartbeat (отметка «в сети»).
+    """
+    token = websocket.query_params.get("token")
+    auth = verify_access_token(token) if token else {"status": "invalid"}
+    user_id = auth.get("user_id")
+    if auth.get("status") != "valid" or not user_id:
+        await websocket.close(code=4401)  # Unauthorized
+        return
+
+    session = game_sessions_manager.get_session(session_id)
+    if not session:
+        await websocket.close(code=4404)  # Not found
+        return
+
+    await ws_manager.connect(session_id, websocket)
+    game_sessions_manager.touch_player(session_id, user_id)
+
+    try:
+        # Сразу отправляем актуальное состояние
+        state = game_sessions_manager.get_session_state(session_id)
+        if state:
+            await websocket.send_json(state)
+
+        # Цикл приёма: heartbeat + детект отключения
+        while True:
+            await websocket.receive_text()
+            game_sessions_manager.touch_player(session_id, user_id)
+    except WebSocketDisconnect:
+        pass
+    except Exception:
+        pass
+    finally:
+        ws_manager.disconnect(session_id, websocket)
