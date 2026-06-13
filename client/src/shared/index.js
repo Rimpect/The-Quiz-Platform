@@ -7,6 +7,7 @@ export { SearchBar } from './ui/SearchBar'
 export { ModalFilter } from './ui/Modal'
 export { ModalNotifications } from './ui/Modal'
 export { ModalHelp } from './ui/Modal'
+export { ModalInfo } from './ui/Modal'
 
 export { QuizCard } from './ui/QuizCard'
 export { Badge } from './ui/Badge/Badge'
