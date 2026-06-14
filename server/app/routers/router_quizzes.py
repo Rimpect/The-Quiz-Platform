@@ -15,7 +15,7 @@ from ..utils.security import get_current_user, get_current_user_or_guest_optiona
 router = APIRouter(prefix="/quizzes", tags=["quizzes"])
 
 
-@router.post("", response_model=QuizBase, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=QuizBase, status_code=status.HTTP_201_CREATED)
 def create_quiz(
         quiz: QuizCreate,
         db: Session = Depends(get_db),
@@ -27,7 +27,7 @@ def create_quiz(
     raise HTTPException(status_code=404, detail="Quiz not found")
 
 
-@router.get("")
+@router.get("/")
 def get_quizzes(
         skip: int = 0,
         limit: int = 100,
@@ -109,55 +109,6 @@ def read_quiz_full(quiz_id: int, db: Session = Depends(get_db)):
     return db_quiz
 
 
-@router.get("/{quiz_id}/edit")
-def get_quiz_for_edit(
-        quiz_id: int,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
-):
-    """Получение квиза в формате редактора (с вопросами и ответами)"""
-    quiz = crud_quiz.get_quiz_with_details(db, quiz_id)
-    if not quiz:
-        raise HTTPException(status_code=404, detail="Quiz not found")
-    if quiz.author_id != current_user.id and current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="Not your quiz")
-
-    return ResponseFactory.success(
-        data={
-            "id": quiz.id,
-            "title": quiz.title,
-            "description": quiz.description or "",
-            "categoryId": str(quiz.category_id) if quiz.category_id else "",
-            "difficulty": quiz.difficulty or "easy",
-            "quizMode": quiz.quiz_mode or "single",
-            "lobbyWaitTimeSeconds": quiz.lobby_wait_time_seconds or 30,
-            "maxTeamMembers": quiz.max_team_members or 10,
-            "coverUrl": quiz.cover_url or "",
-            "status": quiz.status,
-            "questions": [
-                {
-                    "id": q.id,
-                    "questionText": q.question_text,
-                    "questionType": getattr(q.answer_type, "value", q.answer_type) or "single",
-                    "timeLimitSeconds": q.time_limit_seconds or 0,
-                    "points": q.points or 10,
-                    "mediaUrl": q.question_media_url or "",
-                    "answers": [
-                        {
-                            "id": a.id,
-                            "text": a.answer_text,
-                            "isCorrect": a.is_correct,
-                        }
-                        for a in sorted(q.answers, key=lambda x: x.order_number)
-                    ],
-                }
-                for q in quiz.questions
-            ],
-        },
-        message="Quiz editor data retrieved"
-    )
-
-
 @router.put("/{quiz_id}", response_model=QuizBase)
 def update_quiz(
         quiz_id: int,
@@ -182,29 +133,25 @@ def delete_quiz(
         db: Session = Depends(get_db),
         current_user: User = Depends(get_current_user)
 ):
-    """Удаление квиза. Админ — любой квиз, автор — только свой."""
-    is_admin = current_user.role == UserRole.ADMIN or current_user.role == "admin"
-    deleted = crud_quiz.delete_quiz(db, quiz_id, current_user.id, is_admin=is_admin)
-    if not deleted:
-        raise HTTPException(
-            status_code=404, detail="Квиз не найден или недостаточно прав"
-        )
-    return
+    """Удаление квиза"""
+    if current_user.role == "admin":
+        if not crud_quiz.delete_quiz(db, quiz_id):
+            raise HTTPException(status_code=404, detail="Quiz not found")
+    raise HTTPException(status_code=404, detail="No admin or author rules")
 
 
-@router.get("/{quiz_id}/leaderboard")
+"""@router.get("/{quiz_id}/leaderboard")
 def get_leaderboard(
         quiz_id: int,
-        limit: int = 100,
+        limit: int = Query(10, ge=1, le=100),
         db: Session = Depends(get_db)
 ):
-    """Получение таблицы лидеров для квиза"""
+    "Получение таблицы лидеров для квиза"
     # Проверяем существование квиза
     if not crud_quiz.get_quiz(db, quiz_id):
         raise HTTPException(status_code=404, detail="Quiz not found")
-
-    leaderboard = crud_quiz.get_quiz_leaderboard(db, quiz_id, limit)
-    return ResponseFactory.success(data=leaderboard, message="Leaderboard retrieved")
+    return crud_quiz.get_quiz_leaderboard(db, quiz_id, limit)
+"""
 
 
 @router.post("/bulk", response_model=QuizBulkResponse, status_code=status.HTTP_201_CREATED)
@@ -213,26 +160,48 @@ def create_quiz_bulk(
         db: Session = Depends(get_db),
         current_user: User = Depends(get_current_user)
 ):
-    """Массовое создание квиза. Админ публикует сразу, обычный пользователь отправляет на модерацию."""
-    quiz_status = "approved" if current_user.role == UserRole.ADMIN else "pending"
-    result = crud_quiz.create_quiz_full(db, quiz_data, author_id=current_user.id, status=quiz_status)
-    result["status"] = quiz_status
-    return result
+    """
+    Массовое создание квиза с вопросами и ответами за один запрос
 
-
-@router.put("/{quiz_id}/bulk")
-def update_quiz_bulk(
-        quiz_id: int,
-        quiz_data: QuizBulkCreate,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user)
-):
-    """Полное обновление квиза с вопросами. Сбрасывает статус на pending для обычных пользователей."""
-    is_admin = current_user.role == UserRole.ADMIN
-    result = crud_quiz.update_quiz_full(db, quiz_id, quiz_data, user_id=current_user.id, is_admin=is_admin)
-    if not result:
-        raise HTTPException(status_code=404, detail="Quiz not found or access denied")
-    return ResponseFactory.success(data=result, message="Quiz updated successfully")
+    Пример тела запроса:
+    {
+        "title": "Python Basics Quiz",
+        "category": "Programming",
+        "description": "Test your Python knowledge",
+        "is_public": true,
+        "quiz_mode": "single",
+        "questions":
+        [
+            {
+                "answer_type": "single",
+                "points": 10,
+                "question_text": "What is Python?",
+                "time_limit_seconds": 30,
+                "answers": [
+                    {"answer_text": "A snake", "is_correct": false, "order_number": 1},
+                    {"answer_text": "A programming language", "is_correct": true, "order_number": 2},
+                    {"answer_text": "A car", "is_correct": false, "order_number": 3}
+                ]
+            },
+            {
+                "answer_type": "multiple",
+                "points": 20,
+                "question_text": "Which of these are Python frameworks?",
+                "time_limit_seconds": 45,
+                "answers": [
+                    {"answer_text": "Django", "is_correct": true, "order_number": 1},
+                    {"answer_text": "Flask", "is_correct": true, "order_number": 2},
+                    {"answer_text": "React", "is_correct": false, "order_number": 3},
+                    {"answer_text": "Spring", "is_correct": false, "order_number": 4}
+                ]
+            }
+        ]
+    }
+    """
+    if current_user.role == UserRole.ADMIN:
+        result = crud_quiz.create_quiz_full(db, quiz_data)
+        return result
+    raise HTTPException(status_code=404, detail="No admin or author rules")
 
 
 @router.post("/pending")

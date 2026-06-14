@@ -27,9 +27,6 @@ class CategoryResponse(BaseModel) :
     class Config:
         from_attributes = True
 
-    class Config :
-        from_attributes = True
-
 
 class Category(CategoryBase) :
     id: int
@@ -51,9 +48,6 @@ class QuizBase(BaseModel) :
     description: str = Field(..., min_length=1)
     is_public: bool = True
     quiz_mode: str = "single"
-    difficulty: str = "easy"
-    lobby_wait_time_seconds: int = Field(30, ge=10, le=300)
-    max_team_members: int = Field(10, ge=1, le=50)
 
 
 class QuizCreate(QuizBase) :
@@ -67,25 +61,17 @@ class QuizUpdate(BaseModel) :
     cover_url: Optional[str] = None
     is_public: Optional[bool] = None
     quiz_mode: Optional[str] = None
-    lobby_wait_time_seconds: Optional[int] = Field(None, ge=10, le=300)
-    max_team_members: Optional[int] = Field(None, ge=1, le=50)
 
 
 class QuizResponse(QuizBase) :
     id: int
     cover_url: Optional[str] = None
     created_at: datetime
-    updated_at: Optional[datetime] = None
+    updated_at: datetime
     total_questions: int = 0
     duration_minutes: int = 0
     difficulty: str = "easy"
-    status: str = "approved"
     times_taken: int = 0
-    lobby_wait_time_seconds: int = 30
-    max_team_members: int = 10
-    media_types: List[str] = []
-    category: Optional[str] = None
-    author_name: Optional[str] = None
     category_obj: Optional[Category] = None
 
     class Config :
@@ -115,9 +101,6 @@ class QuizBulkCreate(BaseModel) :
     cover_url: Optional[str] = None
     is_public: bool = True
     quiz_mode: str = "single"
-    difficulty: str = "easy"
-    lobby_wait_time_seconds: int = Field(30, ge=10, le=300)
-    max_team_members: int = Field(10, ge=1, le=50)
     questions: List[QuestionBulkCreate] = Field(default_factory=list)
 
 
@@ -127,4 +110,3 @@ class QuizBulkResponse(BaseModel) :
     questions_created: int
     answers_created: int
     total_time_limit_minutes: int
-    status: str = "approved"

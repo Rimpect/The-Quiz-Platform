@@ -96,8 +96,7 @@ def login(
             "token_type" : "bearer",
             "user_id" : user.id,
             "nickname" : user.nickname,
-            "role" : user.role,
-            "photo_profile" : user.photo_profile
+            "role" : user.role
         },
         message="Login successful",
         access_status="granted"
@@ -193,6 +192,7 @@ def logout(
         db: Session = Depends(get_db),
         current_user: model_user.User = Depends(get_current_user)
 ) :
+
     """
     Выход пользователя - удаление refresh токена из cookie и отзыв токенов в БД
     """
