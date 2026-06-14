@@ -21,7 +21,7 @@ export { RegistrationForm } from './auth'
 
 // фичи для Quiz
 
-export { QuizTimer } from './quiz-timer'
+export { QuizTimer, useTimerSound } from './quiz-timer'
 export { AnswerList } from './answer-selection'
 export { QuizProgress } from './quiz-progress'
 export { QuizActions } from './quiz-actions'

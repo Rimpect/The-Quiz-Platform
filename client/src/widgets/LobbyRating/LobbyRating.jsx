@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 import { PlayerCard } from '@entities'
+import { useTimerSound } from '@features'
 import { useGameLobby } from '@features/game-lobby/model/useGameLobby'
 import { Button, ROUTES } from '@shared'
 import { Trophy, Clock } from 'lucide-react'
@@ -22,6 +23,9 @@ export function LobbyRating({ quiz, quizId }) {
     readyCount,
     markReady,
   } = useGameLobby(quizId, 'competitive')
+
+  // Звук обратного отсчёта лобби: тиканье за 10 сек + звонок в конце
+  useTimerSound(lobbyTimeLeft)
 
   // Когда лобби стартовало (все готовы или истёк общий таймер) — переходим к квизу
   useEffect(() => {

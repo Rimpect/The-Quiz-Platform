@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { TeamCard, QuizInfoCard } from '@entities'
-import { CreateTeamModal } from '@features'
+import { CreateTeamModal, useTimerSound } from '@features'
 import { useGameLobby } from '@features/game-lobby/model/useGameLobby'
 import { Button, ROUTES, Input } from '@shared'
 import { Clock, Copy, Users } from 'lucide-react'
@@ -38,6 +38,9 @@ export function LobbyTeams({ quiz, quizId }) {
   } = useGameLobby(quizId, 'team')
 
   const leftRef = useRef(false)
+
+  // Звук обратного отсчёта лобби: тиканье за 10 сек + звонок в конце
+  useTimerSound(lobbyTimeLeft)
 
   // Когда лобби стартовало (все готовы или истёк общий таймер) — переходим к квизу
   useEffect(() => {

@@ -10,8 +10,6 @@ import {
 import { ArrowLeft, Users, Clock, Trophy, Star, Award } from 'lucide-react'
 import { useParams, Link } from 'react-router-dom'
 
-import image1 from '../../assets/img/QuizCardTest/pic.jpg'
-
 import styles from './QuizDescription.module.scss'
 
 // Русская плюрализация: forms = [одна, несколько, много]
@@ -42,7 +40,7 @@ export function QuizDescription({ quiz }) {
     author: quiz?.author ?? 'QuizStudio',
     language: quiz?.language ?? 'Русский',
     lastUpdated: quiz?.lastUpdated ?? '2026-01-01',
-    image: quiz?.img || quiz?.image || image1,
+    image: quiz?.img || quiz?.image,
   }
 
   let difficultyVariant = 'medium'

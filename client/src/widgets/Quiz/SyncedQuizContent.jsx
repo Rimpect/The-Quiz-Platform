@@ -5,12 +5,14 @@ import {
   QuizProgress,
   QuestionSection,
   AnswerResult,
+  QuizTimer,
+  useTimerSound,
 } from '@features'
 import { useAntiCheatContext } from '@features/anti-cheating'
 import { useSyncedQuiz } from '@features/synced-quiz/model/useSyncedQuiz'
 import { Button, ROUTES } from '@shared'
 import { client } from '@shared/api/client'
-import { Clock, Users } from 'lucide-react'
+import { Users } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { AntiCheatWarning } from './components/AntiCheatWarning'
@@ -56,6 +58,9 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
     players,
     teams,
   } = useSyncedQuiz(quizId, sessionId)
+
+  // Звук таймера вопроса (серверное время): предупреждение + «звонок» в конце
+  useTimerSound(timeLeft)
 
   // Рядовой участник команды (не капитан): только голосует
   const isVoter = isTeam && !isLeader
@@ -103,10 +108,7 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
               : 'Совместный режим'}
           </div>
         </div>
-        <div className={styles.syncedTimer}>
-          <Clock size={20} />
-          <span>{timeLeft !== null ? `${timeLeft} сек` : '—'}</span>
-        </div>
+        <QuizTimer timeLeft={timeLeft} />
       </div>
 
       <QuizProgress
