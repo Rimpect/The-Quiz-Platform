@@ -1,4 +1,4 @@
-// features/change-password/model/useChangePassword.js
+
 import { useState } from 'react'
 
 import { changePasswordApi } from '../api/changePasswordApi.js'

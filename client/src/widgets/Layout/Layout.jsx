@@ -1,4 +1,4 @@
-import { useLayoutEffect } from 'react'
+import { Suspense, useLayoutEffect } from 'react'
 
 import { Outlet, useLocation } from 'react-router-dom'
 
@@ -21,7 +21,15 @@ export function Layout() {
       <Header></Header>
 
       <main>
-        <Outlet />
+        <Suspense
+          fallback={
+            <div style={{ padding: '2rem', textAlign: 'center' }}>
+              Загрузка…
+            </div>
+          }
+        >
+          <Outlet />
+        </Suspense>
       </main>
 
       <Footer></Footer>
