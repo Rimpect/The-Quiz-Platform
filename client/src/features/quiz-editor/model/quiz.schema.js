@@ -1,36 +1,48 @@
 import { z } from 'zod'
 
-export const quizSchema = z.object({
-  title: z.string().min(3, 'Название слишком короткое'),
+export const quizSchema = z
+  .object({
+    title: z.string().min(3, 'Название слишком короткое'),
 
-  description: z.string().min(1, 'Добавьте описание квиза'),
+    description: z.string().min(1, 'Добавьте описание квиза'),
 
-  coverUrl: z.string().min(1, 'Загрузите обложку квиза'),
+    coverUrl: z.string().min(1, 'Загрузите обложку квиза'),
 
-  categoryId: z.string().min(1, 'Выберите категорию'),
+    categoryId: z.string().min(1, 'Выберите категорию'),
 
-  difficulty: z.string().min(1, 'Выберите сложность'),
+    categoryName: z.string().optional(),
 
-  quizMode: z.string().optional(),
+    difficulty: z.string().min(1, 'Выберите сложность'),
 
-  duration: z.number().min(1, 'Минимум 1 минута'),
+    quizMode: z.string().optional(),
 
-  questions: z
-    .array(
-      z.object({
-        questionText: z.string().min(1, 'Введите вопрос'),
+    duration: z.number().min(1, 'Минимум 1 минута'),
 
-        timeLimitSeconds: z.number().min(0).optional(),
+    questions: z
+      .array(
+        z.object({
+          questionText: z.string().min(1, 'Введите вопрос'),
 
-        answers: z
-          .array(
-            z.object({
-              text: z.string().min(1, 'Введите ответ'),
-              isCorrect: z.boolean(),
-            }),
-          )
-          .min(2, 'Минимум 2 ответа'),
-      }),
-    )
-    .min(1, 'Добавьте хотя бы один вопрос'),
-})
+          timeLimitSeconds: z.number().min(0).optional(),
+
+          answers: z
+            .array(
+              z.object({
+                text: z.string().min(1, 'Введите ответ'),
+                isCorrect: z.boolean(),
+              }),
+            )
+            .min(2, 'Минимум 2 ответа'),
+        }),
+      )
+      .min(1, 'Добавьте хотя бы один вопрос'),
+  })
+  .superRefine((data, ctx) => {
+    if (data.categoryId === 'other' && !data.categoryName?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['categoryName'],
+        message: 'Введите название категории',
+      })
+    }
+  })

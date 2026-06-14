@@ -91,6 +91,16 @@ export function QuizStats() {
 
             <option value="other">Другое</option>
           </Select>
+
+          {quiz.categoryId === 'other' && (
+            <Input
+              type="text"
+              placeholder="Введите название категории"
+              value={quiz.categoryName}
+              maxLength={100}
+              onChange={(e) => setField('categoryName', e.target.value)}
+            />
+          )}
         </div>
 
         <div className={styles.label}>

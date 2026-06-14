@@ -79,6 +79,22 @@ async def lifespan(app: FastAPI):
     await asyncio.to_thread(Base.metadata.create_all, bind=engine)
     logger.info("Database tables created")
 
+    # Стартовые категории (идемпотентно: создаются только отсутствующие)
+    def _seed_categories():
+        from .crud import crud_categories
+        from .database.database import SessionLocal
+        db = SessionLocal()
+        try:
+            return crud_categories.seed_default_categories(db)
+        finally:
+            db.close()
+
+    try:
+        added = await asyncio.to_thread(_seed_categories)
+        logger.info(f"Default categories seeded (added: {added})")
+    except Exception as e:
+        logger.error(f"Category seeding failed: {e}")
+
     # Структура папок для медиа (media/...)
     from .utils.media_utils import ensure_media_dirs
     ensure_media_dirs()

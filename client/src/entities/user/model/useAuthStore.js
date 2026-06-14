@@ -101,6 +101,14 @@ export const useAuthStore = create(
   ),
 )
 
+// Подхватываем токен, обновлённый в client.js после авто-рефреша по 401,
+// чтобы in-memory состояние стора не оставалось со старым (протухшим) токеном.
+if (typeof window !== 'undefined') {
+  window.addEventListener('auth:refreshed', (e) => {
+    if (e.detail) useAuthStore.getState().setToken(e.detail)
+  })
+}
+
 export const useUser = () => useAuthStore((state) => state.user)
 export const useIsAuthenticated = () =>
   useAuthStore((state) => state.isAuthenticated)

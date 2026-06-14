@@ -57,8 +57,6 @@ export function Quiz() {
         const response = await client(`/quizzes/${id}`)
         const quizData = response?.data ?? response
 
-        // Только командный режим идёт через лобби (хост-сессия).
-        // Рейтинговый — асинхронный: играется как соло, результат в общий лидерборд.
         if (quizData.quiz_mode === 'team') {
           navigate(`/quiz/${id}/lobby`)
           return

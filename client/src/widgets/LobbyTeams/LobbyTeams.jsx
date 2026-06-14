@@ -42,7 +42,6 @@ export function LobbyTeams({ quiz, quizId }) {
   // Звук обратного отсчёта лобби: тиканье за 10 сек + звонок в конце
   useTimerSound(lobbyTimeLeft)
 
-  // Когда лобби стартовало (все готовы или истёк общий таймер) — переходим к квизу
   useEffect(() => {
     if (lobbyStarted && !startedRef.current) {
       startedRef.current = true

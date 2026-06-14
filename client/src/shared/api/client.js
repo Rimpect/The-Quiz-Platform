@@ -50,7 +50,12 @@ const doRefresh = async () => {
     if (!res.ok) return null
     const json = await res.json()
     const token = (json?.data ?? json)?.access_token
-    if (token) writeToken(token)
+    if (token) {
+      writeToken(token)
+      // Синхронизируем обновлённый токен с in-memory стором (его читают, например,
+      // при установке WebSocket-соединения), а не только localStorage.
+      window.dispatchEvent(new CustomEvent('auth:refreshed', { detail: token }))
+    }
     return token || null
   } catch {
     return null

@@ -9,6 +9,21 @@ from ..models.model_answer import Answer
 from ..models.model_pending_quiz import PendingQuiz, PendingQuizStatus
 from ..models.model_question import Question as Quest
 from ..models.model_quiz import Quiz
+from . import crud_categories
+
+
+def resolve_category_id(db: Session, category_id: Optional[int], category_name: Optional[str]) -> Optional[int]:
+    """Определить id категории: если задан явный id — берём его, иначе по введённому
+    вручную названию находим существующую категорию или создаём новую."""
+    if category_id:
+        return category_id
+    if category_name and category_name.strip():
+        name = category_name.strip()
+        existing = crud_categories.get_category_by_type(db, name)
+        if existing:
+            return existing.id
+        return crud_categories.create_category(db, name).id
+    return None
 
 
 def get_quiz(db: Session, quiz_id: int) -> Optional[Quiz]:
@@ -79,10 +94,12 @@ def create_quiz_full(
 
     is_public = status == "approved"
 
+    category_id = resolve_category_id(db, quiz_data.category_id, quiz_data.category_name)
+
     # 1. Создаём квиз
     db_quiz = Quiz(
         title=quiz_data.title,
-        category_id=quiz_data.category_id,
+        category_id=category_id,
         description=quiz_data.description,
         cover_url=quiz_data.cover_url,
         is_public=is_public,
@@ -401,7 +418,7 @@ def update_quiz_full(
 
     db_quiz.title = quiz_data.title
     db_quiz.description = quiz_data.description
-    db_quiz.category_id = quiz_data.category_id
+    db_quiz.category_id = resolve_category_id(db, quiz_data.category_id, quiz_data.category_name)
     db_quiz.quiz_mode = quiz_data.quiz_mode
     db_quiz.difficulty = quiz_data.difficulty
     db_quiz.status = new_status
