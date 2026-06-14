@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Secrets / окружение (живёт только на VM)
+.env
+server/.env
+
+# Логи и медиа
+server/logs/
+server/media/
+server/media_files/
+
+# Виртуальное окружение
+server/{virt_name}/
+.venv/
+venv/
