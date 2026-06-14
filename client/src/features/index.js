@@ -49,5 +49,7 @@ export {
   WarningModal,
 } from './anti-cheating'
 export { RulesModal, RulesGate } from './rules'
+// инфо-модалки футера (помощь / правила / FAQ)
+export { HelpModal, RulesInfoModal, FaqModal } from './info-modals'
 // фичи для поиска
 export { useAdminSearch, useQuizSearch, useSearchStore } from './search-quiz'
