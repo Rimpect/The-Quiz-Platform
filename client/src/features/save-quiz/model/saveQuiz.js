@@ -9,6 +9,10 @@ const toServerFormat = (quiz) => ({
     quiz.categoryId && quiz.categoryId !== 'other'
       ? Number(quiz.categoryId)
       : null,
+  category_name:
+    quiz.categoryId === 'other' && quiz.categoryName?.trim()
+      ? quiz.categoryName.trim()
+      : null,
   is_public: true,
   quiz_mode: quiz.quizMode || 'single',
   difficulty: quiz.difficulty || 'easy',

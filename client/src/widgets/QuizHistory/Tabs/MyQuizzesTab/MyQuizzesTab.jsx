@@ -95,12 +95,14 @@ export function MyQuizzesTab({
                       icon={<Edit size={16} />}
                       variant="transparent"
                       title="Редактировать"
+                      aria-label="Редактировать квиз"
                       onClick={() => handleEdit(quiz)}
                     />
                     <Button
                       icon={<Trash2 size={16} />}
                       variant="transparent"
                       title="Удалить"
+                      aria-label="Удалить квиз"
                       onClick={() => setConfirmQuiz(quiz)}
                     />
                   </div>

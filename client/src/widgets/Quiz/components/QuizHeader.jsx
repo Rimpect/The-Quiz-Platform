@@ -8,7 +8,6 @@ import styles from '../Quiz.module.scss'
 
 export const QuizHeader = ({
   title,
-  category,
   timerKey,
   onTimeEnd,
   timeLimitSeconds,
@@ -20,7 +19,6 @@ export const QuizHeader = ({
           Выход
         </Link>
         <div className={styles.quizTitle}>{title || 'Квиз'}</div>
-        <div className={styles.quizCategory}>{category || 'Общий'}</div>
       </div>
       {timeLimitSeconds > 0 && (
         <QuizTimer

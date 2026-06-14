@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { useAuthStore } from '@entities'
-import { registerUser } from '@entities/user/api/authApi.js'
+import { registerUser } from '@entities/user'
 import { toast } from 'sonner'
 
 import { registerSchema } from './registerSchema'

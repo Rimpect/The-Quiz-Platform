@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+logs/
+media/
+media_files/
+test/
+pip/
+{virt_name}/
+*.bat
+*.ps1

@@ -21,7 +21,7 @@ export { RegistrationForm } from './auth'
 
 // фичи для Quiz
 
-export { QuizTimer } from './quiz-timer'
+export { QuizTimer, useTimerSound } from './quiz-timer'
 export { AnswerList } from './answer-selection'
 export { QuizProgress } from './quiz-progress'
 export { QuizActions } from './quiz-actions'
@@ -49,5 +49,7 @@ export {
   WarningModal,
 } from './anti-cheating'
 export { RulesModal, RulesGate } from './rules'
+// инфо-модалки футера (помощь / правила / FAQ)
+export { HelpModal, RulesInfoModal, FaqModal } from './info-modals'
 // фичи для поиска
 export { useAdminSearch, useQuizSearch, useSearchStore } from './search-quiz'

@@ -6,7 +6,7 @@ import {
   useAnswerSelection,
   checkAnswer,
 } from '@features'
-import { useGameSocket } from '@features/game-lobby/model/useGameSocket'
+import { useGameSocket } from '@features/game-lobby'
 import { client } from '@shared/api/client'
 import { useNavigate } from 'react-router-dom'
 
@@ -71,7 +71,7 @@ export function useSyncedQuiz(quizId, sessionId) {
   const isAnswered = isTeam
     ? isLeader
       ? submittedIndex === serverIndex
-      : leaderAnswered 
+      : leaderAnswered
     : submittedIndex === serverIndex
   const hasVoted = votedIndex === serverIndex
 

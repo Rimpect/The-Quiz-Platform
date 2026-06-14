@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import { ACHIEVEMENTS_LIST } from '@entities/achievement/achievementsList'
+import { ACHIEVEMENTS_LIST } from '@entities/achievement'
 import { getGrade, getMessage, getMotivation } from '@features'
 import { ROUTES, getQuizRoute } from '@shared'
 import { client } from '@shared/api/client'

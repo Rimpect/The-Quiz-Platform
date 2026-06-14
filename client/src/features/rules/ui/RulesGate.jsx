@@ -28,11 +28,7 @@ export function RulesGate({ quizId, children }) {
 
   if (!accepted) {
     return (
-      <RulesModal
-        isOpen
-        onAccept={handleAccept}
-        onDecline={handleDecline}
-      />
+      <RulesModal isOpen onAccept={handleAccept} onDecline={handleDecline} />
     )
   }
 

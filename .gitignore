@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+
+.env
+server/.env
+
+server/logs/
+server/media/
+server/media_files/
+
+server/{virt_name}/
+.venv/
+venv/

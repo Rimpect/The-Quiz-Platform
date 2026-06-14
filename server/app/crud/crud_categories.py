@@ -33,3 +33,21 @@ def delete_category(db: Session, category_id: int) -> bool:
         db.commit()
         return True
     return False
+
+
+DEFAULT_CATEGORIES = [
+    "История", "География", "Литература", "Искусство", "Музыка",
+    "Кино", "Наука", "Математика", "Технологии", "Спорт",
+    "Психология", "Мифология", "Еда", "Животные", "Общая эрудиция",
+]
+
+
+def seed_default_categories(db: Session) -> int:
+    """Создать стартовые категории, которых ещё нет. Идемпотентно.
+    Возвращает количество добавленных."""
+    created = 0
+    for name in DEFAULT_CATEGORIES:
+        if not get_category_by_type(db, name):
+            create_category(db, name)
+            created += 1
+    return created

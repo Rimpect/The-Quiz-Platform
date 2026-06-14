@@ -8,7 +8,7 @@ export function QuestionSection({ question }) {
           {question.mediaType === 'image' && (
             <img
               src={question.mediaUrl}
-              alt="media"
+              alt="Изображение к вопросу"
               className={styles.mediaImage}
             />
           )}

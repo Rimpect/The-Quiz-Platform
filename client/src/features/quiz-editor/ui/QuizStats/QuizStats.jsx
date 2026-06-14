@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useCategories } from '@entities/category/model/useCategories'
+import { useCategories } from '@entities/category'
 import { Textarea, Select, CoverUpload, Input } from '@shared'
 import { Clock } from 'lucide-react'
 
@@ -65,7 +65,7 @@ export function QuizStats() {
             id="quiz-description"
             placeholder="Краткое описание квиза"
             value={quiz.description}
-            maxLength={100}
+            maxLength={500}
             onChange={(e) => setField('description', e.target.value)}
             className={styles.editorTextarea}
           />
@@ -91,6 +91,16 @@ export function QuizStats() {
 
             <option value="other">Другое</option>
           </Select>
+
+          {quiz.categoryId === 'other' && (
+            <Input
+              type="text"
+              placeholder="Введите название категории"
+              value={quiz.categoryName}
+              maxLength={100}
+              onChange={(e) => setField('categoryName', e.target.value)}
+            />
+          )}
         </div>
 
         <div className={styles.label}>

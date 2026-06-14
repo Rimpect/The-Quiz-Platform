@@ -1,11 +1,10 @@
 import { useState } from 'react'
 
 import { Button, Input } from '@shared'
-import { client } from '@shared/api/client'
 import { Eye, EyeOff } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { changePasswordSchema } from '../model/schema/changePasswordSchema'
+import { useChangePassword } from '../model/useChangePassword'
 
 import styles from './ChangePassword.module.scss'
 
@@ -50,41 +49,24 @@ export function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false)
+  const { submit, loading } = useChangePassword()
 
   const handleChangePassword = async () => {
-    const result = changePasswordSchema.safeParse({
-      currentPassword,
-      newPassword,
-      confirmPassword,
-    })
+    const res = await submit({ currentPassword, newPassword, confirmPassword })
 
-    if (!result.success) {
-      const firstError = Object.values(result.error.flatten().fieldErrors)
-        .flat()
-        .find(Boolean)
-      if (firstError) toast.error(firstError)
+    if (!res.ok) {
+      // ошибки валидации (zod) либо сообщение сервера
+      const firstError = res.errors
+        ? Object.values(res.errors).flat().find(Boolean)
+        : res.error
+      toast.error(firstError || 'Ошибка изменения пароля')
       return
     }
 
-    try {
-      setLoading(true)
-      await client('/users/me/change-password', {
-        method: 'POST',
-        body: JSON.stringify({
-          current_password: currentPassword,
-          new_password: newPassword,
-        }),
-      })
-      toast.success('Пароль успешно изменён')
-      setCurrentPassword('')
-      setNewPassword('')
-      setConfirmPassword('')
-    } catch (e) {
-      toast.error(e.message || 'Ошибка изменения пароля')
-    } finally {
-      setLoading(false)
-    }
+    toast.success('Пароль успешно изменён')
+    setCurrentPassword('')
+    setNewPassword('')
+    setConfirmPassword('')
   }
 
   return (

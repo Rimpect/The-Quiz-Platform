@@ -1,0 +1,9 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; // прижимаем футер к низу, если контента мало
+}
+
+.main {
+  flex: 1 0 auto; // занимает всё свободное место → футер внизу
+}

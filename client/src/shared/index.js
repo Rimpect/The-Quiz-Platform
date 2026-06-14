@@ -13,6 +13,7 @@ export { QuizCard } from './ui/QuizCard'
 export { Badge } from './ui/Badge/Badge'
 export { Avatar } from './ui/Avatar/Avatar'
 export { ConfirmDialog } from './ui/ConfirmDialog/ConfirmDialog'
+export { ErrorBoundary } from './ui/ErrorBoundary/ErrorBoundary'
 export { Input } from './ui/Input'
 export { Textarea } from './ui/Textarea'
 export { Select } from './ui/Select'
@@ -21,6 +22,8 @@ export { Checkbox } from './ui/Checkbox'
 export { CoverUpload } from './ui/CoverUpload'
 
 export { useCurrentUser } from './hooks/useCurrentUser'
+
+export { getDifficulty, QUIZ_MODE_LABELS } from './lib/quizMeta'
 
 export { ROUTES, createRoute } from './config'
 

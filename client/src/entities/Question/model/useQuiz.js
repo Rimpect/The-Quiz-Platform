@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+
 import { client } from '@shared/api/client'
 
 export const useQuiz = (quizId) => {

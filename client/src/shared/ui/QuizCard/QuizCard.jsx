@@ -1,19 +1,7 @@
-import { Badge } from '@shared'
+import { Badge, getDifficulty, QUIZ_MODE_LABELS } from '@shared'
 import { Users, Clock, Trophy } from 'lucide-react'
 
 import styles from './QuizCard.module.scss'
-
-const DIFFICULTY_LABELS = {
-  easy: 'Лёгкий',
-  medium: 'Средний',
-  hard: 'Сложный',
-}
-
-const QUIZ_MODE_LABELS = {
-  single: 'Соло',
-  team: 'Командный',
-  competitive: 'Рейтинговый',
-}
 
 const DEFAULT_COVER = '/placeholder-quiz.png'
 
@@ -31,9 +19,10 @@ export function QuizCard(props) {
   } = props
 
   const coverSrc = cover_url || img || DEFAULT_COVER
-  const difficultyLabel =
-    DIFFICULTY_LABELS[difficulty] || difficulty || 'Лёгкий'
-  const badgeVariant = difficulty || 'easy'
+  const { variant: badgeVariant, label: difficultyLabel } =
+    getDifficulty(difficulty)
+  const showModeBadge =
+    quiz_mode && quiz_mode !== 'single' && quiz_mode !== 'solo'
 
   return (
     <article className={styles.card}>
@@ -46,16 +35,6 @@ export function QuizCard(props) {
             e.currentTarget.src = DEFAULT_COVER
           }}
         />
-        <div className={styles.badgeContainer}>
-          <Badge variant={badgeVariant} size="sm">
-            {difficultyLabel}
-          </Badge>
-          {quiz_mode && quiz_mode !== 'single' && (
-            <Badge variant={quiz_mode} size="sm">
-              {QUIZ_MODE_LABELS[quiz_mode] || quiz_mode}
-            </Badge>
-          )}
-        </div>
       </div>
 
       <div className={styles.content}>
@@ -66,6 +45,18 @@ export function QuizCard(props) {
 
         <h3 className={styles.title}>{title}</h3>
         <p className={styles.description}>{description}</p>
+
+        {/* Бейджи в контенте — всегда читаемы (не зависят от фона обложки) */}
+        <div className={styles.badges}>
+          <Badge variant={badgeVariant} size="sm">
+            {difficultyLabel}
+          </Badge>
+          {showModeBadge && (
+            <Badge variant={quiz_mode} size="sm">
+              {QUIZ_MODE_LABELS[quiz_mode] || quiz_mode}
+            </Badge>
+          )}
+        </div>
 
         <div className={styles.info}>
           <div className={styles.infoItem}>

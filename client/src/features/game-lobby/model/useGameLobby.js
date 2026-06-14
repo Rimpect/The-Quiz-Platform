@@ -106,7 +106,10 @@ export function useGameLobby(quizId, gameMode) {
       try {
         const state = await client('/game/lobby/join-by-code', {
           method: 'POST',
-          body: JSON.stringify({ code: code.trim().toUpperCase() }),
+          body: JSON.stringify({
+            code: code.trim().toUpperCase(),
+            quiz_id: Number(quizId),
+          }),
         })
         setSessionId(state.session_id)
         applyState(state)
@@ -116,7 +119,7 @@ export function useGameLobby(quizId, gameMode) {
         setLoading(false)
       }
     },
-    [applyState],
+    [quizId, applyState],
   )
 
   const leaveLobby = useCallback(async () => {

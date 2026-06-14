@@ -16,11 +16,17 @@
   color: var(--color-gray-text);
 }
 .avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 90px;
   height: 90px;
   border-radius: 50%;
   background-color: var(--blue-900);
   object-fit: cover;
+}
+.placeholderIcon {
+  color: #fff;
 }
 .error {
   display: block;
