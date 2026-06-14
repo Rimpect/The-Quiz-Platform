@@ -5,7 +5,6 @@ from fastapi import HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-
 from ..crud import crud_quiz as quiz_crud
 from ..crud import crud_user as crud_user
 from ..database.database import get_db

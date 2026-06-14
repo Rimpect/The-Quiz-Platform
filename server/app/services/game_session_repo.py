@@ -18,6 +18,7 @@ from .game_sessions_manager import GameMode, Player, GameSessionMemory
 SESSION_TTL_SECONDS = 180 * 60  # как session_ttl менеджера (180 минут)
 
 
+
 def _dt(value: Optional[datetime]) -> Optional[str]:
     return value.isoformat() if value else None
 
