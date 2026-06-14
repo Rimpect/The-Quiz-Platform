@@ -15,6 +15,8 @@ import { useParams, Link } from 'react-router-dom'
 
 import styles from './QuizDescription.module.scss'
 
+const DEFAULT_COVER = '/placeholder-quiz.png'
+
 // Русская плюрализация: forms = [одна, несколько, много]
 const pluralRu = (n, forms) => {
   const m10 = n % 10
@@ -35,20 +37,15 @@ export function QuizDescription({ quiz }) {
   const bestScore = leaderboard?.[0]?.percent ?? null
 
   const quizData = {
-    id: quiz?.id ?? 2,
-    title: quiz?.title ?? 'Великие научные открытия',
-    description:
-      quiz?.description ??
-      'Квиз о великих научных открытиях и изобретениях человечества',
-    category: quiz?.category,
+    title: quiz?.title || 'Квиз',
+    description: quiz?.description || '',
+    category: quiz?.category || '',
     difficulty: quiz?.difficulty,
-    participants: quiz?.participants,
-    duration: quiz?.duration,
-    questionCount: quiz?.questionCount ?? 20,
-    author: quiz?.author ?? 'QuizStudio',
-    language: quiz?.language ?? 'Русский',
-    lastUpdated: quiz?.lastUpdated ?? '2026-01-01',
-    image: quiz?.img || quiz?.image,
+    participants: quiz?.participants ?? 0,
+    duration: quiz?.duration || 0,
+    questionCount: quiz?.questionCount ?? 0,
+    author: quiz?.author || '',
+    image: quiz?.img || quiz?.image || DEFAULT_COVER,
   }
 
   const difficulty = getDifficulty(quizData.difficulty)
@@ -70,14 +67,19 @@ export function QuizDescription({ quiz }) {
               src={quizData.image}
               alt={quizData.title}
               className={styles.img}
+              onError={(e) => {
+                e.currentTarget.src = DEFAULT_COVER
+              }}
             />
             <div className={styles.overlay}>
               <div className={styles.overlayContent}>
                 <div className={styles.meta}>
                   <Trophy className={styles.metaIcon} />
-                  <span className={styles.metaCategory}>
-                    {quizData.category}
-                  </span>
+                  {quizData.category && (
+                    <span className={styles.metaCategory}>
+                      {quizData.category}
+                    </span>
+                  )}
                   <Badge variant={difficulty.variant} size="sm">
                     {difficulty.label}
                   </Badge>
@@ -97,7 +99,9 @@ export function QuizDescription({ quiz }) {
             {/* Левая колонка - описание */}
             <div>
               <h2 className={styles.infoTitle}>О квизе</h2>
-              <p className={styles.infoText}>{quizData.description}</p>
+              {quizData.description && (
+                <p className={styles.infoText}>{quizData.description}</p>
+              )}
 
               <div className={styles.card}>
                 <h3 className={styles.cardTitle}>Что вас ждет?</h3>
@@ -145,7 +149,9 @@ export function QuizDescription({ quiz }) {
                     <span className={styles.statsLabel}>Длительность:</span>
                   </div>
                   <span className={styles.statsValue}>
-                    {quizData.duration} минут
+                    {quizData.duration
+                      ? `${quizData.duration} минут`
+                      : 'без лимита'}
                   </span>
                 </li>
 
@@ -172,15 +178,17 @@ export function QuizDescription({ quiz }) {
                     {quizData.questionCount}
                   </span>
                 </li>
-                <li className={styles.statsItem}>
-                  <div className={styles.statsLeft}>
-                    <span className={styles.statsIcon}>
-                      <Award />
-                    </span>
-                    <span className={styles.statsLabel}>Автор:</span>
-                  </div>
-                  <span className={styles.statsValue}>{quizData.author}</span>
-                </li>
+                {quizData.author && (
+                  <li className={styles.statsItem}>
+                    <div className={styles.statsLeft}>
+                      <span className={styles.statsIcon}>
+                        <Award />
+                      </span>
+                      <span className={styles.statsLabel}>Автор:</span>
+                    </div>
+                    <span className={styles.statsValue}>{quizData.author}</span>
+                  </li>
+                )}
               </ul>
               <Link to={getQuizRoute(id)}>
                 <Button variant="black" size="medium" fullWidth>
