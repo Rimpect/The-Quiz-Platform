@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
 
 import { RulesGate } from '@features'
-import { LobbyTeams, LobbyRating } from '@widgets'
 import { client } from '@shared/api/client'
+import { LobbyTeams, LobbyRating } from '@widgets'
+import { useParams, useNavigate } from 'react-router-dom'
 
 export function LobbyTeamsPage() {
   const { quizId } = useParams()
@@ -50,7 +50,9 @@ export function LobbyTeamsPage() {
   }, [quizId, navigate])
 
   if (loading) {
-    return <div style={{ padding: '2rem', textAlign: 'center' }}>Загрузка...</div>
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center' }}>Загрузка...</div>
+    )
   }
 
   if (!quiz) return null

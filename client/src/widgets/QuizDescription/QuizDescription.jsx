@@ -1,18 +1,21 @@
 import React from 'react'
 
+import { useLeaderboard } from '@entities/leaderboard'
 import {
   Badge,
   Button,
   ROUTES,
   getQuizRoute,
   getLeaderboardRatingRoute,
+  getDifficulty,
+  QUIZ_MODE_LABELS,
 } from '@shared'
-import { ArrowLeft, Users, Clock, Trophy, Star, Award } from 'lucide-react'
+import { ArrowLeft, Users, Clock, Trophy, Award } from 'lucide-react'
 import { useParams, Link } from 'react-router-dom'
 
-import image1 from '../../assets/img/QuizCardTest/pic.jpg'
-
 import styles from './QuizDescription.module.scss'
+
+const DEFAULT_COVER = '/placeholder-quiz.png'
 
 // Русская плюрализация: forms = [одна, несколько, много]
 const pluralRu = (n, forms) => {
@@ -25,32 +28,27 @@ const pluralRu = (n, forms) => {
 
 export function QuizDescription({ quiz }) {
   const { id } = useParams()
-  const isCompetitive = quiz?.quiz_mode === 'competitive'
+  const quizMode = quiz?.quiz_mode
+  const isCompetitive = quizMode === 'competitive'
+  const showModeBadge = quizMode && quizMode !== 'single' && quizMode !== 'solo'
+
+  // Лучший результат — топ таблицы лидеров квиза
+  const { leaderboard } = useLeaderboard(id)
+  const bestScore = leaderboard?.[0]?.percent ?? null
+
   const quizData = {
-    id: quiz?.id ?? 2,
-    title: quiz?.title ?? 'Великие научные открытия',
-    description:
-      quiz?.description ??
-      'Квиз о великих научных открытиях и изобретениях человечества',
-    category: quiz?.category ?? 'Наука',
-    difficulty: quiz?.difficulty ?? 'Средний',
-    rating: quiz?.rating ?? 4.7,
-    participants: quiz?.participants ?? 1234,
-    duration: quiz?.duration ?? 45,
-    topScore: quiz?.topScore ?? 98,
-    questionCount: quiz?.questionCount ?? 20,
-    author: quiz?.author ?? 'QuizStudio',
-    language: quiz?.language ?? 'Русский',
-    lastUpdated: quiz?.lastUpdated ?? '2026-01-01',
-    image: quiz?.img || quiz?.image || image1,
+    title: quiz?.title || 'Квиз',
+    description: quiz?.description || '',
+    category: quiz?.category || '',
+    difficulty: quiz?.difficulty,
+    participants: quiz?.participants ?? 0,
+    duration: quiz?.duration || 0,
+    questionCount: quiz?.questionCount ?? 0,
+    author: quiz?.author || '',
+    image: quiz?.img || quiz?.image || DEFAULT_COVER,
   }
 
-  let difficultyVariant = 'medium'
-  if (quizData.difficulty === 'Легкий') {
-    difficultyVariant = 'easy'
-  } else if (quizData.difficulty === 'Сложный') {
-    difficultyVariant = 'hard'
-  }
+  const difficulty = getDifficulty(quizData.difficulty)
 
   return (
     <div className={styles.description}>
@@ -69,23 +67,29 @@ export function QuizDescription({ quiz }) {
               src={quizData.image}
               alt={quizData.title}
               className={styles.img}
+              onError={(e) => {
+                e.currentTarget.src = DEFAULT_COVER
+              }}
             />
             <div className={styles.overlay}>
               <div className={styles.overlayContent}>
                 <div className={styles.meta}>
                   <Trophy className={styles.metaIcon} />
-                  <span className={styles.metaCategory}>
-                    {quizData.category}
-                  </span>
-                  <Badge variant={difficultyVariant} size="sm">
-                    {quizData.difficulty}
+                  {quizData.category && (
+                    <span className={styles.metaCategory}>
+                      {quizData.category}
+                    </span>
+                  )}
+                  <Badge variant={difficulty.variant} size="sm">
+                    {difficulty.label}
                   </Badge>
+                  {showModeBadge && (
+                    <Badge variant={quizMode} size="sm">
+                      {QUIZ_MODE_LABELS[quizMode] || quizMode}
+                    </Badge>
+                  )}
                 </div>
                 <h1 className={styles.title}>{quizData.title}</h1>
-                <div className={styles.rating}>
-                  <Star className={styles.ratingIcon} />
-                  <span className={styles.ratingValue}>{quizData.rating}</span>
-                </div>
               </div>
             </div>
           </div>
@@ -95,7 +99,9 @@ export function QuizDescription({ quiz }) {
             {/* Левая колонка - описание */}
             <div>
               <h2 className={styles.infoTitle}>О квизе</h2>
-              <p className={styles.infoText}>{quizData.description}</p>
+              {quizData.description && (
+                <p className={styles.infoText}>{quizData.description}</p>
+              )}
 
               <div className={styles.card}>
                 <h3 className={styles.cardTitle}>Что вас ждет?</h3>
@@ -113,9 +119,6 @@ export function QuizDescription({ quiz }) {
                   </li>
                   <li className={styles.cardItem}>
                     • Мгновенная проверка ответов
-                  </li>
-                  <li className={styles.cardItem}>
-                    • Подробная статистика в конце
                   </li>
                 </ul>
               </div>
@@ -146,7 +149,9 @@ export function QuizDescription({ quiz }) {
                     <span className={styles.statsLabel}>Длительность:</span>
                   </div>
                   <span className={styles.statsValue}>
-                    {quizData.duration} минут
+                    {quizData.duration
+                      ? `${quizData.duration} минут`
+                      : 'без лимита'}
                   </span>
                 </li>
 
@@ -158,7 +163,7 @@ export function QuizDescription({ quiz }) {
                     <span className={styles.statsLabel}>Лучший результат:</span>
                   </div>
                   <span className={styles.statsValue}>
-                    {quizData.topScore}%
+                    {bestScore != null ? `${bestScore}%` : '—'}
                   </span>
                 </li>
 
@@ -173,15 +178,17 @@ export function QuizDescription({ quiz }) {
                     {quizData.questionCount}
                   </span>
                 </li>
-                <li className={styles.statsItem}>
-                  <div className={styles.statsLeft}>
-                    <span className={styles.statsIcon}>
-                      <Award />
-                    </span>
-                    <span className={styles.statsLabel}>Автор:</span>
-                  </div>
-                  <span className={styles.statsValue}>{quizData.author}</span>
-                </li>
+                {quizData.author && (
+                  <li className={styles.statsItem}>
+                    <div className={styles.statsLeft}>
+                      <span className={styles.statsIcon}>
+                        <Award />
+                      </span>
+                      <span className={styles.statsLabel}>Автор:</span>
+                    </div>
+                    <span className={styles.statsValue}>{quizData.author}</span>
+                  </li>
+                )}
               </ul>
               <Link to={getQuizRoute(id)}>
                 <Button variant="black" size="medium" fullWidth>

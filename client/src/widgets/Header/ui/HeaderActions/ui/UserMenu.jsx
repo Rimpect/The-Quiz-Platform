@@ -15,7 +15,6 @@ export function UserMenu() {
   const handleLogout = () => {
     logout()
     toast.info('Вы вышли из аккаунта')
-    console.log('after logout', useAuthStore.getState())
     navigate(ROUTES.main, { replace: true })
   }
 
@@ -49,6 +48,8 @@ export function UserMenu() {
           size="medium"
           onClick={handleLogout}
           className={styles.logoutButton}
+          aria-label="Выйти из аккаунта"
+          title="Выйти из аккаунта"
         >
           <LogOut size={16} />
         </Button>

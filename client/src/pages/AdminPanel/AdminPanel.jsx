@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { useAdminQuizzes } from '@entities/quiz/model/useAdminQuizzes'
+import { useAdminQuizzes } from '@entities/quiz'
 import { QuizSearch, useAdminSearch } from '@features'
 import { RejectQuizDialog, ViewQuizDialog } from '@shared'
 import { AdminPanelHeader, QuizTabs, StatsCards } from '@widgets'

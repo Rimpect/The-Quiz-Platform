@@ -1,4 +1,3 @@
-// features/change-password/model/useChangePassword.js
 import { useState } from 'react'
 
 import { changePasswordApi } from '../api/changePasswordApi.js'
@@ -25,7 +24,7 @@ export function useChangePassword() {
 
       return { ok: true }
     } catch (e) {
-      return { ok: false, error: 'Server error' }
+      return { ok: false, error: e.message || 'Ошибка изменения пароля' }
     } finally {
       setLoading(false)
     }
