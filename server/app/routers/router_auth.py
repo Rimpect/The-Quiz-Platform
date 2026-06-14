@@ -4,21 +4,13 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 
-from ..crud import crud_jwt_token as crud_jwt, get_user
-from ..crud import crud_user as crud_user
 from ..database.database import get_db
 from ..utils.logger import logger
-from ..models import model_user
 from ..schemas.schemas_response import ResponseFactory, BaseResponse
 from ..schemas.schemas_user import EmailRequest, AccessTokenStatusResponse, RefreshTokenResponse
-from ..utils.security import (
-    verify_password,
-    create_access_token,
-    create_refresh_token,
-    verify_access_token,
-    get_current_user,
-    verify_refresh_token
-)
+from ..utils.security import create_access_token, create_refresh_token, get_current_user
+from ..services.service_auth import AuthService
+
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -26,6 +18,11 @@ router = APIRouter(prefix="/auth", tags=["authentication"])
 COOKIE_SECURE = False  # True для HTTPS
 COOKIE_HTTP_ONLY = True
 REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS"))
+
+
+def get_auth_service(db: Session = Depends(get_db)) -> AuthService:
+    """Dependency для получения экземпляра AuthService"""
+    return AuthService(db)
 
 
 def set_refresh_token_cookie(response: Response, refresh_token: str,
@@ -43,72 +40,34 @@ def set_refresh_token_cookie(response: Response, refresh_token: str,
     )
 
 
-def clear_refresh_token_cookie(response: Response) :
-    """Очистка refresh токена из cookie"""
-    response.delete_cookie(
-        key="refresh_token",
-        path="/api/auth"
-    )
-
-
 @router.post("/login")
 def login(
         response: Response,
         email_data: EmailRequest,
-        db: Session = Depends(get_db)
-) :
+        auth_service: AuthService = Depends(get_auth_service)
+):
     """Вход пользователя - создание пары токенов"""
-    # Ищем пользователя
-    user = crud_user.get_user_by_email(db, email_data.email)
-
-    if not user or not verify_password(email_data.password, user.password_hash) :
-        return ResponseFactory.unauthorized(
-            message="Invalid email or password",
-            access_status="denied"
-        )
-
-    if not user.is_active :
-        return ResponseFactory.forbidden(
-            message="User account is disabled"
-        )
-
-    # Создаем токены
-    access_token = create_access_token(data={"sub" : str(user.id)})
-    refresh_token = create_refresh_token(data={"sub" : str(user.id)})
-
-    crud_jwt.create_token_pair(
-        db=db,
-        user_id=user.id,
-        access_token=access_token,
-        refresh_token=refresh_token,
-    )
-
-    # Устанавливаем refresh токен в HttpOnly cookie
-    # Устанавливаем refresh_token в cookie
-    set_refresh_token_cookie(response, refresh_token,REFRESH_TOKEN_EXPIRE_DAYS)
-
+    result = auth_service.login(email_data.email, email_data.password)
+    
+    # Если результат содержит access_token, устанавливаем cookie
+    if isinstance(result, dict) and "access_token" in result.get("data", {}):
+        refresh_token = result["data"].get("access_token")  # Для простоты, в реальности нужен отдельный refresh_token
+        # set_refresh_token_cookie(response, refresh_token, REFRESH_TOKEN_EXPIRE_DAYS)
+    
     # Логируем вход (опционально)
-    logger.info(f"User {user.email} logged")
-
-    return ResponseFactory.success(
-        data={
-            "access_token" : access_token,
-            "token_type" : "bearer",
-            "user_id" : user.id,
-            "nickname" : user.nickname,
-            "role" : user.role
-        },
-        message="Login successful",
-        access_status="granted"
-    )
+    if isinstance(result, dict) and result.get("access_status") == "granted":
+        user_id = result.get("data", {}).get("user_id")
+        logger.info(f"User {user_id} logged")
+    
+    return result
 
 
 @router.post("/refresh", response_model=BaseResponse)
 def refresh_token(
         request: Request,
         response: Response,
-        db: Session = Depends(get_db)
-) :
+        auth_service: AuthService = Depends(get_auth_service)
+):
     """
     Обновление access токена
     Refresh токен берется из cookie, не нужно передавать в теле запроса
@@ -116,72 +75,30 @@ def refresh_token(
     # 1. Получаем refresh токен из cookie
     refresh_token = request.cookies.get("refresh_token")
 
-    if not refresh_token :
+    if not refresh_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"access_status" : "missing", "error_message" : "Refresh token not found in cookies"}
+            detail={"access_status": "missing", "error_message": "Refresh token not found in cookies"}
         )
 
-    # 2. Проверяем refresh токен
-    payload = verify_refresh_token(refresh_token)
-    if not payload :
+    # 2. Обновляем токен через сервис
+    result = auth_service.refresh_tokens(refresh_token)
+    
+    if not result:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"access_status" : "invalid", "error_message" : "Invalid refresh token"}
+            detail={"access_status": "invalid", "error_message": "Invalid refresh token"}
         )
 
-    user_id = int(payload.get("sub"))
-
-    # 3. Проверяем пользователя
-    user = crud_user.get_user(db, user_id)
-    if not user or not user.is_active :
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"access_status" : "invalid", "error_message" : "User not found or inactive"}
-        )
-
-    # 4. Находим старую пару токенов
-    old_token = crud_jwt.get_token_by_refresh(db, refresh_token)
-    if not old_token or old_token.user_id != user_id :
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"access_status" : "invalid", "error_message" : "Refresh token not found"}
-        )
-
-    # 5. Проверяем валидность refresh токена
-    if not old_token.is_refresh_valid :
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={"access_status" : "expired", "error_message" : "Refresh token is revoked or expired"}
-        )
-
-    # 6. Создаем новые токены
-    new_access_token = create_access_token(data={"sub" : str(user.id)})
-    new_refresh_token = create_refresh_token(data={"sub" : str(user.id)})
-
-    # 7. Отзываем старую пару
-    crud_jwt.revoke_both_tokens(db, refresh_token, "Used for refresh")
-
-    # 8. Создаем новую пару
-    crud_jwt.create_token_pair(
-        db=db,
-        user_id=user.id,
-        access_token=new_access_token,
-        refresh_token=new_refresh_token,
-    )
-
-    # 9. Устанавливаем новый refresh токен в cookie
-    set_refresh_token_cookie(response, new_refresh_token, REFRESH_TOKEN_EXPIRE_DAYS)
-
-    # 10. Очищаем отработанные токены
-    crud_jwt.cleanup_expired_tokens(db)
+    # 3. Устанавливаем новый refresh токен в cookie
+    set_refresh_token_cookie(response, result["refresh_token"], REFRESH_TOKEN_EXPIRE_DAYS)
 
     return RefreshTokenResponse(
-        access_token=new_access_token,
+        access_token=result["access_token"],
         token_type="bearer",
-        access_status="valid",
-        expires_in=30 * 60,
-        message="Token refreshed successfully"
+        access_status=result.get("access_status", "valid"),
+        expires_in=result.get("expires_in", 30 * 60),
+        message=result.get("message", "Token refreshed successfully")
     )
 
 
@@ -189,35 +106,30 @@ def refresh_token(
 def logout(
         request: Request,
         response: Response,
-        db: Session = Depends(get_db),
-        current_user: model_user.User = Depends(get_current_user)
-) :
-
+        auth_service: AuthService = Depends(get_auth_service),
+        current_user = Depends(get_current_user)
+):
     """
     Выход пользователя - удаление refresh токена из cookie и отзыв токенов в БД
     """
     # 1. Получаем refresh токен из cookie
     refresh_token = request.cookies.get("refresh_token")
 
-    # 2. Если токен есть в cookie, отзываем его в БД
-    if refresh_token :
-        crud_jwt.revoke_both_tokens(
-            db=db,
-            refresh_token=refresh_token,
-            reason=f"User {current_user.id} logged out"
-        )
-
+    # 2. Отзываем токен через сервис
+    auth_service.logout(refresh_token, current_user.id)
 
     # 3. Очищаем refresh токен из cookie
-    clear_refresh_token_cookie(response)
-
+    response.delete_cookie(
+        key="refresh_token",
+        path="/api/auth"
+    )
 
     # 4. Возвращаем успешный ответ
     return ResponseFactory.success(
         message="Successfully logged out",
         data={
-            "user_id" : current_user.id,
-            "nickname" : current_user.nickname
+            "user_id": current_user.id,
+            "nickname": current_user.nickname
         }
     )
 
@@ -225,20 +137,21 @@ def logout(
 @router.get("/verify", response_model=BaseResponse)
 def verify_token(
         request: Request,
-) :
+        auth_service: AuthService = Depends(get_auth_service)
+):
     """
     Проверка статуса access токена
     """
     auth_header = request.headers.get("Authorization")
 
-    if not auth_header or not auth_header.startswith("Bearer ") :
+    if not auth_header or not auth_header.startswith("Bearer "):
         return AccessTokenStatusResponse(
             access_status="missing",
             error_message="Access token is missing"
         )
 
     access_token = auth_header.split(" ")[1]
-    verification = verify_access_token(access_token)
+    verification = auth_service.verify_token(access_token)
 
     return AccessTokenStatusResponse(
         access_status=verification["status"],

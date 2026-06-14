@@ -146,7 +146,7 @@ async def lifespan(app: FastAPI):
                 logger.error(f"Background cleanup error: {exc}")
 
     # Фоновый тикер WebSocket командных игр (пуш состояния вместо поллинга)
-    from .services.ws_manager import game_ws_ticker
+    from .game_services.ws_manager import game_ws_ticker
     asyncio.create_task(game_ws_ticker())
     logger.info("Game WebSocket ticker started")
 

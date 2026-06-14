@@ -5,14 +5,16 @@ from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File,
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
-# from ..schemas import schemas_user
-from ..crud import crud_media as media_crud
 from ..database.database import get_db
-from ..models.model_media import MediaEntity, MediaType
 from ..utils import media_utils
-# from ..utils.security import get_current_user
+from ..services import MediaService
 
 router = APIRouter(prefix="/media", tags=["media"])
+
+
+def get_media_service(db: Session = Depends(get_db)) -> MediaService:
+    """Dependency для получения экземпляра MediaService"""
+    return MediaService(db)
 
 
 # ========== Загрузка файлов ==========
@@ -22,8 +24,7 @@ async def upload_media(
         entity_id: int,
         file: UploadFile = File(...),
         alt_text: Optional[str] = Form(None),
-        # current_user: schemas_user = Depends(get_current_user),
-        db: Session = Depends(get_db)
+        media_service: MediaService = Depends(get_media_service)
 ):
     """
     Загрузка медиафайла для сущности
@@ -37,29 +38,10 @@ async def upload_media(
             detail="Invalid entity type"
         )
 
-    # Проверяем права доступа (пользователь может загружать только свои файлы)
-    # Здесь нужна дополнительная логика проверки прав
-
-    # Сохраняем файл
-    file_info = media_utils.save_media_file(file, entity_type, entity_id)
-
-    # Создаем запись в БД
-    db_media = media_crud.create_media_record(
-        db=db,
-        entity_type=MediaEntity(entity_type),
-        entity_id=entity_id,
-        file_info=file_info,
-        alt_text=alt_text
-    )
-
-    return {
-        "id": db_media.id,
-        "url": db_media.url,
-        "file_name": db_media.file_name,
-        "file_size": db_media.file_size,
-        "media_type": db_media.media_type,
-        "alt_text": db_media.alt_text
-    }
+    try:
+        return media_service.upload_media(entity_type, entity_id, file, alt_text)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/upload-multiple/{entity_type}/{entity_id}")
@@ -67,29 +49,14 @@ async def upload_multiple_media(
         entity_type: str,
         entity_id: int,
         files: List[UploadFile] = File(...),
-        # current_user: schemas_user = Depends(get_current_user),
-        db: Session = Depends(get_db)
+        media_service: MediaService = Depends(get_media_service)
 ):
     """Загрузка нескольких медиафайлов"""
-    uploaded_files = []
-
-    for order, file in enumerate(files):
-        file_info = media_utils.save_media_file(file, entity_type, entity_id)
-        db_media = media_crud.create_media_record(
-            db=db,
-            entity_type=MediaEntity(entity_type),
-            entity_id=entity_id,
-            file_info=file_info,
-            order_number=order
-        )
-        uploaded_files.append({
-            "id": db_media.id,
-            "url": db_media.url,
-            "file_name": db_media.file_name,
-            "order": order
-        })
-
-    return {"uploaded_files": uploaded_files}
+    try:
+        uploaded_files = media_service.upload_multiple_media(entity_type, entity_id, files)
+        return {"uploaded_files": uploaded_files}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ========== Простая загрузка (файл -> URL, без привязки к id) ==========
@@ -157,28 +124,14 @@ async def get_entity_media(
         entity_type: str,
         entity_id: int,
         media_type: Optional[str] = None,
-        db: Session = Depends(get_db)
+        media_service: MediaService = Depends(get_media_service)
 ):
     """Получение всех медиафайлов сущности"""
-    media_files = media_crud.get_entity_media(
-        db=db,
-        entity_type=MediaEntity(entity_type),
-        entity_id=entity_id,
-        media_type=MediaType(media_type) if media_type else None
-    )
-
-    return [
-        {
-            "id": m.id,
-            "url": m.url,
-            "file_name": m.file_name,
-            "file_size": m.file_size,
-            "media_type": m.media_type,
-            "alt_text": m.alt_text,
-            "order_number": m.order_number
-        }
-        for m in media_files
-    ]
+    try:
+        media_files = media_service.get_entity_media(entity_type, entity_id, media_type)
+        return media_files
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # ========== Обновление и удаление ==========
@@ -187,36 +140,24 @@ async def update_media(
         media_id: int,
         alt_text: Optional[str] = None,
         order_number: Optional[int] = None,
-        # current_user: schemas_user = Depends(get_current_user),
-        db: Session = Depends(get_db)
+        media_service: MediaService = Depends(get_media_service)
 ):
     """Обновление метаданных медиафайла"""
-    db_media = media_crud.update_media_record(
-        db=db,
-        media_id=media_id,
-        alt_text=alt_text,
-        order_number=order_number
-    )
+    updated = media_service.update_media(media_id, alt_text, order_number)
 
-    if not db_media:
+    if not updated:
         raise HTTPException(status_code=404, detail="Media not found")
 
-    return {
-        "id": db_media.id,
-        "url": db_media.url,
-        "alt_text": db_media.alt_text,
-        "order_number": db_media.order_number
-    }
+    return updated
 
 
 @router.delete("/{media_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_media(
         media_id: int,
-        # current_user: schemas_user = Depends(get_current_user),
-        db: Session = Depends(get_db)
+        media_service: MediaService = Depends(get_media_service)
 ):
     """Удаление медиафайла"""
-    if not media_crud.delete_media_record(db, media_id):
+    if not media_service.delete_media(media_id):
         raise HTTPException(status_code=404, detail="Media not found")
 
 
@@ -224,12 +165,7 @@ async def delete_media(
 async def delete_entity_media(
         entity_type: str,
         entity_id: int,
-        # current_user: schemas.User = Depends(get_current_user),
-        db: Session = Depends(get_db)
+        media_service: MediaService = Depends(get_media_service)
 ):
     """Удаление всех медиафайлов сущности"""
-    media_crud.delete_entity_media(
-        db=db,
-        entity_type=MediaEntity(entity_type),
-        entity_id=entity_id
-    )
+    media_service.delete_entity_media(entity_type, entity_id)

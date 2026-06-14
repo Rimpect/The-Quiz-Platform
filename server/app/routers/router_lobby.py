@@ -11,26 +11,32 @@ from ..models import User
 from ..schemas.schemas_response import ResponseFactory
 from ..schemas.schemas_lobby import LobbyCreate, LobbyResponse
 from ..utils.security import get_current_user
+from ..services import QuizService
 
 router = APIRouter(prefix="/lobby", tags=["lobby"])
 
-# Сервисы
+# Сервисы Redis
 lobby_service = LobbyService()
 quiz_session_service = QuizSessionService()
+
+
+def get_quiz_service(db: Session = Depends(get_db)) -> QuizService:
+    """Dependency для получения экземпляра QuizService"""
+    return QuizService(db)
 
 
 @router.post("/create", response_model=LobbyResponse)
 def create_lobby(
         lobby_data: LobbyCreate,
-        db: Session = Depends(get_db),
+        quiz_service: QuizService = Depends(get_quiz_service),
         current_user: User = Depends(get_current_user)
 ):
     """
     Создание приватного лобби
     Хост создает комнату, куда могут присоединиться другие игроки
     """
-    # Проверяем квиз
-    quiz = quiz_crud.get_quiz(db, lobby_data.quiz_id)
+    # Проверяем квиз через сервис
+    quiz = quiz_service.get_quiz(lobby_data.quiz_id)
     if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found")
 
@@ -102,7 +108,7 @@ def leave_lobby(
 
 @router.post("/start")
 def start_game(
-        db: Session = Depends(get_db),
+        quiz_service: QuizService = Depends(get_quiz_service),
         current_user: User = Depends(get_current_user)
 ):
     """
@@ -123,9 +129,9 @@ def start_game(
 
     quiz_id = int(lobby.get("quiz_id"))
 
-    # Получаем вопросы квиза
-    questions = quiz_crud.get_quiz_questions(db, quiz_id)
-    total_questions = len(questions)
+    # Получаем вопросы квиза через сервис
+    quiz = quiz_service.get_quiz_with_details(quiz_id)
+    total_questions = len(quiz.get("questions", [])) if quiz else 0
 
     # Создаем сессии для всех игроков
     sessions = {}

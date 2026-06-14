@@ -1,54 +1,61 @@
 """
 Роутер для управления сессиями прохождения квизов
 """
-from fastapi import APIRouter, Depends, HTTPException   # status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-# from typing import List
 
-from ..crud import crud_quiz as quiz_crud
-from ..crud import crud_question as question_crud
-from ..crud import crud_user_answer as answer_service
-from ..crud.crud_user_answer import user_answer_service
 from ..database.database import get_db
 from ..models import Guest, User
 from ..schemas.schemas_response import ResponseFactory
-from ..schemas.schemas_user_answer import  StartSessionResponse, UserAnswerCreate
+from ..schemas.schemas_user_answer import StartSessionResponse, UserAnswerCreate
 from ..utils.security import get_current_user, get_current_guest
 from ..config_redis.redis_service import QuizSessionService
+from ..services import QuizService, QuestionService
 
 
 router = APIRouter(prefix="/quiz-session", tags=["quiz-sessions"])
 
-# Сервисы
+# Сервисы Redis
 quiz_session_service = QuizSessionService()
+
+
+def get_quiz_service(db: Session = Depends(get_db)) -> QuizService:
+    """Dependency для получения экземпляра QuizService"""
+    return QuizService(db)
+
+
+def get_question_service(db: Session = Depends(get_db)) -> QuestionService:
+    """Dependency для получения экземпляра QuestionService"""
+    return QuestionService(db)
 
 
 @router.post("/start", response_model=StartSessionResponse)
 def start_session(
         quiz_id: int,
-        db: Session = Depends(get_db),
+        quiz_service: QuizService = Depends(get_quiz_service),
         current_user: User = Depends(get_current_user)
 ):
     """Начало новой сессии прохождения квиза"""
-    # Проверяем существование квиза
-    quiz = quiz_crud.get_quiz(db, quiz_id)
+    # Проверяем существование квиза через сервис
+    quiz = quiz_service.get_quiz(quiz_id)
     if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found")
 
-    # Получаем вопросы
-    questions = question_crud.get_questions_by_quiz(db, quiz_id)
+    # Получаем вопросы через сервис
+    questions = quiz_service.get_quiz_with_details(quiz_id)
+    total_questions = len(questions.get("questions", [])) if questions else 0
 
     # Создаем сессию в Redis
     session_id = quiz_session_service.create_session(
         user_id=current_user.id,
         quiz_id=quiz_id,
-        total_questions=len(questions)
+        total_questions=total_questions
     )
 
     return StartSessionResponse(
         session_id=session_id,
         quiz_id=quiz_id,
-        total_questions=len(questions),
+        total_questions=total_questions,
         expires_in_minutes=60
     )
 
@@ -56,30 +63,31 @@ def start_session(
 @router.post("/guest/start", response_model=StartSessionResponse)
 def start_guest_session(
         quiz_id: int,
-        db: Session = Depends(get_db),
+        quiz_service: QuizService = Depends(get_quiz_service),
         current_guest: Guest = Depends(get_current_guest)
 ):
     """Начало сессии для гостя"""
-    quiz = quiz_crud.get_quiz(db, quiz_id)
+    quiz = quiz_service.get_quiz(quiz_id)
     if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found")
 
-    if not quiz.is_public:
+    if not quiz.get("is_public"):
         raise HTTPException(status_code=403, detail="Guests can only play public quizzes")
 
-    questions = question_crud.get_questions_by_quiz(db, quiz_id)
+    questions = quiz_service.get_quiz_with_details(quiz_id)
+    total_questions = len(questions.get("questions", [])) if questions else 0
 
     # Для гостя используем guest_id как user_id (отрицательное число)
     session_id = quiz_session_service.create_session(
         user_id=-current_guest.id,  # Отрицательное значение для гостей
         quiz_id=quiz_id,
-        total_questions=len(questions)
+        total_questions=total_questions
     )
 
     return StartSessionResponse(
         session_id=session_id,
         quiz_id=quiz_id,
-        total_questions=len(questions),
+        total_questions=total_questions,
         expires_in_minutes=60
     )
 

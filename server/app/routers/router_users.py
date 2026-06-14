@@ -5,14 +5,12 @@ from fastapi import HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from ..crud import crud_quiz as quiz_crud
-from ..crud import crud_user as crud_user
 from ..database.database import get_db
 from ..schemas.schemas_user import UserRole
 from ..schemas.schemas_user import UserCreate, UserResponse, UserUpdate
 from ..schemas.schemas_quiz import QuizResponse, QuizUpdate
-from ..schemas.schemas_response import ResponseFactory
-from ..utils.security import get_current_user, verify_password, get_password_hash
+from ..utils.security import get_current_user
+from ..services import UserService, QuizService
 
 
 class PasswordChangeRequest(BaseModel):
@@ -22,40 +20,42 @@ class PasswordChangeRequest(BaseModel):
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    """
-    Создание пользователя
-  param user: шаблон пользователя из схемы
-  param db: запрос к базе данных
-  return: создан пользователь
-    """
+def get_user_service(db: Session = Depends(get_db)) -> UserService:
+    """Dependency для получения экземпляра UserService"""
+    return UserService(db)
 
-    if crud_user.get_user_by_email(db, user.email):
+
+def get_quiz_service(db: Session = Depends(get_db)) -> QuizService:
+    """Dependency для получения экземпляра QuizService"""
+    return QuizService(db)
+
+
+@router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+def create_user(user: UserCreate, user_service: UserService = Depends(get_user_service)):
+    """Создание пользователя"""
+    try:
+        return user_service.create_user(user)
+    except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Этот email уже зарегистрирован"
+            detail=str(e)
         )
-    return crud_user.create_user(db=db, user=user)
 
 
 @router.get("", response_model=List[UserResponse])
 def read_users(
         skip: int = 0,
         limit: int = 100,
-        db: Session = Depends(get_db),
+        user_service: UserService = Depends(get_user_service),
         current_user: UserResponse = Depends(get_current_user)
 ):
-    """
-    Запрос всех пользователей(только для админов)
-    """
-    if current_user.role == UserRole.ADMIN:
-        return crud_user.get_users(db, skip=skip, limit=limit)
-    else:
-        return ResponseFactory.unauthorized(
-            message="Not admin rules",
-            access_status="denied"
+    """Запрос всех пользователей (только для админов)"""
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not admin rules"
         )
+    return user_service.get_users(skip=skip, limit=limit)
 
 
 @router.get("/me", response_model=UserResponse)
@@ -67,59 +67,60 @@ def read_current_user(current_user: UserResponse = Depends(get_current_user)):
 @router.get("/{user_id}", response_model=UserResponse)
 def read_user(
         user_id: int,
-        db: Session = Depends(get_db),
+        user_service: UserService = Depends(get_user_service),
 ):
     """Получение пользователя по ID"""
-    db_user = crud_user.get_user(db, user_id)
-    if db_user is None:
+    user = user_service.get_user(user_id)
+    if user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+    return user
 
 
 @router.put("/me", response_model=UserResponse)
 def update_current_user(
         user_update: UserUpdate,
-        db: Session = Depends(get_db),
+        user_service: UserService = Depends(get_user_service),
         current_user: UserResponse = Depends(get_current_user)
 ):
     """Обновление текущего пользователя"""
-    return crud_user.update_user(db, current_user.id, user_update)
+    return user_service.update_user(current_user.id, user_update)
 
 
 @router.delete("/me")
 def delete_current_user(
-        db: Session = Depends(get_db),
+        user_service: UserService = Depends(get_user_service),
         current_user: UserResponse = Depends(get_current_user)
 ):
     """Удаление текущего пользователя"""
-    crud_user.delete_user(db, current_user.id)
-    return ResponseFactory.success(message="Аккаунт удалён")
+    user_service.delete_user(current_user.id)
+    return {"message": "Аккаунт удалён"}
 
 
 @router.post("/me/change-password")
 def change_password(
         request: PasswordChangeRequest,
-        db: Session = Depends(get_db),
+        user_service: UserService = Depends(get_user_service),
         current_user: UserResponse = Depends(get_current_user)
 ):
     """Смена пароля текущего пользователя"""
-    db_user = crud_user.get_user(db, current_user.id)
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    if not verify_password(request.current_password, db_user.password_hash):
-        raise HTTPException(status_code=400, detail="Неверный текущий пароль")
-    db_user.password_hash = get_password_hash(request.new_password)
-    db.commit()
-    return ResponseFactory.success(message="Пароль успешно изменён")
+    try:
+        user_service.change_password(
+            current_user.id,
+            request.current_password,
+            request.new_password
+        )
+        return {"message": "Пароль успешно изменён"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.get("/me/statistics")
 def get_my_statistics(
-        db: Session = Depends(get_db),
+        user_service: UserService = Depends(get_user_service),
         current_user: UserResponse = Depends(get_current_user)
 ):
     """Получение статистики текущего пользователя"""
-    return crud_user.get_user_statistics(db, current_user.id)
+    return user_service.get_user_statistics(current_user.id)
 
 
 #  -------------------------Пользовательские квизы
@@ -129,54 +130,48 @@ user_quiz_router = APIRouter(prefix="/me/quizzes", tags=["users"])
 
 @user_quiz_router.get("")
 def get_my_quizzes(
-        db: Session = Depends(get_db),
+        quiz_service: QuizService = Depends(get_quiz_service),
         current_user: UserResponse = Depends(get_current_user)
 ):
     """Получение всех квизов текущего пользователя"""
-    user_quizzes = quiz_crud.get_user_quizzes(db, current_user.id)
+    user_quizzes = quiz_service.get_user_quizzes(current_user.id)
 
-    def serialize(quizzes):
-        return [QuizResponse.model_validate(q).model_dump() for q in quizzes]
-
-    return ResponseFactory.success(
-        data={
-            "approved": serialize(user_quizzes["approved"]),
-            "pending": serialize(user_quizzes["pending"]),
-            "rejected": serialize(user_quizzes["rejected"]),
-        },
-        message="User quizzes retrieved"
-    )
+    return {
+        "approved": user_quizzes["approved"],
+        "pending": user_quizzes["pending"],
+        "rejected": user_quizzes["rejected"],
+    }
 
 
 @user_quiz_router.delete("/{quiz_id}")
 def delete_my_quiz(
         quiz_id: int,
-        db: Session = Depends(get_db),
+        quiz_service: QuizService = Depends(get_quiz_service),
         current_user: UserResponse = Depends(get_current_user)
 ):
     """Удаление своего квиза (любого статуса)"""
-    deleted = quiz_crud.delete_quiz(db, quiz_id, current_user.id, is_admin=False)
+    deleted = quiz_service.delete_quiz(quiz_id, current_user.id, current_user.role)
     if not deleted:
-        return ResponseFactory.not_found(f"Quiz {quiz_id}")
-    return ResponseFactory.success(message="Quiz deleted successfully")
+        raise HTTPException(status_code=404, detail=f"Quiz {quiz_id} not found")
+    return {"message": "Quiz deleted successfully"}
 
 
 @user_quiz_router.put("/published/{quiz_id}")
 def update_my_published_quiz(
         quiz_id: int,
         quiz_update: QuizUpdate,
-        db: Session = Depends(get_db),
+        quiz_service: QuizService = Depends(get_quiz_service),
         current_user: UserResponse = Depends(get_current_user)
 ):
     """Редактирование своего опубликованного квиза"""
-    updated = quiz_crud.update_quiz(db, quiz_id, quiz_update, current_user.id)
+    updated = quiz_service.update_quiz(quiz_id, quiz_update, current_user.id, current_user.role)
     if not updated:
-        return ResponseFactory.not_found(f"Quiz {quiz_id}")
+        raise HTTPException(status_code=404, detail=f"Quiz {quiz_id} not found")
 
-    return ResponseFactory.success(
-        data=QuizResponse.model_validate(updated).model_dump(),
-        message="Quiz updated successfully"
-    )
+    return {
+        "data": updated,
+        "message": "Quiz updated successfully"
+    }
 
 
 router.include_router(user_quiz_router)
