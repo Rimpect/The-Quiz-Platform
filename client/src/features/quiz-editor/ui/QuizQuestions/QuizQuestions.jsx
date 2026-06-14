@@ -97,7 +97,7 @@ export function QuizQuestions() {
 
               <Textarea
                 value={question.questionText}
-                maxLength={100}
+                maxLength={300}
                 onChange={(e) =>
                   updateQuestion(question.id, 'questionText', e.target.value)
                 }
@@ -221,7 +221,7 @@ export function QuizQuestions() {
                     <Input
                       type="text"
                       value={answer.text}
-                      maxLength={40}
+                      maxLength={150}
                       onChange={(e) =>
                         updateAnswerText(question.id, answer.id, e.target.value)
                       }

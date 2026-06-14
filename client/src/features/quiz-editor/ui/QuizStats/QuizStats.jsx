@@ -65,7 +65,7 @@ export function QuizStats() {
             id="quiz-description"
             placeholder="Краткое описание квиза"
             value={quiz.description}
-            maxLength={100}
+            maxLength={500}
             onChange={(e) => setField('description', e.target.value)}
             className={styles.editorTextarea}
           />

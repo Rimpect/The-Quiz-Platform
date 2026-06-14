@@ -1,3 +1,4 @@
+import { User } from 'lucide-react'
 import React, { useState, useRef } from 'react'
 
 import { Button, Input } from '@shared'
@@ -64,7 +65,9 @@ export function AvatarUploader({ onAvatarChange, initialAvatar = null }) {
         {avatar ? (
           <img src={avatar} alt="avatar" className={styles.avatar} />
         ) : (
-          <div className={styles.avatar}></div>
+          <div className={styles.avatar}>
+            <User size={48} className={styles.placeholderIcon} />
+          </div>
         )}
         <div className={styles.buttonBlock}>
           <Input
