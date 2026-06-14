@@ -43,6 +43,7 @@ class CreateLobbyRequest(BaseModel):
 
 class JoinByCodeRequest(BaseModel):
     code: str
+    quiz_id: Optional[int] = None
 
 
 class AnsweredRequest(BaseModel):
@@ -294,6 +295,13 @@ def join_by_code(
     session_id = game_sessions_manager.find_by_code(request.code)
     if not session_id:
         raise HTTPException(status_code=404, detail="Лобби с таким кодом не найдено или уже началось")
+
+    session = game_sessions_manager.get_session(session_id)
+    if request.quiz_id is not None and session and session.quiz_id != request.quiz_id:
+        raise HTTPException(
+            status_code=400,
+            detail="Этот код относится к другому квизу",
+        )
 
     game_sessions_manager.add_player(
         session_id,
