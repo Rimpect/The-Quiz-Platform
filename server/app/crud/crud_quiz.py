@@ -419,6 +419,7 @@ def update_quiz_full(
     db_quiz.title = quiz_data.title
     db_quiz.description = quiz_data.description
     db_quiz.category_id = resolve_category_id(db, quiz_data.category_id, quiz_data.category_name)
+    db_quiz.cover_url = quiz_data.cover_url
     db_quiz.quiz_mode = quiz_data.quiz_mode
     db_quiz.difficulty = quiz_data.difficulty
     db_quiz.status = new_status

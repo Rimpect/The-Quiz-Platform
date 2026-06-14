@@ -162,7 +162,7 @@ async def lifespan(app: FastAPI):
                 logger.error(f"Background cleanup error: {exc}")
 
     # Фоновый тикер WebSocket командных игр (пуш состояния вместо поллинга)
-    from .game_services.ws_manager import game_ws_ticker
+    from .services.ws_manager import game_ws_ticker
     asyncio.create_task(game_ws_ticker())
     logger.info("Game WebSocket ticker started")
 
@@ -210,6 +210,10 @@ app = FastAPI(
     openapi_version="3.1.0",
     redirect_slashes=False,
 )
+
+# Маппинг доменных исключений сервисного слоя → унифицированные ответы
+from .services.exception_handlers import register_exception_handlers
+register_exception_handlers(app)
 
 # ========== ПОДКЛЮЧЕНИЕ MIDDLEWARE (порядок важен!) ==========
 # Starlette добавляет каждый новый middleware поверх предыдущих.
