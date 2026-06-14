@@ -25,7 +25,7 @@ logs/
 
 # ===== Загруженные медиа =====
 media/
-media_files/
+../media_files/
 
 # ===== Кэш / тесты =====
 .pytest_cache/

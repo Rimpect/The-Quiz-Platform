@@ -1,15 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from typing import List
-
-from ..crud.crud_question import get_question, get_questions_by_quiz
-from ..crud.crud_quiz import get_quiz
 
 from ..database.database import get_db
 from ..models.model_user import User
 from ..schemas.schemas_question import QuestionBase, QuestionCreate, QuestionUpdate, QuestionResponse
-from ..utils import get_current_user
-from ..utils.security import get_current_user_or_guest_optional
+from ..services import question_service
+from ..utils.security import get_current_user, get_current_user_or_guest_optional
 
 router = APIRouter(prefix="/quizzes/{quiz_id}/questions", tags=["questions"])
 
@@ -22,10 +19,7 @@ def create_question(
         current_user: User = Depends(get_current_user)
 ):
     """Создание вопроса в квизе"""
-    # Проверяем существование квиза
-    if not get_quiz(db, quiz_id):
-        raise HTTPException(status_code=404, detail="Quiz not found")
-    return create_question(db, question, quiz_id)
+    return question_service.create_question(db, quiz_id, question)
 
 
 @router.get("", response_model=List[QuestionResponse])
@@ -37,7 +31,7 @@ def read_questions(
         current_user=Depends(get_current_user_or_guest_optional)
 ):
     """Получение всех вопросов квиза с вариантами ответов (доступно гостям)"""
-    return get_questions_by_quiz(db, quiz_id, skip, limit)
+    return question_service.get_questions(db, quiz_id, skip, limit)
 
 
 @router.get("/{question_id}", response_model=QuestionBase)
@@ -48,10 +42,7 @@ def read_question(
         current_user: User = Depends(get_current_user)
 ):
     """Получение вопроса по ID"""
-    question = get_question(db, question_id)
-    if not question or question.quiz_id != quiz_id:
-        raise HTTPException(status_code=404, detail="Question not found")
-    return question
+    return question_service.get_question(db, quiz_id, question_id)
 
 
 @router.put("/{question_id}", response_model=QuestionBase)
@@ -63,10 +54,7 @@ def update_question(
         current_user: User = Depends(get_current_user)
 ):
     """Обновление вопроса"""
-    question = get_question(db, question_id)
-    if not question or question.quiz_id != quiz_id:
-        raise HTTPException(status_code=404, detail="Question not found")
-    return update_question(db, question_id, question_update)
+    return question_service.update_question(db, quiz_id, question_id, question_update)
 
 
 @router.delete("/{question_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -77,7 +65,4 @@ def delete_question(
         current_user: User = Depends(get_current_user)
 ):
     """Удаление вопроса"""
-    question = get_question(db, question_id)
-    if not question or question.quiz_id != quiz_id:
-        raise HTTPException(status_code=404, detail="Question not found")
-    delete_question(db, question_id)
+    question_service.delete_question(db, quiz_id, question_id)

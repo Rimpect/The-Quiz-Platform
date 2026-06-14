@@ -211,6 +211,10 @@ app = FastAPI(
     redirect_slashes=False,
 )
 
+# Маппинг доменных исключений сервисного слоя → унифицированные ответы
+from .services.exception_handlers import register_exception_handlers
+register_exception_handlers(app)
+
 # ========== ПОДКЛЮЧЕНИЕ MIDDLEWARE (порядок важен!) ==========
 # Starlette добавляет каждый новый middleware поверх предыдущих.
 # Последний add_middleware = самый внешний слой = обрабатывает ответ последним.

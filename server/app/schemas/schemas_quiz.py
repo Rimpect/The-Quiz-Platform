@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Optional, List
 
 from pydantic import BaseModel, Field
+from sqlalchemy import func
 
 
 # ========== Категории ==========
@@ -23,6 +24,8 @@ class CategoryUpdate(BaseModel) :
 class CategoryResponse(BaseModel) :
     id: int
     category_type: str
+    class Config:
+        from_attributes = True
 
     class Config :
         from_attributes = True
@@ -107,8 +110,7 @@ class QuestionBulkCreate(BaseModel) :
 
 class QuizBulkCreate(BaseModel) :
     title: str = Field(..., min_length=1, max_length=200)
-    category_id: Optional[int] = None
-    category_name: Optional[str] = Field(None, max_length=100)
+    category_id: int
     description: str = Field(..., min_length=1)
     cover_url: Optional[str] = None
     is_public: bool = True

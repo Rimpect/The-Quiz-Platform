@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from ..crud import crud_answer as crud_answer, crud_question as crud_question
+from ..database.database import get_db
 from ..schemas.schemas_answer import AnswerBase, AnswerUpdate, AnswerCreate
 from ..schemas.schemas_user import UserResponse
-from ..database.database import get_db
+from ..services import answer_service
 from ..utils.security import get_current_user
 
 router = APIRouter(prefix="/questions/{question_id}/answers", tags=["answers"])
@@ -18,9 +18,7 @@ def create_answer(
         db: Session = Depends(get_db),
         current_user: UserResponse = Depends(get_current_user)
 ):
-    if not crud_question.get_question(db, question_id):
-        raise HTTPException(status_code=404, detail="Question not found")
-    return answer.create_answer(db, answer, question_id)
+    return answer_service.create_answer(db, question_id, answer)
 
 
 @router.post("/bulk", response_model=List[AnswerBase], status_code=status.HTTP_201_CREATED)
@@ -31,31 +29,19 @@ def create_answers_bulk(
         current_user: UserResponse = Depends(get_current_user)
 ):
     """Массовое создание вариантов ответов"""
-    if not crud_question.get_question(db, question_id):
-        raise HTTPException(status_code=404, detail="Question not found")
-    return crud_answer.create_answers_bulk(db, answers, question_id)
+    return answer_service.create_answers_bulk(db, question_id, answers)
 
 
 @router.get("", response_model=List[AnswerBase])
-def read_answers(
-        question_id: int,
-        db: Session = Depends(get_db)
-):
+def read_answers(question_id: int, db: Session = Depends(get_db)):
     """Получение всех вариантов ответов для вопроса"""
-    return crud_answer.get_answers_by_question(db, question_id)
+    return answer_service.get_answers(db, question_id)
 
 
 @router.get("/{answer_id}", response_model=AnswerBase)
-def read_answer(
-        question_id: int,
-        answer_id: int,
-        db: Session = Depends(get_db)
-):
+def read_answer(question_id: int, answer_id: int, db: Session = Depends(get_db)):
     """Получение варианта ответа по ID"""
-    answer_id = crud_answer.get_answer(db, answer_id)
-    if not answer_id or answer_id.question_id != question_id:
-        raise HTTPException(status_code=404, detail="Answer not found")
-    return answer_id
+    return answer_service.get_answer(db, question_id, answer_id)
 
 
 @router.put("/{answer_id}", response_model=AnswerBase)
@@ -67,10 +53,7 @@ def update_answer(
         current_user: UserResponse = Depends(get_current_user)
 ):
     """Обновление варианта ответа"""
-    answer = crud_answer.get_answer(db, answer_id)
-    if not answer or answer.question_id != question_id:
-        raise HTTPException(status_code=404, detail="Answer not found")
-    return crud_answer.update_answer(db, answer_id, answer_update)
+    return answer_service.update_answer(db, question_id, answer_id, answer_update)
 
 
 @router.delete("/{answer_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -81,7 +64,4 @@ def delete_answer(
         current_user: UserResponse = Depends(get_current_user)
 ):
     """Удаление варианта ответа"""
-    answer = crud_answer.get_answer(db, answer_id)
-    if not answer or answer.question_id != question_id:
-        raise HTTPException(status_code=404, detail="Answer not found")
-    crud_answer.delete_answer(db, answer_id)
+    answer_service.delete_answer(db, question_id, answer_id)
