@@ -23,6 +23,8 @@ export { CoverUpload } from './ui/CoverUpload'
 
 export { useCurrentUser } from './hooks/useCurrentUser'
 
+export { getDifficulty, QUIZ_MODE_LABELS } from './lib/quizMeta'
+
 export { ROUTES, createRoute } from './config'
 
 export { request } from './api/request'

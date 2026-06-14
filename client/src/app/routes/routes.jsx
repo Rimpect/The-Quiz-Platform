@@ -152,6 +152,7 @@ export const router = createBrowserRouter(
     },
   ],
   {
-    basename: '/The-Quiz-Platform',
+    // basename берём из base сборки (prod: /The-Quiz-Platform, dev: /)
+    basename: import.meta.env.BASE_URL.replace(/\/+$/, '') || '/',
   },
 )

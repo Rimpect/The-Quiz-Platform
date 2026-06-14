@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 
-const TICTAK = '/The-Quiz-Platform/sounds/tictak.mp3'
-const BELL = '/The-Quiz-Platform/sounds/bell-sound.mp3'
+const TICTAK = `${import.meta.env.BASE_URL}sounds/tictak.mp3`
+const BELL = `${import.meta.env.BASE_URL}sounds/bell-sound.mp3`
 
 /**
  * Звук таймера, завязанный на ВНЕШНЕЕ (серверное) время.

@@ -5,6 +5,8 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { Footer } from '../Footer/Footer'
 import { Header } from '../Header'
 
+import styles from './Layout.module.scss'
+
 export function Layout() {
   const { pathname } = useLocation()
 
@@ -17,10 +19,10 @@ export function Layout() {
   }, [pathname])
 
   return (
-    <>
+    <div className={styles.layout}>
       <Header></Header>
 
-      <main>
+      <main className={styles.main}>
         <Suspense
           fallback={
             <div style={{ padding: '2rem', textAlign: 'center' }}>
@@ -33,6 +35,6 @@ export function Layout() {
       </main>
 
       <Footer></Footer>
-    </>
+    </div>
   )
 }

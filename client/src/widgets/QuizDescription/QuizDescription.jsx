@@ -1,13 +1,16 @@
 import React from 'react'
 
+import { useLeaderboard } from '@entities/leaderboard/model/useLeaderboard'
 import {
   Badge,
   Button,
   ROUTES,
   getQuizRoute,
   getLeaderboardRatingRoute,
+  getDifficulty,
+  QUIZ_MODE_LABELS,
 } from '@shared'
-import { ArrowLeft, Users, Clock, Trophy, Star, Award } from 'lucide-react'
+import { ArrowLeft, Users, Clock, Trophy, Award } from 'lucide-react'
 import { useParams, Link } from 'react-router-dom'
 
 import styles from './QuizDescription.module.scss'
@@ -23,19 +26,24 @@ const pluralRu = (n, forms) => {
 
 export function QuizDescription({ quiz }) {
   const { id } = useParams()
-  const isCompetitive = quiz?.quiz_mode === 'competitive'
+  const quizMode = quiz?.quiz_mode
+  const isCompetitive = quizMode === 'competitive'
+  const showModeBadge = quizMode && quizMode !== 'single' && quizMode !== 'solo'
+
+  // Лучший результат — топ таблицы лидеров квиза
+  const { leaderboard } = useLeaderboard(id)
+  const bestScore = leaderboard?.[0]?.percent ?? null
+
   const quizData = {
     id: quiz?.id ?? 2,
     title: quiz?.title ?? 'Великие научные открытия',
     description:
       quiz?.description ??
       'Квиз о великих научных открытиях и изобретениях человечества',
-    category: quiz?.category ?? 'Наука',
-    difficulty: quiz?.difficulty ?? 'Средний',
-    rating: quiz?.rating ?? 4.7,
-    participants: quiz?.participants ?? 1234,
-    duration: quiz?.duration ?? 45,
-    topScore: quiz?.topScore ?? 98,
+    category: quiz?.category,
+    difficulty: quiz?.difficulty,
+    participants: quiz?.participants,
+    duration: quiz?.duration,
     questionCount: quiz?.questionCount ?? 20,
     author: quiz?.author ?? 'QuizStudio',
     language: quiz?.language ?? 'Русский',
@@ -43,12 +51,7 @@ export function QuizDescription({ quiz }) {
     image: quiz?.img || quiz?.image,
   }
 
-  let difficultyVariant = 'medium'
-  if (quizData.difficulty === 'Легкий') {
-    difficultyVariant = 'easy'
-  } else if (quizData.difficulty === 'Сложный') {
-    difficultyVariant = 'hard'
-  }
+  const difficulty = getDifficulty(quizData.difficulty)
 
   return (
     <div className={styles.description}>
@@ -75,15 +78,16 @@ export function QuizDescription({ quiz }) {
                   <span className={styles.metaCategory}>
                     {quizData.category}
                   </span>
-                  <Badge variant={difficultyVariant} size="sm">
-                    {quizData.difficulty}
+                  <Badge variant={difficulty.variant} size="sm">
+                    {difficulty.label}
                   </Badge>
+                  {showModeBadge && (
+                    <Badge variant={quizMode} size="sm">
+                      {QUIZ_MODE_LABELS[quizMode] || quizMode}
+                    </Badge>
+                  )}
                 </div>
                 <h1 className={styles.title}>{quizData.title}</h1>
-                <div className={styles.rating}>
-                  <Star className={styles.ratingIcon} />
-                  <span className={styles.ratingValue}>{quizData.rating}</span>
-                </div>
               </div>
             </div>
           </div>
@@ -111,9 +115,6 @@ export function QuizDescription({ quiz }) {
                   </li>
                   <li className={styles.cardItem}>
                     • Мгновенная проверка ответов
-                  </li>
-                  <li className={styles.cardItem}>
-                    • Подробная статистика в конце
                   </li>
                 </ul>
               </div>
@@ -156,7 +157,7 @@ export function QuizDescription({ quiz }) {
                     <span className={styles.statsLabel}>Лучший результат:</span>
                   </div>
                   <span className={styles.statsValue}>
-                    {quizData.topScore}%
+                    {bestScore != null ? `${bestScore}%` : '—'}
                   </span>
                 </li>
 

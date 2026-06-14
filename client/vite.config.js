@@ -3,8 +3,10 @@ import path from 'path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
-export default defineConfig({
-  base: '/The-Quiz-Platform/',
+export default defineConfig(({ command }) => ({
+  // В проде (build) — подпуть для GitHub Pages; в dev — корень, чтобы
+  // dev-сервер/туннель работали от «/» без подсказки про base.
+  base: command === 'build' ? '/The-Quiz-Platform/' : '/',
   build: {
     sourcemap: false,
     cssCodeSplit: true,
@@ -34,4 +36,4 @@ export default defineConfig({
       '@MockData': path.resolve(__dirname, 'src/MockData'),
     },
   },
-})
+}))

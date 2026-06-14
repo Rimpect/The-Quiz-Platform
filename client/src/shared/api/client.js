@@ -17,6 +17,28 @@ const writeToken = (token) => {
   }
 }
 
+// Сброс протухшей авторизации: чистим localStorage и уведомляем приложение,
+// чтобы шапка/гварды сразу отразили выход (например, после рестарта сервера).
+const clearStoredAuth = () => {
+  try {
+    const s = localStorage.getItem('auth-storage')
+    if (s) {
+      const parsed = JSON.parse(s)
+      parsed.state = {
+        ...parsed.state,
+        token: null,
+        refreshToken: null,
+        user: null,
+        isAuthenticated: false,
+      }
+      localStorage.setItem('auth-storage', JSON.stringify(parsed))
+    }
+  } catch {
+    /* ignore */
+  }
+  window.dispatchEvent(new Event('auth:expired'))
+}
+
 let refreshPromise = null
 
 const doRefresh = async () => {
@@ -63,6 +85,8 @@ export const client = async (endpoint, options = {}, _retry = false) => {
     if (newToken) {
       return client(endpoint, options, true) // повтор с новым access-токеном
     }
+    // refresh не удался (токен протух / сервер перезапущен) → разлогиниваем
+    clearStoredAuth()
   }
 
   const data = await response.json()

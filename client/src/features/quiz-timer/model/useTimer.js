@@ -21,10 +21,10 @@ export function useTimer({
   useEffect(() => {
     if (enableSound) {
       warningSoundRef.current = new Audio(
-        '/The-Quiz-Platform/sounds/tictak.mp3',
+        `${import.meta.env.BASE_URL}sounds/tictak.mp3`,
       )
       endSoundRef.current = new Audio(
-        '/The-Quiz-Platform/sounds/bell-sound.mp3',
+        `${import.meta.env.BASE_URL}sounds/bell-sound.mp3`,
       )
     }
 
