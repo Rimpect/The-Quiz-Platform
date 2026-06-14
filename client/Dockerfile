@@ -2,8 +2,6 @@ FROM node:20-slim AS build
 
 WORKDIR /app
 
-# Только package.json (без lock-файла) — иначе всплывает баг npm с нативными
-# бинарниками rollup (Cannot find module .../rollup/dist/native.js).
 COPY package.json ./
 RUN npm install
 

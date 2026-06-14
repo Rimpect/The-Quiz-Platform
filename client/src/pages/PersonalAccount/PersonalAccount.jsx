@@ -18,7 +18,7 @@ export function PersonalAccount({
   const userData = {
     name: storeUser?.name || storeUser?.nickname || '',
     email: storeUser?.email || '',
-    avatar: storeUser?.avatar || null,
+    avatar: storeUser?.photo_profile || storeUser?.avatar || null,
     level: storeUser?.level || 1,
     totalQuizzes: stats.totalQuizzes,
     averageScore: stats.averageScore,

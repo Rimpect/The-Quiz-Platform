@@ -4,7 +4,6 @@ import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 export default defineConfig(({ command }) => ({
-  // В проде base берётся из VITE_BASE (на VM — «/»); в dev — корень.
   base: command === 'build' ? process.env.VITE_BASE || '/' : '/',
   build: {
     sourcemap: false,
