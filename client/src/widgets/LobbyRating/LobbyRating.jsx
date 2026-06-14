@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 
 import { PlayerCard } from '@entities'
 import { useTimerSound } from '@features'
-import { useGameLobby } from '@features/game-lobby/model/useGameLobby'
+import { useGameLobby } from '@features/game-lobby'
 import { Button, ROUTES } from '@shared'
 import { Trophy, Clock } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'

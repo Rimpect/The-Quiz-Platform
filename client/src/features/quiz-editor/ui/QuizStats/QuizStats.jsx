@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useCategories } from '@entities/category/model/useCategories'
+import { useCategories } from '@entities/category'
 import { Textarea, Select, CoverUpload, Input } from '@shared'
 import { Clock } from 'lucide-react'
 

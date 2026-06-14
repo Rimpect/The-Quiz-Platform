@@ -9,7 +9,7 @@ import {
   useTimerSound,
 } from '@features'
 import { useAntiCheatContext } from '@features/anti-cheating'
-import { useSyncedQuiz } from '@features/synced-quiz/model/useSyncedQuiz'
+import { useSyncedQuiz } from '@features/synced-quiz'
 import { Button, ROUTES } from '@shared'
 import { client } from '@shared/api/client'
 import { Users } from 'lucide-react'

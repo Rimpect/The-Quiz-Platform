@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useLeaderboard } from '@entities/leaderboard/model/useLeaderboard'
+import { useLeaderboard } from '@entities/leaderboard'
 import {
   Badge,
   Button,

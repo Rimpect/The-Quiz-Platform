@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 
 import { QuizStats, QuizQuestions } from '@features'
-import { useQuizStore } from '@features/quiz-editor/model/quiz.store'
+import { useQuizStore } from '@features/quiz-editor'
 import { client } from '@shared/api/client'
 import { HeaderCreateQuiz } from '@widgets'
 import { useLocation } from 'react-router-dom'

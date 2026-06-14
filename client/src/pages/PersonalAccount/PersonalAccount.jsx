@@ -1,8 +1,8 @@
 import { useUser } from '@entities'
-import { useAchievements } from '@entities/achievement/model/useAchievements'
-import { useMyQuizzes } from '@entities/myQuizzes/model/useMyQuizzes'
-import { useQuizHistory } from '@entities/quizHistory/model/useQuizHistory'
-import { useProfileStats } from '@entities/user/model/useProfileStats'
+import { useAchievements } from '@entities/achievement'
+import { useMyQuizzes } from '@entities/myQuizzes'
+import { useQuizHistory } from '@entities/quizHistory'
+import { useProfileStats } from '@entities/user'
 import { ProfileStats, QuizHistory } from '@widgets'
 
 import styles from './PersonalAccount.module.scss'

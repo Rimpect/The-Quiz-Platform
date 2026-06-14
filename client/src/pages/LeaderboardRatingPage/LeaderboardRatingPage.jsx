@@ -1,8 +1,7 @@
 import { useState } from 'react'
 
 import { LeaderboardList } from '@entities'
-import { useLeaderboard } from '@entities/leaderboard/model/useLeaderboard'
-import { useSessionResults } from '@entities/leaderboard/model/useSessionResults'
+import { useLeaderboard, useSessionResults } from '@entities/leaderboard'
 import { ROUTES, Button, Badge } from '@shared'
 import { Trophy, Users } from 'lucide-react'
 import { useParams, useLocation, Link } from 'react-router-dom'

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { TeamCard, QuizInfoCard } from '@entities'
 import { CreateTeamModal, useTimerSound } from '@features'
-import { useGameLobby } from '@features/game-lobby/model/useGameLobby'
+import { useGameLobby } from '@features/game-lobby'
 import { Button, ROUTES, Input } from '@shared'
 import { Clock, Copy, Users } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom'

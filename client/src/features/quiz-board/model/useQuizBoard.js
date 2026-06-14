@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 
-import { useSearchStore } from '@features/search-quiz/model/search.store'
-import { useQuizSearch } from '@features/search-quiz/model/useQuizSearch'
+import { useSearchStore, useQuizSearch } from '@features/search-quiz'
 
 const DEFAULT_ITEMS_PER_PAGE = 12
 
