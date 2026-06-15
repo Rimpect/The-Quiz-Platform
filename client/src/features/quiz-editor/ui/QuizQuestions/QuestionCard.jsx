@@ -73,14 +73,18 @@ export function QuestionCard({ question, index }) {
         <span className={styles.timeLimitLabel}>Время на ответ (сек):</span>
         <Input
           type="number"
-          value={question.timeLimitSeconds}
+          value={question.timeLimitSeconds || ''}
           min={0}
           max={300}
           step={5}
           placeholder="0 = без лимита"
           className={styles.timeLimitInput}
           onChange={(e) =>
-            updateQuestion(question.id, 'timeLimitSeconds', Number(e.target.value))
+            updateQuestion(
+              question.id,
+              'timeLimitSeconds',
+              Number(e.target.value) || 0,
+            )
           }
         />
       </div>

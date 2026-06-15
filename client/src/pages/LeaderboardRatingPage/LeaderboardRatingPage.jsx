@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 import { LeaderboardList } from '@entities'
 import { useLeaderboard, useSessionResults } from '@entities/leaderboard'
 import { ROUTES, Button, Badge } from '@shared'
@@ -39,13 +37,11 @@ export function LeaderboardRatingPage() {
     error: sError,
   } = useSessionResults(sessionId)
 
-  const [view, setView] = useState(sessionId ? 'session' : 'global')
-
   const mode = state?.quizMode === 'team' ? 'team' : 'competitive'
   const config = MODE_CONFIG[mode]
   const Icon = config.icon
 
-  const isSession = view === 'session'
+  const isSession = mode === 'team'
   const items = isSession ? results : leaderboard
   const loading = isSession ? sLoading : gLoading
   const error = isSession ? sError : gError
@@ -71,25 +67,6 @@ export function LeaderboardRatingPage() {
           </Link>
         </div>
       </div>
-
-      {sessionId && (
-        <div className={styles.tabs}>
-          <Button
-            variant={isSession ? 'black' : 'white'}
-            size="medium"
-            onClick={() => setView('session')}
-          >
-            Результаты группы
-          </Button>
-          <Button
-            variant={!isSession ? 'black' : 'white'}
-            size="medium"
-            onClick={() => setView('global')}
-          >
-            Общий рейтинг
-          </Button>
-        </div>
-      )}
 
       {loading && (
         <div style={{ padding: '2rem', textAlign: 'center' }}>Загрузка...</div>

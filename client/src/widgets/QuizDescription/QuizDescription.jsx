@@ -148,7 +148,11 @@ export function QuizDescription({ quiz }) {
                   </div>
                   <span className={styles.statsValue}>
                     {quizData.duration
-                      ? `${quizData.duration} минут`
+                      ? `${quizData.duration} ${pluralRu(quizData.duration, [
+                          'минута',
+                          'минуты',
+                          'минут',
+                        ])}`
                       : 'без лимита'}
                   </span>
                 </li>
