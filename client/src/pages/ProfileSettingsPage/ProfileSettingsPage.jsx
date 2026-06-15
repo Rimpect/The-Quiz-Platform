@@ -10,19 +10,20 @@ import styles from './ProfileSettingsPage.module.scss'
 
 export function ProfileSettingsPage() {
   const storeUser = useUser()
-  const [email, setEmail] = useState('')
+  const [me, setMe] = useState(null)
 
   useEffect(() => {
     client('/users/me')
       .then((data) => {
-        if (data?.email) setEmail(data.email)
+        if (data) setMe(data)
       })
       .catch(() => {})
   }, [])
 
   const user = {
-    name: storeUser?.name || storeUser?.nickname || '',
-    email,
+    name: me?.nickname || storeUser?.nickname || '',
+    email: me?.email || '',
+    photo_profile: me?.photo_profile ?? storeUser?.photo_profile ?? null,
   }
 
   return (
