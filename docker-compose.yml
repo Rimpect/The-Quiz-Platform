@@ -30,7 +30,7 @@ services:
       redis:
         condition: service_started
     volumes:
-      - ./server/media_files:/app/media_files
+      - mediadata:/app/media
       - ./server/logs:/app/logs
 
   frontend:
@@ -47,3 +47,4 @@ services:
 volumes:
   pgdata:
   redisdata:
+  mediadata:
