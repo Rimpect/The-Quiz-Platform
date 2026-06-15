@@ -25,11 +25,7 @@ export const ACHIEVEMENTS_LIST = [
     id: 8,
     icon: '🚀',
     title: 'Ракета',
-<<<<<<< HEAD
-    description: 'закончить квиз менее чем за 60 секунд',
-=======
     description: 'Закончить квиз менее чем за 60 секунд',
->>>>>>> 3bdf3803ea3a7cfae3a006c7fe75aa1956fa1694
   },
   { id: 9, icon: '🏅', title: 'Чемпион', description: 'Войдите в топ-10' },
   { id: 10, icon: '💪', title: 'Упорный', description: 'Пройдите 100 квизов' },

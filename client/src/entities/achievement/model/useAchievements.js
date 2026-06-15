@@ -18,10 +18,6 @@ export function useAchievements() {
       try {
         const data = await getMyAchievements()
         if (canceled) return
-<<<<<<< HEAD
-=======
-
->>>>>>> 3bdf3803ea3a7cfae3a006c7fe75aa1956fa1694
         const statusMap = data?.achievements || {}
         setAchievements(
           ACHIEVEMENTS_LIST.map((a) => ({
