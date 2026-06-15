@@ -4,12 +4,6 @@ import { useNavigate } from 'react-router-dom'
 
 import { RulesModal } from './RulesModal'
 
-/**
- * Показывает правила анти-чита перед отображением содержимого (например, лобби).
- * После согласия выставляет флаг `agreed_quiz_{quizId}` в sessionStorage,
- * поэтому при старте самого квиза правила повторно не показываются,
- * но флаг не живёт вечно — сбрасывается при закрытии вкладки.
- */
 export function RulesGate({ quizId, children }) {
   const navigate = useNavigate()
   const agreedKey = `agreed_quiz_${quizId}`

@@ -18,12 +18,11 @@ export function useTimerSound(
   timeLeft,
   { threshold = 10, enabled = true } = {},
 ) {
-  const warnRef = useRef(null) // tictak.mp3 (управляемый — можно остановить)
+  const warnRef = useRef(null)
   const prevRef = useRef(null)
-  const warnedRef = useRef(false) // «тик» уже сыгран на этом отсчёте
-  const endedRef = useRef(false) // «звонок» уже сыгран
+  const warnedRef = useRef(false)
+  const endedRef = useRef(false)
 
-  // Инициализация аудио + разблокировка autoplay по первому жесту пользователя
   useEffect(() => {
     if (!enabled) return undefined
 
@@ -59,7 +58,6 @@ export function useTimerSound(
     const prev = prevRef.current
     prevRef.current = timeLeft
 
-    // Время выросло → начался новый отсчёт (следующий вопрос) → сброс флагов
     if (prev != null && timeLeft > prev) {
       warnedRef.current = false
       endedRef.current = false
@@ -67,19 +65,16 @@ export function useTimerSound(
       warn.currentTime = 0
     }
 
-    // Конец времени → «звонок»
     if (timeLeft <= 0) {
       if (!endedRef.current) {
         endedRef.current = true
         warn.pause()
         warn.currentTime = 0
-        // fire-and-forget: звонок доиграет, даже если экран сменится (лобби→квиз)
         new Audio(BELL).play().catch(() => {})
       }
       return
     }
 
-    // Вход в зону предупреждения → одно проигрывание «тиканья»
     if (timeLeft <= threshold && !warnedRef.current) {
       warnedRef.current = true
       warn.currentTime = 0
