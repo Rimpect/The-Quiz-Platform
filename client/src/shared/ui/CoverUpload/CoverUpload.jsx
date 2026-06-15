@@ -37,7 +37,7 @@ export function CoverUpload({ value = '', onUpload }) {
 
   return (
     <div className={styles.coverSection}>
-      <div className={styles.coverLabel}>Обложка квиза</div>
+      <div className={styles.coverLabel}>Обложка квиза *</div>
 
       <Input
         type="file"

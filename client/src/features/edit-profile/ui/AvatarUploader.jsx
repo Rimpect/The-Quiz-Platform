@@ -1,5 +1,5 @@
 import { User } from 'lucide-react'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
 import { Button, Input } from '@shared'
 
@@ -9,6 +9,12 @@ export function AvatarUploader({ onAvatarChange, initialAvatar = null }) {
   const [avatar, setAvatar] = useState(initialAvatar)
   const [error, setError] = useState('')
   const fileInputRef = useRef(null)
+
+  // initialAvatar приходит из стора асинхронно — подхватываем его, когда появится
+  // (useState берёт значение только при первом рендере).
+  useEffect(() => {
+    setAvatar(initialAvatar)
+  }, [initialAvatar])
 
   const MAX_FILE_SIZE = 2 * 1024 * 1024
   const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png']

@@ -18,7 +18,7 @@ class Quiz(Base) :
     title = Column(String(200), nullable=False)
     category_id = Column(Integer, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True, index=True)
     description = Column(Text, nullable=False)
-    profile_url = Column(String(500), nullable=True)
+    cover_url = Column(String(500), nullable=True)
     is_public = Column(Boolean, default=True, nullable=False)  # Одобренный квиз
     quiz_mode = Column(SQLEnum(QuizMode), default=QuizMode.SINGLE, nullable=False)
     difficulty = Column(String(20), default='easy', nullable=False, server_default='easy')
