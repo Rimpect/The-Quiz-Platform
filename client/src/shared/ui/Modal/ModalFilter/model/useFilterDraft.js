@@ -22,10 +22,6 @@ const clamp = (value, min, max) => {
   return Math.min(max, Math.max(min, Number.isNaN(n) ? min : n))
 }
 
-/**
- * Состояние и логика черновика фильтров: переключение значений, ограничение
- * числовых диапазонов, валидация «От ≤ До» и применение/сброс.
- */
 export function useFilterDraft(filter, { onApply, onReset, onClose }) {
   const [draftFilters, setDraftFilters] = useState(filter ?? createInitialFilters())
 

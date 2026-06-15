@@ -1,9 +1,3 @@
-"""Бизнес-логика игровых сессий (командные/рейтинговые квизы).
-
-HTTP-агностична. Оркестрирует in-memory менеджер (game_sessions_manager),
-persistence (game_crud) и проверки; данные возвращает, ошибки кидает доменно.
-WebSocket-канал остаётся в роутере (транспортный слой).
-"""
 from sqlalchemy.orm import Session
 
 from ..crud import crud_game_sessions as game_crud
@@ -11,20 +5,17 @@ from ..crud import crud_quiz as quiz_crud
 from ..services.game_sessions_manager import game_sessions_manager, GameMode
 from .exceptions import NotFoundError, BadRequestError
 
-
 def _require_session(session_id: str):
     session = game_sessions_manager.get_session(session_id)
     if not session:
         raise NotFoundError("Session not found")
     return session
 
-
 def _parse_mode(game_mode: str) -> GameMode:
     try:
         return GameMode(game_mode)
     except ValueError:
         raise BadRequestError("Invalid game mode")
-
 
 def create_game_session(db: Session, current_user, request):
     quiz = quiz_crud.get_quiz(db, request.quiz_id)
@@ -53,7 +44,6 @@ def create_game_session(db: Session, current_user, request):
         )
     return {"session_id": session_id}
 
-
 def join_game_session(db: Session, current_user, request):
     session = _require_session(request.session_id)
     if session.is_finished():
@@ -65,7 +55,6 @@ def join_game_session(db: Session, current_user, request):
             db, session_id=request.session_id, team_id=session.team_id, user_id=current_user.id
         )
     return game_sessions_manager.get_session_state(request.session_id)
-
 
 def join_lobby(db: Session, current_user, request):
     quiz = quiz_crud.get_quiz(db, request.quiz_id)
@@ -94,7 +83,6 @@ def join_lobby(db: Session, current_user, request):
         getattr(current_user, "photo_profile", "") or "",
     )
     return game_sessions_manager.get_session_state(session_id)
-
 
 def create_lobby(db: Session, current_user, request):
     quiz = quiz_crud.get_quiz(db, request.quiz_id)
@@ -132,7 +120,6 @@ def create_lobby(db: Session, current_user, request):
     )
     return game_sessions_manager.get_session_state(session_id)
 
-
 def join_by_code(current_user, request):
     session_id = game_sessions_manager.find_by_code(request.code)
     if not session_id:
@@ -148,25 +135,21 @@ def join_by_code(current_user, request):
     )
     return game_sessions_manager.get_session_state(session_id)
 
-
 def leave_lobby(current_user, session_id: str):
     _require_session(session_id)
     cancelled = game_sessions_manager.leave_lobby(session_id, current_user.id)
     return {"cancelled": cancelled}
-
 
 def report_banned(current_user, session_id: str):
     _require_session(session_id)
     game_sessions_manager.ban_player(session_id, current_user.id)
     return {"banned": True}
 
-
 def create_team(current_user, session_id: str, team_name: str):
     _require_session(session_id)
     team_id = game_sessions_manager.create_team(session_id, current_user.id, team_name)
     state = game_sessions_manager.get_session_state(session_id)
     return {"team_id": team_id, "state": state}
-
 
 def join_team(current_user, session_id: str, team_id: str):
     _require_session(session_id)
@@ -175,18 +158,15 @@ def join_team(current_user, session_id: str, team_id: str):
         raise BadRequestError("Команда не найдена или заполнена")
     return game_sessions_manager.get_session_state(session_id)
 
-
 def leave_team(current_user, session_id: str):
     _require_session(session_id)
     game_sessions_manager.leave_team(session_id, current_user.id)
     return game_sessions_manager.get_session_state(session_id)
 
-
 def set_ready(current_user, session_id: str):
     _require_session(session_id)
     game_sessions_manager.set_player_ready(session_id, current_user.id)
     return game_sessions_manager.get_session_state(session_id)
-
 
 def mark_answered(current_user, session_id: str, question_index: int):
     _require_session(session_id)
@@ -194,12 +174,10 @@ def mark_answered(current_user, session_id: str, question_index: int):
     game_sessions_manager.sync_progress(session_id)
     return game_sessions_manager.get_session_state(session_id)
 
-
 def cast_vote(current_user, session_id: str, question_index: int, answer_ids):
     _require_session(session_id)
     game_sessions_manager.record_vote(session_id, current_user.id, question_index, answer_ids)
     return game_sessions_manager.get_session_state(session_id)
-
 
 def team_answer(current_user, session_id: str, request):
     _require_session(session_id)
@@ -210,7 +188,6 @@ def team_answer(current_user, session_id: str, request):
     game_sessions_manager.sync_progress(session_id)
     return game_sessions_manager.get_session_state(session_id)
 
-
 def record_result(current_user, session_id: str, request):
     _require_session(session_id)
     game_sessions_manager.record_result(
@@ -219,19 +196,16 @@ def record_result(current_user, session_id: str, request):
     )
     return {"recorded": True}
 
-
 def get_results(session_id: str):
     results = game_sessions_manager.get_results(session_id)
     if results is None:
         raise NotFoundError("Session not found")
     return results
 
-
 def start_lobby(current_user, session_id: str):
     _require_session(session_id)
     game_sessions_manager.start_lobby(session_id)
     return game_sessions_manager.get_session_state(session_id)
-
 
 def get_session_state(current_user, session_id: str):
     _require_session(session_id)
@@ -239,7 +213,6 @@ def get_session_state(current_user, session_id: str):
     game_sessions_manager.check_disconnects(session_id)
     game_sessions_manager.sync_progress(session_id)
     return game_sessions_manager.get_session_state(session_id)
-
 
 def submit_answer(db: Session, current_user, request):
     session = _require_session(request.session_id)
@@ -268,9 +241,8 @@ def submit_answer(db: Session, current_user, request):
     all_answered = all(
         request.question_id in player.answers for player in session.players.values()
     )
-    time_expired = session.is_time_expired(time_limit_seconds=30)  # TODO: реальное время вопроса
+    time_expired = session.is_time_expired(time_limit_seconds=30)
     return {"answer_recorded": True, "can_next_question": all_answered or time_expired}
-
 
 def next_question(db: Session, current_user, session_id: str):
     _require_session(session_id)
@@ -280,7 +252,6 @@ def next_question(db: Session, current_user, session_id: str):
         game_crud.end_game_session(db, session_id)
     state = game_sessions_manager.get_session_state(session_id)
     return state, has_next
-
 
 def finish_game(db: Session, current_user, request):
     session = _require_session(request.session_id)

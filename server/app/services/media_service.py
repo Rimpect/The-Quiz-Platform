@@ -1,7 +1,3 @@
-"""Бизнес-логика медиа: загрузка/метаданные файлов (HTTP-агностична).
-
-Отдача самого файла (FileResponse) остаётся в роутере — это чисто HTTP-слой.
-"""
 from pathlib import Path
 from typing import List, Optional
 
@@ -14,7 +10,6 @@ from .exceptions import BadRequestError, NotFoundError
 
 ALLOWED_ENTITY_TYPES = ["profile", "question", "quiz", "quiz_description"]
 
-# target -> (entity_type, media_type) для простой загрузки без id сущности
 SIMPLE_TARGETS = {
     "quiz": ("quiz", "image"),
     "quiz_description": ("quiz_description", "image"),
@@ -23,7 +18,6 @@ SIMPLE_TARGETS = {
     "question_audio": ("question", "audio"),
     "question_video": ("question", "video"),
 }
-
 
 def upload_media(db: Session, entity_type: str, entity_id: int, file, alt_text: Optional[str] = None):
     if entity_type not in ALLOWED_ENTITY_TYPES:
@@ -46,7 +40,6 @@ def upload_media(db: Session, entity_type: str, entity_id: int, file, alt_text: 
         "alt_text": db_media.alt_text,
     }
 
-
 def upload_multiple_media(db: Session, entity_type: str, entity_id: int, files: List):
     uploaded_files = []
     for order, file in enumerate(files):
@@ -66,7 +59,6 @@ def upload_multiple_media(db: Session, entity_type: str, entity_id: int, files: 
         })
     return {"uploaded_files": uploaded_files}
 
-
 def upload_simple(target: str, file):
     if target not in SIMPLE_TARGETS:
         raise BadRequestError(f"Invalid target. Allowed: {list(SIMPLE_TARGETS.keys())}")
@@ -79,9 +71,7 @@ def upload_simple(target: str, file):
         "media_type": file_info["media_type"],
     }
 
-
 def resolve_media_file(file_path: str):
-    """Вернуть (полный путь, content-type) существующего файла или кинуть NotFound."""
     import mimetypes
 
     full_path = Path(media_utils.BASE_MEDIA_DIR) / file_path
@@ -92,7 +82,6 @@ def resolve_media_file(file_path: str):
     if not media_type:
         media_type = "image/webp" if full_path.suffix.lower() == ".webp" else "application/octet-stream"
     return full_path, media_type
-
 
 def get_entity_media(db: Session, entity_type: str, entity_id: int, media_type: Optional[str] = None):
     media_files = media_crud.get_entity_media(
@@ -114,7 +103,6 @@ def get_entity_media(db: Session, entity_type: str, entity_id: int, media_type: 
         for m in media_files
     ]
 
-
 def update_media(db: Session, media_id: int, alt_text: Optional[str] = None, order_number: Optional[int] = None):
     db_media = media_crud.update_media_record(
         db=db, media_id=media_id, alt_text=alt_text, order_number=order_number
@@ -128,11 +116,9 @@ def update_media(db: Session, media_id: int, alt_text: Optional[str] = None, ord
         "order_number": db_media.order_number,
     }
 
-
 def delete_media(db: Session, media_id: int):
     if not media_crud.delete_media_record(db, media_id):
         raise NotFoundError("Media not found")
-
 
 def delete_entity_media(db: Session, entity_type: str, entity_id: int):
     media_crud.delete_entity_media(

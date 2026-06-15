@@ -79,7 +79,6 @@ async def lifespan(app: FastAPI):
     await asyncio.to_thread(Base.metadata.create_all, bind=engine)
     logger.info("Database tables created")
 
-    # Стартовые категории (идемпотентно: создаются только отсутствующие)
     def _seed_categories():
         from .crud import crud_categories
         from .database.database import SessionLocal
@@ -211,14 +210,9 @@ app = FastAPI(
     redirect_slashes=False,
 )
 
-# Маппинг доменных исключений сервисного слоя → унифицированные ответы
 from .services.exception_handlers import register_exception_handlers
 register_exception_handlers(app)
 
-# ========== ПОДКЛЮЧЕНИЕ MIDDLEWARE (порядок важен!) ==========
-# Starlette добавляет каждый новый middleware поверх предыдущих.
-# Последний add_middleware = самый внешний слой = обрабатывает ответ последним.
-# CORS должен быть последним (самым внешним), чтобы его заголовки не перезаписывались.
 
 app.add_middleware(ResponseFormatterMiddleware)
 app.add_middleware(LoggingMiddleware)

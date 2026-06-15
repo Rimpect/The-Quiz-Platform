@@ -20,7 +20,7 @@ export function useLeaderboard(quizId) {
     client(`/quizzes/${quizId}/leaderboard`)
       .then((data) => {
         const items = Array.isArray(data) ? data : data?.items || []
-        // Сервер уже отдаёт отсортированный список с полями place/name/avatar/percent/time
+
         const mapped = items.map((item, idx) => ({
           place: item.place ?? idx + 1,
           name: item.name || 'Игрок',

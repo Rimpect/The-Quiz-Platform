@@ -15,7 +15,6 @@ export function CoverUpload({ value = '', onUpload }) {
     const file = e.target.files[0]
     if (!file) return
 
-    // Мгновенное локальное превью
     const reader = new FileReader()
     reader.onloadend = () => setPreview(reader.result)
     reader.readAsDataURL(file)
@@ -37,7 +36,7 @@ export function CoverUpload({ value = '', onUpload }) {
 
   return (
     <div className={styles.coverSection}>
-      <div className={styles.coverLabel}>Обложка квиза</div>
+      <div className={styles.coverLabel}>Обложка квиза *</div>
 
       <Input
         type="file"

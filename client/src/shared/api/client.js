@@ -17,8 +17,6 @@ const writeToken = (token) => {
   }
 }
 
-// Сброс протухшей авторизации: чистим localStorage и уведомляем приложение,
-// чтобы шапка/гварды сразу отразили выход (например, после рестарта сервера).
 const clearStoredAuth = () => {
   try {
     const s = localStorage.getItem('auth-storage')
@@ -52,8 +50,7 @@ const doRefresh = async () => {
     const token = (json?.data ?? json)?.access_token
     if (token) {
       writeToken(token)
-      // Синхронизируем обновлённый токен с in-memory стором (его читают, например,
-      // при установке WebSocket-соединения), а не только localStorage.
+
       window.dispatchEvent(new CustomEvent('auth:refreshed', { detail: token }))
     }
     return token || null
@@ -65,7 +62,6 @@ const doRefresh = async () => {
 export const client = async (endpoint, options = {}, _retry = false) => {
   const token = getToken()
 
-  // Для FormData НЕ ставим Content-Type — браузер сам выставит multipart с boundary
   const isFormData = options.body instanceof FormData
 
   const response = await fetch(`${API_URL}${endpoint}`, {

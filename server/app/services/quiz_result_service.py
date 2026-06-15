@@ -1,4 +1,3 @@
-"""Бизнес-логика результатов квизов (HTTP-агностична)."""
 from datetime import datetime, timedelta
 
 from sqlalchemy.orm import Session, joinedload
@@ -6,7 +5,6 @@ from sqlalchemy.orm import Session, joinedload
 from ..crud import crud_quiz, crud_quiz_result as crud_quiz_results, crud_achievement
 from ..models.model_quiz_result import QuizResult
 from .exceptions import NotFoundError, BadRequestError
-
 
 def save_quiz_result(db: Session, current_user, quiz_id: int, score: float,
                      max_score: float, duration_seconds: int = 0):
@@ -32,16 +30,13 @@ def save_quiz_result(db: Session, current_user, quiz_id: int, score: float,
     newly_unlocked = crud_achievement.check_and_unlock_achievements(db, current_user.id)
     return {"result_id": result.id, "newly_unlocked": newly_unlocked}
 
-
 def start_quiz(db: Session, current_user, quiz_id: int):
     if not crud_quiz.get_quiz(db, quiz_id):
         raise NotFoundError("Quiz not found")
     return crud_quiz_results.create_quiz_result(db, current_user.id, quiz_id)
 
-
 def get_my_results(db: Session, current_user, skip: int = 0, limit: int = 100):
     return crud_quiz_results.get_user_quiz_results(db, current_user.id, skip, limit)
-
 
 def get_my_history(db: Session, current_user, skip: int = 0, limit: int = 50):
     results = (
@@ -71,7 +66,6 @@ def get_my_history(db: Session, current_user, skip: int = 0, limit: int = 50):
         })
     return history
 
-
 def get_quiz_result(db: Session, current_user, result_id: int):
     result = crud_quiz_results.get_quiz_result(db, result_id)
     if not result or result.user_id != current_user.id:
@@ -79,7 +73,6 @@ def get_quiz_result(db: Session, current_user, result_id: int):
     if current_user.role != "admin":
         raise BadRequestError("No admin rules")
     return result
-
 
 def complete_quiz(db: Session, current_user, result_id: int):
     result = crud_quiz_results.get_quiz_result(db, result_id)
@@ -90,10 +83,9 @@ def complete_quiz(db: Session, current_user, result_id: int):
 
     completed = crud_quiz_results.complete_quiz_result(db, result_id)
 
-    # Автопроверка достижений после завершения квиза
     try:
         crud_achievement.check_and_unlock_achievements(db, current_user.id)
     except Exception:
-        pass  # Не ломаем ответ если что-то пошло не так
+        pass
 
     return completed

@@ -1,11 +1,9 @@
-"""Бизнес-логика гостевых пользователей (HTTP-агностична)."""
 from sqlalchemy.orm import Session
 
 from ..crud import crud_guest as guest_crud
 from ..models.model_guest import Guest
 from ..utils.security import create_guest_access_token
 from .exceptions import ForbiddenError
-
 
 def register_guest(db: Session):
     guest_user = guest_crud.create_guest(db=db, expires_hours=24)
@@ -19,7 +17,6 @@ def register_guest(db: Session):
         "token_type": "bearer",
     }
 
-
 def get_guest_info(current_guest: Guest):
     return {
         "id": current_guest.id,
@@ -29,7 +26,6 @@ def get_guest_info(current_guest: Guest):
         "expires_at": current_guest.expires_at.isoformat() if current_guest.expires_at else None,
         "last_active_at": current_guest.last_active_at.isoformat() if current_guest.last_active_at else None,
     }
-
 
 def get_guest_stats(db: Session, current_user):
     if current_user.role != "admin":

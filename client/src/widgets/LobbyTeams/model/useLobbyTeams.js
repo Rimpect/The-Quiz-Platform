@@ -6,11 +6,6 @@ import { ROUTES } from '@shared'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
-/**
- * Логика командного лобби: оборачивает useGameLobby и добавляет навигацию
- * (старт квиза / закрытие лобби хостом), звук обратного отсчёта и обработчики.
- * Возвращает состояние лобби вместе с готовыми хендлерами.
- */
 export function useLobbyTeams(quizId) {
   const navigate = useNavigate()
   const startedRef = useRef(false)
@@ -20,7 +15,6 @@ export function useLobbyTeams(quizId) {
   const { sessionId, lobbyStarted, lobbyTimeLeft, cancelled, leaveLobby, createTeam } =
     lobby
 
-  // Звук обратного отсчёта лобби: тиканье за 10 сек + звонок в конце
   useTimerSound(lobbyTimeLeft)
 
   useEffect(() => {
@@ -31,7 +25,6 @@ export function useLobbyTeams(quizId) {
     }
   }, [lobbyStarted, quizId, navigate, sessionId])
 
-  // Хост вышел — лобби закрыто, всех выкидывает с ошибкой
   useEffect(() => {
     if (cancelled && !leftRef.current && !startedRef.current) {
       leftRef.current = true

@@ -3,10 +3,6 @@ import { useEffect, useState } from 'react'
 import { client } from '@shared'
 import { toast } from 'sonner'
 
-/**
- * Логика диалога просмотра квиза (для админки): дозагрузка полного квиза
- * с вопросами/ответами и удаление с подтверждением.
- */
 export function useViewQuizDialog(quiz, isOpen, { onClose, onDelete }) {
   const [fullQuiz, setFullQuiz] = useState(null)
   const [loading, setLoading] = useState(false)

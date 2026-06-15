@@ -1,7 +1,3 @@
-"""Бизнес-логика сессий прохождения квиза (Redis + сохранение результата).
-
-HTTP-агностична: данные/доменные исключения.
-"""
 from sqlalchemy.orm import Session
 
 from ..crud import crud_quiz as quiz_crud
@@ -13,9 +9,7 @@ from ..schemas.schemas_user_answer import StartSessionResponse, UserAnswerCreate
 from ..config_redis.redis_service import QuizSessionService
 from .exceptions import NotFoundError, ForbiddenError, BadRequestError
 
-# Сервис Redis-сессий
 _redis_sessions = QuizSessionService()
-
 
 def _require_own_session(session_id: str, user_id: int):
     session = _redis_sessions.get_session(session_id)
@@ -24,7 +18,6 @@ def _require_own_session(session_id: str, user_id: int):
     if int(session.get("user_id")) != user_id:
         raise ForbiddenError("Not your session")
     return session
-
 
 def start_session(db: Session, current_user, quiz_id: int):
     if not quiz_crud.get_quiz(db, quiz_id):
@@ -39,7 +32,6 @@ def start_session(db: Session, current_user, quiz_id: int):
         total_questions=len(questions), expires_in_minutes=60,
     )
 
-
 def start_guest_session(db: Session, current_guest, quiz_id: int):
     quiz = quiz_crud.get_quiz(db, quiz_id)
     if not quiz:
@@ -48,7 +40,6 @@ def start_guest_session(db: Session, current_guest, quiz_id: int):
         raise ForbiddenError("Guests can only play public quizzes")
 
     questions = question_crud.get_questions_by_quiz(db, quiz_id)
-    # Для гостя используем отрицательный guest_id как user_id
     session_id = _redis_sessions.create_session(
         user_id=-current_guest.id, quiz_id=quiz_id, total_questions=len(questions)
     )
@@ -56,7 +47,6 @@ def start_guest_session(db: Session, current_guest, quiz_id: int):
         session_id=session_id, quiz_id=quiz_id,
         total_questions=len(questions), expires_in_minutes=60,
     )
-
 
 def save_answer(db: Session, current_user, session_id: str, answer: UserAnswerCreate):
     session = _require_own_session(session_id, current_user.id)
@@ -81,11 +71,9 @@ def save_answer(db: Session, current_user, session_id: str, answer: UserAnswerCr
         "points_earned": result["points_earned"],
     }
 
-
 def get_session_answers(current_user, session_id: str):
     _require_own_session(session_id, current_user.id)
     return {"answers": user_answer_service.get_all_answers(session_id)}
-
 
 def get_session_score(db: Session, current_user, session_id: str):
     session = _require_own_session(session_id, current_user.id)
@@ -101,7 +89,6 @@ def get_session_score(db: Session, current_user, session_id: str):
         score=result["total_points"], max_score=max_score,
     )
 
-    # Детальные ответы в PostgreSQL
     for answer in user_answer_service.get_all_answers(session_id):
         db.add(UserAnswer(
             quiz_result_id=db_result.id,
@@ -114,7 +101,6 @@ def get_session_score(db: Session, current_user, session_id: str):
         ))
     db.commit()
 
-    # Чистим временные данные сессии
     _redis_sessions.delete_session(session_id)
     user_answer_service.delete_session_answers(session_id)
 
@@ -126,7 +112,6 @@ def get_session_score(db: Session, current_user, session_id: str):
         "percentage": result["percentage"],
         "max_score": max_score,
     }
-
 
 def cancel_session(current_user, session_id: str):
     session = _redis_sessions.get_session(session_id)

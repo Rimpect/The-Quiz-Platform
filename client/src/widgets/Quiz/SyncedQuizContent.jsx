@@ -26,7 +26,6 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
   const { violationsCount, isBlocked } = useAntiCheatContext()
   const navigate = useNavigate()
 
-  // Бан — per-player: сообщаем серверу, остальные (и хост) продолжают
   useEffect(() => {
     if (isBlocked && sessionId) {
       client(`/game/sessions/${sessionId}/banned`, { method: 'POST' }).catch(
@@ -59,18 +58,13 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
     teams,
   } = useSyncedQuiz(quizId, sessionId)
 
-  // Звук таймера вопроса (серверное время): предупреждение + «звонок» в конце
   useTimerSound(timeLeft)
 
-  // Рядовой участник команды (не капитан): только голосует
   const isVoter = isTeam && !isLeader
   const voteLocked = leaderAnswered || timeLeft === 0
 
-  // Блокировка: локальный анти-чит ИЛИ серверный бан (переживает перезагрузку)
   const blocked = isBlocked || meBanned
 
-  // С экрана бана авто-редирект на главную (и чистим сохранённую сессию),
-  // чтобы забаненный не мог вернуться в квиз сворачиванием/перезагрузкой
   useEffect(() => {
     if (!blocked) return
     const t = setTimeout(() => {
@@ -141,7 +135,6 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
       </div>
 
       {isVoter ? (
-        // ----- Рядовой участник команды: только голос -----
         voteLocked ? (
           <div className={styles.waitingNext}>
             Капитан зафиксировал ответ команды. Переходим дальше...

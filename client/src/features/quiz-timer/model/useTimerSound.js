@@ -70,6 +70,10 @@ export function useTimerSound(
         endedRef.current = true
         warn.pause()
         warn.currentTime = 0
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3bdf3803ea3a7cfae3a006c7fe75aa1956fa1694
         new Audio(BELL).play().catch(() => {})
       }
       return

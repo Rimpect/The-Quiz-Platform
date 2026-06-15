@@ -1,8 +1,3 @@
-"""Маппинг доменных исключений сервисного слоя в унифицированные HTTP-ответы.
-
-Сервисы остаются HTTP-агностичными: кидают ServiceError, а конверт ответа
-(тот же, что у ResponseFactory) собирается здесь централизованно.
-"""
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -15,7 +10,6 @@ from .exceptions import (
     NotFoundError,
     ConflictError,
 )
-
 
 def _to_response(exc: ServiceError):
     if isinstance(exc, BadRequestError):
@@ -33,7 +27,6 @@ def _to_response(exc: ServiceError):
         errors=exc.errors,
         status_code=exc.status_code,
     )
-
 
 def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(ServiceError)

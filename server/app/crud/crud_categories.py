@@ -43,8 +43,6 @@ DEFAULT_CATEGORIES = [
 
 
 def seed_default_categories(db: Session) -> int:
-    """Создать стартовые категории, которых ещё нет. Идемпотентно.
-    Возвращает количество добавленных."""
     created = 0
     for name in DEFAULT_CATEGORIES:
         if not get_category_by_type(db, name):

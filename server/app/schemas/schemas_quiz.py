@@ -110,7 +110,8 @@ class QuestionBulkCreate(BaseModel) :
 
 class QuizBulkCreate(BaseModel) :
     title: str = Field(..., min_length=1, max_length=200)
-    category_id: int
+    category_id: Optional[int] = None
+    category_name: Optional[str] = Field(None, max_length=100)
     description: str = Field(..., min_length=1)
     cover_url: Optional[str] = None
     is_public: bool = True
