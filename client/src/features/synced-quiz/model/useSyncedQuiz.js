@@ -54,6 +54,8 @@ export function useSyncedQuiz(quizId, sessionId) {
   const leaderAnswered = !!myTeam?.leader_answered
   myTeamIdRef.current = myTeamId
 
+  const displayTotalScore = isTeam ? (myTeam?.score ?? 0) : totalScore
+
   const voters = {}
   if (isTeam && myTeamId) {
     for (const v of currentVotes) {
@@ -253,7 +255,7 @@ export function useSyncedQuiz(quizId, sessionId) {
     error,
     selectedAnswers,
     currentScore,
-    totalScore,
+    totalScore: displayTotalScore,
     maxPossibleScore,
     timeLeft,
     toggleAnswer,

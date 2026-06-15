@@ -10,8 +10,6 @@ export function AvatarUploader({ onAvatarChange, initialAvatar = null }) {
   const [error, setError] = useState('')
   const fileInputRef = useRef(null)
 
-  // initialAvatar приходит из стора асинхронно — подхватываем его, когда появится
-  // (useState берёт значение только при первом рендере).
   useEffect(() => {
     setAvatar(initialAvatar)
   }, [initialAvatar])

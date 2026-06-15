@@ -10,10 +10,6 @@ import styles from './QuizQuestion.module.scss'
 
 const MAX_ANSWERS = 10
 
-/**
- * Карточка одного вопроса: медиа, текст, тип ответа, время, баллы и
- * список вариантов ответа.
- */
 export function QuestionCard({ question, index }) {
   const deleteQuestion = useQuizStore((s) => s.deleteQuestion)
   const updateQuestion = useQuizStore((s) => s.updateQuestion)

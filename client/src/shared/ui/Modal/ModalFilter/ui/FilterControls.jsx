@@ -2,7 +2,6 @@ import { Input } from '@shared'
 
 import styles from '../ModalFilter.module.scss'
 
-/** Секция фильтра: подпись + содержимое. */
 export function FilterSection({ label, children }) {
   return (
     <div className={styles.section}>
@@ -12,7 +11,6 @@ export function FilterSection({ label, children }) {
   )
 }
 
-/** Чекбокс с подписью (опционально с иконкой — для медиа). */
 export function CheckboxItem({ id, label, checked, onChange, icon = null }) {
   return (
     <div className={styles.checkboxItem}>
@@ -31,7 +29,6 @@ export function CheckboxItem({ id, label, checked, onChange, icon = null }) {
   )
 }
 
-/** Радио-кнопка с подписью. */
 export function RadioItem({ id, name, label, checked, onChange }) {
   return (
     <div className={styles.radioItem}>
@@ -50,7 +47,6 @@ export function RadioItem({ id, name, label, checked, onChange }) {
   )
 }
 
-/** Числовой диапазон «От / До» с подсказкой. */
 export function RangeField({
   label,
   hint,

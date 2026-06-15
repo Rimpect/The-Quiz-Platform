@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 
 import styles from '../ViewQuizDialog.module.scss'
 
-/** Действия над квизом в диалоге: модерация (для pending), удаление, переход на сайт. */
 export function ViewQuizActions({
   quiz,
   onApprove,

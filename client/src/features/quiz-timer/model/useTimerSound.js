@@ -23,7 +23,6 @@ export function useTimerSound(
   const warnedRef = useRef(false) // «тик» уже сыгран на этом отсчёте
   const endedRef = useRef(false) // «звонок» уже сыгран
 
-  // Инициализация аудио + разблокировка autoplay по первому жесту пользователя
   useEffect(() => {
     if (!enabled) return undefined
 
@@ -59,7 +58,6 @@ export function useTimerSound(
     const prev = prevRef.current
     prevRef.current = timeLeft
 
-    // Время выросло → начался новый отсчёт (следующий вопрос) → сброс флагов
     if (prev != null && timeLeft > prev) {
       warnedRef.current = false
       endedRef.current = false
@@ -67,13 +65,12 @@ export function useTimerSound(
       warn.currentTime = 0
     }
 
-    // Конец времени → «звонок»
     if (timeLeft <= 0) {
       if (!endedRef.current) {
         endedRef.current = true
         warn.pause()
         warn.currentTime = 0
-        // fire-and-forget: звонок доиграет, даже если экран сменится (лобби→квиз)
+
         new Audio(BELL).play().catch(() => {})
       }
       return

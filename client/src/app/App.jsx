@@ -9,12 +9,10 @@ import { Toaster, toast } from 'sonner'
 import { router } from './routes/routes.jsx'
 
 function App() {
-  // Протухшая авторизация (refresh не удался / сервер перезапущен) →
-  // сбрасываем стор, чтобы шапка не показывала «залогинен» по старым данным
   useEffect(() => {
     const onExpired = () => {
       const { isAuthenticated, token } = useAuthStore.getState()
-      if (!isAuthenticated && !token) return // уже разлогинены — без спама
+      if (!isAuthenticated && !token) return
       useAuthStore.setState({
         token: null,
         refreshToken: null,

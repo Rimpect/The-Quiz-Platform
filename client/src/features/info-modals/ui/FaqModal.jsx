@@ -4,7 +4,7 @@ import styles from './InfoModals.module.scss'
 
 export function FaqModal({ onClose }) {
   return (
-    <ModalInfo title="Часто задаваемые вопросы" icon="❓" onClose={onClose}>
+    <ModalInfo title="Часто задаваемые вопросы" onClose={onClose}>
       <ul className={styles.faqList}>
         <li>
           <strong>Как создать свой квиз?</strong>
@@ -42,8 +42,8 @@ export function FaqModal({ onClose }) {
         <li>
           <strong>Почему меня заблокировало в квизе?</strong>
           <p>
-            Сработала защита от списывания (3 нарушения). Подробности — в разделе
-            «Правила».
+            Сработала защита от списывания (3 нарушения). Подробности — в
+            разделе «Правила».
           </p>
         </li>
       </ul>

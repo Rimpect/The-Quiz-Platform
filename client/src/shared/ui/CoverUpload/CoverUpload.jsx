@@ -15,7 +15,6 @@ export function CoverUpload({ value = '', onUpload }) {
     const file = e.target.files[0]
     if (!file) return
 
-    // Мгновенное локальное превью
     const reader = new FileReader()
     reader.onloadend = () => setPreview(reader.result)
     reader.readAsDataURL(file)

@@ -7,8 +7,6 @@ import { Layout } from '../../widgets/Layout/Layout.jsx'
 
 import { AppGuard } from './AppGuard.jsx'
 
-// Ленивые страницы: каждая попадает в отдельный чанк → быстрее первая загрузка.
-// Страницы экспортируются как именованные, поэтому маппим в default для lazy.
 const lazyPage = (loader, name) =>
   lazy(() => loader().then((m) => ({ default: m[name] })))
 
@@ -67,7 +65,6 @@ const fallback = (
   <div style={{ padding: '2rem', textAlign: 'center' }}>Загрузка…</div>
 )
 
-// Для роутов без общего Layout оборачиваем элемент в Suspense
 const s = (element) => <Suspense fallback={fallback}>{element}</Suspense>
 
 export const router = createBrowserRouter(
@@ -152,7 +149,6 @@ export const router = createBrowserRouter(
     },
   ],
   {
-    // basename берём из base сборки (prod: /The-Quiz-Platform, dev: /)
     basename: import.meta.env.BASE_URL.replace(/\/+$/, '') || '/',
   },
 )

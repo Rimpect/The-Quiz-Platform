@@ -8,10 +8,6 @@ import styles from '../LobbyTeams.module.scss'
 
 const WAIT_PRESETS = [15, 30, 60, 120, 300]
 
-/**
- * Экран до входа в лобби: создать своё лобби (с выбором времени ожидания)
- * или войти в чужое по коду приглашения.
- */
 export function PreLobby({ quiz, loading, onCreate, onJoinByCode }) {
   const [waitSeconds, setWaitSeconds] = useState(30)
   const [codeInput, setCodeInput] = useState('')

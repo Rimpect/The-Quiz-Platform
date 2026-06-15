@@ -1,6 +1,5 @@
 import styles from '../ViewQuizDialog.module.scss'
 
-/** Превью вопросов с ответами (верные отмечены галочкой) — для модерации. */
 export function QuizQuestionsPreview({ questions }) {
   if (!questions || questions.length === 0) return null
 
