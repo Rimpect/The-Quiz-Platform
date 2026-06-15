@@ -1,8 +1,3 @@
-"""Бизнес-логика аутентификации (HTTP-агностична).
-
-Работа с cookie/Request/Response остаётся в роутере — это HTTP-слой. Здесь —
-проверка кредов, выпуск/ротация/отзыв токенов, статус access-токена.
-"""
 from sqlalchemy.orm import Session
 
 from ..crud import crud_jwt_token as crud_jwt
@@ -17,7 +12,6 @@ from ..utils.security import (
 )
 from ..schemas.schemas_user import AccessTokenStatusResponse
 from .exceptions import UnauthorizedError, ForbiddenError
-
 
 def login(db: Session, email: str, password: str) -> dict:
     user = crud_user.get_user_by_email(db, email)
@@ -41,7 +35,6 @@ def login(db: Session, email: str, password: str) -> dict:
         "role": user.role,
         "photo_profile": user.photo_profile,
     }
-
 
 def refresh_tokens(db: Session, refresh_token: str) -> dict:
     if not refresh_token:
@@ -72,7 +65,6 @@ def refresh_tokens(db: Session, refresh_token: str) -> dict:
 
     return {"access_token": new_access_token, "refresh_token": new_refresh_token}
 
-
 def logout(db: Session, refresh_token: str, current_user) -> dict:
     if refresh_token:
         crud_jwt.revoke_both_tokens(
@@ -80,7 +72,6 @@ def logout(db: Session, refresh_token: str, current_user) -> dict:
             reason=f"User {current_user.id} logged out",
         )
     return {"user_id": current_user.id, "nickname": current_user.nickname}
-
 
 def check_access_token(access_token) -> AccessTokenStatusResponse:
     if not access_token:

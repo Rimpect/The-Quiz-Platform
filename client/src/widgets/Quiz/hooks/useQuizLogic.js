@@ -62,12 +62,11 @@ export const useQuizLogic = (quizId) => {
       setIsAnswered(false)
     } else {
       setIsFinished(true)
-      // Сбрасываем согласие с правилами, чтобы новое прохождение снова его запросило
+
       sessionStorage.removeItem(`agreed_quiz_${quizId}`)
       const percentScore = Math.round((totalScore / maxPossibleScore) * 100)
       const durationSeconds = Math.round((Date.now() - startTime) / 1000)
 
-      // Для team/competitive идём на лидерборд, для solo на результаты
       const isTeamOrCompetitive =
         quiz?.quiz_mode === 'team' || quiz?.quiz_mode === 'competitive'
 
@@ -85,7 +84,6 @@ export const useQuizLogic = (quizId) => {
       }
 
       if (isTeamOrCompetitive) {
-        // Сохраняем результат в лидерборд, затем переходим к таблице лидеров
         client('/quiz-results/save', {
           method: 'POST',
           body: JSON.stringify({

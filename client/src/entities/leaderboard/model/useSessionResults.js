@@ -28,7 +28,6 @@ export function useSessionResults(sessionId) {
           items.map((item, idx) => ({
             place: item.place ?? idx + 1,
             name: item.name || 'Игрок',
-            // у команд иконки нет
             avatar: item.is_team
               ? null
               : item.avatar || '/placeholder-avatar.png',

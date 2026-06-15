@@ -17,7 +17,6 @@ import styles from './QuizDescription.module.scss'
 
 const DEFAULT_COVER = '/placeholder-quiz.png'
 
-// Русская плюрализация: forms = [одна, несколько, много]
 const pluralRu = (n, forms) => {
   const m10 = n % 10
   const m100 = n % 100
@@ -32,7 +31,6 @@ export function QuizDescription({ quiz }) {
   const isCompetitive = quizMode === 'competitive'
   const showModeBadge = quizMode && quizMode !== 'single' && quizMode !== 'solo'
 
-  // Лучший результат — топ таблицы лидеров квиза
   const { leaderboard } = useLeaderboard(id)
   const bestScore = leaderboard?.[0]?.percent ?? null
 

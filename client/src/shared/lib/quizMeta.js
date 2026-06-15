@@ -21,9 +21,6 @@ const ALIASES = {
   сложный: 'hard',
 }
 
-/**
- * Нормализует сложность к { variant, label } независимо от формата на входе.
- */
 export const getDifficulty = (value) => {
   const raw = String(value || '').toLowerCase()
   const key = ALIASES[raw] || raw

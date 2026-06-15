@@ -17,9 +17,6 @@ export function Quiz() {
 
   const storageKey = `quizSession:${id}`
 
-  // Сессия из лобби; при перезагрузке вкладки (моб. сворачивание) location.state
-  // теряется — восстанавливаем sessionId из sessionStorage, чтобы не выпасть из
-  // synced-сессии (иначе серверный бан/состояние не применятся).
   const [sessionId] = useState(() => {
     if (location.state?.sessionId) return location.state.sessionId
     try {
@@ -34,7 +31,6 @@ export function Quiz() {
     return null
   })
 
-  // Запоминаем сессию для переживания перезагрузки
   useEffect(() => {
     if (location.state?.sessionId) {
       sessionStorage.setItem(
@@ -44,9 +40,7 @@ export function Quiz() {
     }
   }, [storageKey, location.state])
 
-  // Проверяем режим квиза ПЕРЕД рендерингом
   useEffect(() => {
-    // Сессия известна (из лобби или восстановлена) → сразу synced, без редиректа
     if (!id || location.state?.fromLobby || sessionId) {
       setLoading(false)
       return

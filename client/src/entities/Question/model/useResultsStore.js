@@ -81,7 +81,7 @@ export const useResultsStore = create((set) => ({
         results: state.results.map((r) => (r.id === resultId ? result : r)),
         isLoading: false,
       }))
-      // Проверяем достижения после завершения квиза (fire-and-forget)
+      // Проверяем достижения после завершения квиза
       checkAchievements()
       return result
     } catch (err) {

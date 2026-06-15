@@ -14,7 +14,6 @@ const DIFFICULTY_LABELS = {
   hard: 'Сложный',
 }
 
-/** Заголовок, сетка характеристик и описание квиза. */
 export function QuizDetails({ quiz }) {
   return (
     <>

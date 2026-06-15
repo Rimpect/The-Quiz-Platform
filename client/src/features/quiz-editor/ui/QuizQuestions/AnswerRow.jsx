@@ -5,17 +5,12 @@ import { useQuizStore } from '../../model/quiz.store'
 
 import styles from './QuizQuestion.module.scss'
 
-/**
- * Один вариант ответа: маркер правильности (radio для одиночного выбора,
- * checkbox для множественного), поле текста и кнопка удаления.
- */
 export function AnswerRow({ question, answer, index }) {
   const updateAnswerText = useQuizStore((s) => s.updateAnswerText)
   const removeAnswer = useQuizStore((s) => s.removeAnswer)
   const setCorrectAnswer = useQuizStore((s) => s.setCorrectAnswer)
   const toggleCorrectAnswer = useQuizStore((s) => s.toggleCorrectAnswer)
 
-  // Одиночный выбор: повторный клик по уже выбранному снимает отметку
   const handleRadioToggle = () =>
     setCorrectAnswer(question.id, answer.isCorrect ? null : answer.id)
 
@@ -54,7 +49,9 @@ export function AnswerRow({ question, answer, index }) {
         type="text"
         value={answer.text}
         maxLength={150}
-        onChange={(e) => updateAnswerText(question.id, answer.id, e.target.value)}
+        onChange={(e) =>
+          updateAnswerText(question.id, answer.id, e.target.value)
+        }
         placeholder={`Вариант ${index + 1}`}
         className={styles.answerInput}
         variant="default"

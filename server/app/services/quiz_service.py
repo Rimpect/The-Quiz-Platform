@@ -1,4 +1,3 @@
-"""Бизнес-логика квизов (HTTP-агностична: данные + доменные исключения)."""
 from typing import Optional
 
 from sqlalchemy.orm import Session
@@ -8,19 +7,15 @@ from ..models.model_user import User, UserRole
 from ..schemas.schemas_quiz import QuizResponse, QuizCreate, QuizUpdate, QuizBulkCreate
 from .exceptions import NotFoundError, ForbiddenError, UnauthorizedError
 
-
 def _is_guest(current_user) -> bool:
-    """Гость — это либо guest-сессия, либо неавторизованный пользователь."""
     if current_user and hasattr(current_user, "session_id"):
         return True
     return not current_user
-
 
 def create_quiz(db: Session, quiz: QuizCreate, current_user: User):
     if current_user.role == UserRole.ADMIN:
         return crud_quiz.create_quiz_fast(db=db, quiz=quiz, author_id=current_user.id)
     raise NotFoundError("Quiz not found")
-
 
 def get_quizzes(
         db: Session,
@@ -36,10 +31,8 @@ def get_quizzes(
         quizzes = [q for q in quizzes if q.category_id == category_id]
     return [QuizResponse.model_validate(q) for q in quizzes]
 
-
 def get_quiz_categories(db: Session):
     return {"categories": crud_quiz.get_quiz_categories(db)}
-
 
 def get_quiz(db: Session, quiz_id: int, current_user):
     quiz = crud_quiz.get_quiz(db, quiz_id)
@@ -55,13 +48,11 @@ def get_quiz(db: Session, quiz_id: int, current_user):
 
     return QuizResponse.model_validate(quiz)
 
-
 def read_quiz_full(db: Session, quiz_id: int):
     db_quiz = crud_quiz.get_quiz_with_details(db, quiz_id)
     if db_quiz is None:
         raise NotFoundError("Quiz not found")
     return db_quiz
-
 
 def get_quiz_for_edit(db: Session, quiz_id: int, current_user: User):
     quiz = crud_quiz.get_quiz_with_details(db, quiz_id)
@@ -102,7 +93,6 @@ def get_quiz_for_edit(db: Session, quiz_id: int, current_user: User):
         ],
     }
 
-
 def update_quiz(db: Session, quiz_id: int, quiz_update: QuizUpdate, current_user: User):
     if current_user.role == "admin":
         db_quiz = crud_quiz.update_quiz(db, quiz_id, quiz_update)
@@ -112,19 +102,16 @@ def update_quiz(db: Session, quiz_id: int, quiz_update: QuizUpdate, current_user
 
     raise NotFoundError("No admin or author rules")
 
-
 def delete_quiz(db: Session, quiz_id: int, current_user: User):
     is_admin = current_user.role == UserRole.ADMIN or current_user.role == "admin"
     deleted = crud_quiz.delete_quiz(db, quiz_id, current_user.id, is_admin=is_admin)
     if not deleted:
         raise NotFoundError("Квиз не найден или недостаточно прав")
 
-
 def get_leaderboard(db: Session, quiz_id: int, limit: int = 100):
     if not crud_quiz.get_quiz(db, quiz_id):
         raise NotFoundError("Quiz not found")
     return crud_quiz.get_quiz_leaderboard(db, quiz_id, limit)
-
 
 def create_quiz_bulk(db: Session, quiz_data: QuizBulkCreate, current_user: User):
     quiz_status = "approved" if current_user.role == UserRole.ADMIN else "pending"
@@ -134,7 +121,6 @@ def create_quiz_bulk(db: Session, quiz_data: QuizBulkCreate, current_user: User)
     result["status"] = quiz_status
     return result
 
-
 def update_quiz_bulk(db: Session, quiz_id: int, quiz_data: QuizBulkCreate, current_user: User):
     is_admin = current_user.role == UserRole.ADMIN
     result = crud_quiz.update_quiz_full(
@@ -143,7 +129,6 @@ def update_quiz_bulk(db: Session, quiz_id: int, quiz_data: QuizBulkCreate, curre
     if not result:
         raise NotFoundError("Quiz not found or access denied")
     return result
-
 
 def create_quiz_pending(db: Session, quiz: QuizCreate, current_user: User):
     if current_user.role == "guest":

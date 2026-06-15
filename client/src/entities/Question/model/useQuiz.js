@@ -17,7 +17,6 @@ export const useQuiz = (quizId) => {
       try {
         setLoading(true)
         const response = await client(`/quizzes/${quizId}`)
-        // API возвращает { data: {...}, status: "success" }
         const quizData = response?.data ?? response
         setQuiz(quizData)
         setError(null)

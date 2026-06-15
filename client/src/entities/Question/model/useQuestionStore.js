@@ -4,9 +4,6 @@ import { getQuestions } from '../api/QuestionApi/QuestionApi.js'
 
 import { questionSchema } from './questionSchema.js'
 
-// Сервер возвращает: { id, quiz_id, question_text, answer_type, points, answers: [{ id, answer_text, is_correct, order_number }] }
-// Клиент ожидает: { id, quizId, question, questionType, options, correctAnswers, points }
-// Тип медиа определяем по папке (quest_image/quest_audio/quest_video) или расширению
 const inferMediaType = (url) => {
   if (!url) return null
   if (url.includes('/quest_audio/')) return 'audio'

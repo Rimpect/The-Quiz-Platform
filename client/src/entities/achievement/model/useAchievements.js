@@ -19,7 +19,6 @@ export function useAchievements() {
         const data = await getMyAchievements()
         if (canceled) return
 
-        // data = { achievements: { "1": true, "2": false, ... } }
         const statusMap = data?.achievements || {}
         setAchievements(
           ACHIEVEMENTS_LIST.map((a) => ({

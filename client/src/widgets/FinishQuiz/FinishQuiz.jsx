@@ -38,7 +38,6 @@ export function FinishQuiz() {
 
   const grade = getGrade(percentScore)
 
-  // Загружаем лидерборд для team/competitive квизов
   useEffect(() => {
     if ((quizMode === 'team' || quizMode === 'competitive') && id) {
       setLoadingLeaderboard(true)
@@ -55,7 +54,7 @@ export function FinishQuiz() {
   }, [id, quizMode])
 
   useEffect(() => {
-    // Сохраняем один раз (защита от повторного рендера)
+    // Сохраняет один раз (защита от повторного рендера)
     if (savedRef.current || !id) return
     savedRef.current = true
 

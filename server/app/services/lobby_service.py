@@ -1,14 +1,11 @@
-"""Бизнес-логика приватных лобби (Redis). HTTP-агностична."""
 from sqlalchemy.orm import Session
 
 from ..config_redis.redis_service import LobbyService, QuizSessionService
 from ..crud import crud_quiz as quiz_crud
 from .exceptions import NotFoundError, BadRequestError, ForbiddenError
 
-# Redis-сервисы
 _lobby = LobbyService()
 _quiz_sessions = QuizSessionService()
-
 
 def create_lobby(db: Session, current_user, lobby_data):
     quiz = quiz_crud.get_quiz(db, lobby_data.quiz_id)
@@ -25,7 +22,6 @@ def create_lobby(db: Session, current_user, lobby_data):
         is_public=lobby_data.is_public,
     )
     return _lobby.get_lobby(lobby_id)
-
 
 def join_lobby(current_user, lobby_id: str):
     lobby = _lobby.get_lobby(lobby_id)
@@ -46,14 +42,12 @@ def join_lobby(current_user, lobby_id: str):
 
     return _lobby.get_lobby(lobby_id)
 
-
 def leave_lobby(current_user):
     lobby = _lobby.get_user_lobby(current_user.id)
     if not lobby:
         raise NotFoundError("You are not in a lobby")
     _lobby.leave_lobby(lobby["lobby_id"], current_user.id)
     return {"message": "Left lobby"}
-
 
 def start_game(db: Session, current_user):
     lobby = _lobby.get_user_lobby(current_user.id)
@@ -85,13 +79,11 @@ def start_game(db: Session, current_user):
         "total_questions": total_questions,
     }
 
-
 def get_lobby_info(current_user):
     lobby = _lobby.get_user_lobby(current_user.id)
     if not lobby:
         raise NotFoundError("You are not in a lobby")
     return lobby
-
 
 def get_active_lobbies():
     import json
@@ -122,10 +114,8 @@ def get_active_lobbies():
     active_lobbies.sort(key=lambda x: x.get("created_at", ""), reverse=True)
     return active_lobbies
 
-
 def get_public_lobbies(limit: int = 20):
     return _lobby.get_public_lobbies(limit)
-
 
 def join_public_lobby(lobby_id: str):
     lobby = _lobby.get_lobby(lobby_id)

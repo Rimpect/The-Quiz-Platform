@@ -8,13 +8,11 @@ import { toast } from 'sonner'
 
 import styles from '../LobbyTeams.module.scss'
 
-// Обратный отсчёт лобби: минуты:секунды, либо «N сек» при < 1 мин
 const formatCountdown = (s) =>
   s >= 60
     ? `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} мин`
     : `${s} сек`
 
-// Маппинг команд с сервера в формат TeamCard
 const toUiTeams = (teams) =>
   teams.map((t) => ({
     id: t.id,
@@ -28,9 +26,6 @@ const toUiTeams = (teams) =>
     })),
   }))
 
-/**
- * Основной экран лобби: список команд, информация о квизе, готовность и выход.
- */
 export function TeamsRoom({ quiz, lobby }) {
   const {
     players,

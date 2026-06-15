@@ -16,7 +16,6 @@ export const useAuthStore = create(
         set({ isLoading: true, error: null })
         try {
           const response = await authService.login({ email, password })
-          // Server wraps data in response.data (ResponseFactory format)
           const data = response?.data ?? response
           set({
             token: data.access_token,
@@ -101,8 +100,6 @@ export const useAuthStore = create(
   ),
 )
 
-// Подхватываем токен, обновлённый в client.js после авто-рефреша по 401,
-// чтобы in-memory состояние стора не оставалось со старым (протухшим) токеном.
 if (typeof window !== 'undefined') {
   window.addEventListener('auth:refreshed', (e) => {
     if (e.detail) useAuthStore.getState().setToken(e.detail)

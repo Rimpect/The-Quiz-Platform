@@ -13,8 +13,6 @@ from . import crud_categories
 
 
 def resolve_category_id(db: Session, category_id: Optional[int], category_name: Optional[str]) -> Optional[int]:
-    """Определить id категории: если задан явный id — берём его, иначе по введённому
-    вручную названию находим существующую категорию или создаём новую."""
     if category_id:
         return category_id
     if category_name and category_name.strip():
