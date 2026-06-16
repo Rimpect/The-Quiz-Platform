@@ -6,6 +6,7 @@ import {
   Award,
   Home,
   Settings as SettingsIcon,
+  User,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -37,7 +38,7 @@ export function ProfileStats({ user }) {
               />
             ) : (
               <div className={styles.avatarFallback}>
-                {(user.name || 'П').charAt(0)}
+                <User size={40} />
               </div>
             )}
           </div>
