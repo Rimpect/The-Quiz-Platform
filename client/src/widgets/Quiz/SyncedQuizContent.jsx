@@ -90,9 +90,11 @@ export const SyncedQuizContent = ({ quizId, sessionId }) => {
 
       <div className={styles.quizHeader}>
         <div className={styles.quizInfo}>
-          <Link to={ROUTES.main} className={styles.exitLink}>
-            Выход
-          </Link>
+          {!isTeam && (
+            <Link to={ROUTES.main} className={styles.exitLink}>
+              Выход
+            </Link>
+          )}
           <div className={styles.quizCategory}>
             <Users size={16} />{' '}
             {isTeam
