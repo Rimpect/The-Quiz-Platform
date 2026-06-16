@@ -80,6 +80,7 @@ class QuizResponse(QuizBase) :
     duration_minutes: int = 0
     difficulty: str = "easy"
     status: str = "approved"
+    rejection_reason: Optional[str] = None
     times_taken: int = 0
     lobby_wait_time_seconds: int = 30
     max_team_members: int = 10

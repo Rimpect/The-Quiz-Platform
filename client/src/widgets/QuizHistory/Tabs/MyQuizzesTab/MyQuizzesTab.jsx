@@ -109,7 +109,9 @@ export function MyQuizzesTab({
                 </div>
                 {quiz.status === 'rejected' && (
                   <div className={styles.rejectionMessage}>
-                    Квиз отклонён администратором
+                    {quiz.rejectionReason
+                      ? `Причина отклонения: ${quiz.rejectionReason}`
+                      : 'Квиз отклонён администратором'}
                   </div>
                 )}
               </div>

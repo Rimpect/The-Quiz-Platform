@@ -1,6 +1,6 @@
 import { useAuthStore } from '@entities'
 import { Button, ROUTES, Avatar } from '@shared'
-import { LogOut } from 'lucide-react'
+import { LogOut, User } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
@@ -39,8 +39,8 @@ export function UserMenu() {
 
       <div className={styles.actions}>
         <Link to={ROUTES.profile}>
-          <Button variant="white" size="medium">
-            Профиль
+          <Button variant="white" size="medium" icon={<User size={18} />}>
+            <span className={styles.profileLabel}>Профиль</span>
           </Button>
         </Link>
         <Button

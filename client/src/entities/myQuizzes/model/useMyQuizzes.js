@@ -17,6 +17,7 @@ const mapQuiz = (q, status) => ({
   total_questions: q.total_questions || 0,
   createdAt: formatDate(q.created_at),
   created_at: q.created_at,
+  rejectionReason: q.rejection_reason || '',
 })
 
 export function useMyQuizzes() {

@@ -1,0 +1,8 @@
+@use '/src/app/GlobalStyles/media' as *;
+
+// На телефоне оставляем только иконку щита — экономим место в шапке
+@include mobile {
+  .label {
+    display: none;
+  }
+}

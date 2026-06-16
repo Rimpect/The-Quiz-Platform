@@ -23,6 +23,7 @@ class Quiz(Base) :
     quiz_mode = Column(SQLEnum(QuizMode), default=QuizMode.SINGLE, nullable=False)
     difficulty = Column(String(20), default='easy', nullable=False, server_default='easy')
     status = Column(String(20), default='approved', nullable=False, server_default='approved')
+    rejection_reason = Column(Text, nullable=True)  # Причина отклонения (видна автору)
     lobby_wait_time_seconds = Column(Integer, default=30, nullable=False)  # Время ожидания в лобби
     max_team_members = Column(Integer, default=10, nullable=False)  # Макс. игроков в команде (team-режим)
 

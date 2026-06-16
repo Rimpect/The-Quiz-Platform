@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from typing import Optional
 
 from ..database.database import get_db
 from ..models.model_user import User
@@ -8,6 +10,10 @@ from ..services import admin_service
 from ..utils.security import get_current_user
 
 router = APIRouter(prefix="/admin", tags=["admin"])
+
+
+class RejectRequest(BaseModel):
+    reason: Optional[str] = None
 
 
 @router.get("/pending")
@@ -60,11 +66,12 @@ def approve_quiz(
 @router.post("/quizzes/{quiz_id}/reject")
 def reject_quiz(
         quiz_id: int,
+        body: RejectRequest = RejectRequest(),
         db: Session = Depends(get_db),
         current_user: User = Depends(get_current_user)
 ):
-    """Отклонить квиз"""
-    data = admin_service.reject_quiz(db, current_user, quiz_id)
+    """Отклонить квиз с указанием причины (видна автору)"""
+    data = admin_service.reject_quiz(db, current_user, quiz_id, body.reason)
     return ResponseFactory.success(data=data, message="Quiz rejected")
 
 

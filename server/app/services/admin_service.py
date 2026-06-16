@@ -25,6 +25,7 @@ def _quiz_to_dict(q: Quiz) -> dict:
         "author": q.author.nickname if q.author else str(q.author_id),
         "total_questions": q.total_questions,
         "duration_minutes": q.duration_minutes,
+        "rejection_reason": q.rejection_reason,
         "created_at": q.created_at.isoformat() if q.created_at else None,
     }
 
@@ -40,9 +41,9 @@ def approve_quiz(db: Session, current_user: User, quiz_id: int):
         raise NotFoundError(f"Quiz {quiz_id}")
     return _quiz_to_dict(quiz)
 
-def reject_quiz(db: Session, current_user: User, quiz_id: int):
+def reject_quiz(db: Session, current_user: User, quiz_id: int, reason: str = None):
     _ensure_admin(current_user)
-    quiz = quiz_crud.reject_quiz(db, quiz_id, current_user.id)
+    quiz = quiz_crud.reject_quiz(db, quiz_id, current_user.id, reason)
     if not quiz:
         raise NotFoundError(f"Quiz {quiz_id}")
     return _quiz_to_dict(quiz)

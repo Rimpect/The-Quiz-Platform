@@ -47,8 +47,8 @@ export function useAdminQuizzes() {
   )
 
   const handleReject = useCallback(
-    async (quiz) => {
-      await rejectQuiz(quiz.id)
+    async (quiz, reason) => {
+      await rejectQuiz(quiz.id, reason)
       await fetchAll()
     },
     [fetchAll],

@@ -54,10 +54,10 @@ export function AdminPanel({ onBack }) {
     setIsViewDialogOpen(true)
   }
 
-  const handleRejectConfirm = async () => {
+  const handleRejectConfirm = async (reason) => {
     if (!selectedQuiz) return
     try {
-      await doReject(selectedQuiz)
+      await doReject(selectedQuiz, reason)
       toast.success('Квиз отклонён')
     } catch {
       toast.error('Не удалось отклонить квиз')

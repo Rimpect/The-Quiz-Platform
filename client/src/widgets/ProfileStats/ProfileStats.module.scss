@@ -70,13 +70,14 @@
 
 .actionButtons {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   gap: 0.5rem;
   width: 100%;
 
   @media (min-width: 640px) {
-    flex-direction: row;
     width: auto;
+    justify-content: flex-start;
   }
 }
 

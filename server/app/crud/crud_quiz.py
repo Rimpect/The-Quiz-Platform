@@ -170,18 +170,20 @@ def approve_quiz(db: Session, quiz_id: int, moderator_id: int):
         return None
     quiz.is_public = True
     quiz.status = "approved"
+    quiz.rejection_reason = None
     db.commit()
     db.refresh(quiz)
     return quiz
 
 
-def reject_quiz(db: Session, quiz_id: int, moderator_id: int):
-    """Отклонить квиз: status='rejected'"""
+def reject_quiz(db: Session, quiz_id: int, moderator_id: int, reason: str = None):
+    """Отклонить квиз: status='rejected' + причина для автора"""
     quiz = get_quiz(db, quiz_id)
     if not quiz:
         return None
     quiz.is_public = False
     quiz.status = "rejected"
+    quiz.rejection_reason = reason
     db.commit()
     db.refresh(quiz)
     return quiz

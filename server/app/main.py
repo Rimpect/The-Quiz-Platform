@@ -79,6 +79,18 @@ async def lifespan(app: FastAPI):
     await asyncio.to_thread(Base.metadata.create_all, bind=engine)
     logger.info("Database tables created")
 
+    # Авто-миграция: добавляем недостающие колонки моделей (create_all не делает ALTER)
+    def _sync_columns():
+        from .database.auto_migrate import sync_missing_columns
+        return sync_missing_columns(engine)
+
+    try:
+        added_cols = await asyncio.to_thread(_sync_columns)
+        if added_cols:
+            logger.info(f"Auto-migrate: {added_cols} column(s) added")
+    except Exception as e:
+        logger.error(f"Auto-migrate failed: {e}")
+
     def _seed_categories():
         from .crud import crud_categories
         from .database.database import SessionLocal
