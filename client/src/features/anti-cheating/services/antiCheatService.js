@@ -1,5 +1,9 @@
+import { IS_DEMO } from '@shared'
+
 class AntiCheatService {
   async submitViolations(quizId, violations) {
+    // В демо-режиме нет бэкенда — отправлять нарушения некуда.
+    if (IS_DEMO) return
     try {
       const response = await fetch(`/api/quizzes/${quizId}/violations`, {
         method: 'POST',
@@ -24,6 +28,8 @@ class AntiCheatService {
   }
 
   startHeartbeat(sessionId, interval = 5000, onViolation) {
+    // В демо-режиме heartbeat не нужен (нет сервера сессий).
+    if (IS_DEMO) return () => {}
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let violations = []
 

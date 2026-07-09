@@ -20,12 +20,15 @@ export { Select } from './ui/Select'
 export { Radio } from './ui/Radio'
 export { Checkbox } from './ui/Checkbox'
 export { CoverUpload } from './ui/CoverUpload'
+export { DemoBanner } from './ui/DemoBanner/DemoBanner'
 
 export { useCurrentUser } from './hooks/useCurrentUser'
 
 export { getDifficulty, QUIZ_MODE_LABELS } from './lib/quizMeta'
 
 export { ROUTES, createRoute } from './config'
+
+export { IS_DEMO, FULL_VERSION_URL, REPO_URL } from './config/isDemo'
 
 export { request } from './api/request'
 export { client } from './api/client'
