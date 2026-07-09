@@ -21,10 +21,15 @@
 }
 
 .link {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
   color: #93c5fd;
   font-weight: 600;
   text-decoration: underline;
   white-space: nowrap;
+  cursor: pointer;
 
   &:hover {
     color: #bfdbfe;
@@ -39,5 +44,53 @@
   .banner {
     font-size: 12px;
     padding: 6px 10px;
+  }
+}
+
+/* --- Содержимое модалки «Полная версия» --- */
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+
+  code {
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(127, 127, 127, 0.2);
+    font-size: 0.9em;
+  }
+}
+
+.modalHint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(59, 130, 246, 0.12);
+  font-size: 14px;
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.modalRepoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  background: #1f2937;
+  color: #f9fafb;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    background: #374151;
   }
 }
