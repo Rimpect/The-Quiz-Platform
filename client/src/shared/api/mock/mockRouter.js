@@ -1,92 +1,52 @@
 // Мини «REST-сервер» в браузере для демо-режима.
-// Перехватывает вызовы client()/request() и отдаёт данные из фикстур.
+// Перехватывает вызовы client()/request() и отдаёт данные из фикстур/localStorage.
 // Значения возвращаются уже «развёрнутыми» (как их отдают реальные
 // client/request после снятия обёртки { data }).
 //
-// Прогресс прохождения и результаты демо-сессии хранятся в localStorage.
+// Данные (результаты прохождения, созданные квизы) хранит demoDb в localStorage,
+// поэтому история/статистика/лучший результат согласованы, как в продакшене.
 
-import {
-  DEMO_QUIZZES,
-  DEMO_CATEGORIES,
-  DEMO_LEADERBOARD,
-} from './fixtures/quizzes'
-import { DEMO_USER, DEMO_STATISTICS, DEMO_ACHIEVEMENTS } from './fixtures/user'
-
-const RESULTS_KEY = 'demo-quiz-results'
+import { demoDb } from './demoDb'
+import { DEMO_CATEGORIES } from './fixtures/quizzes'
+import { DEMO_USER, DEMO_ACHIEVEMENTS } from './fixtures/user'
 
 // --- искусственная задержка, чтобы были видны состояния загрузки ---
 const delay = (ms = 200 + Math.random() * 200) =>
   new Promise((resolve) => setTimeout(resolve, ms))
 
-// --- localStorage helpers ---
-const readResults = () => {
+const parseBody = (options) => {
   try {
-    return JSON.parse(localStorage.getItem(RESULTS_KEY)) || []
+    return typeof options?.body === 'string'
+      ? JSON.parse(options.body || '{}')
+      : options?.body || {}
   } catch {
-    return []
+    return {}
   }
-}
-
-const writeResults = (results) => {
-  try {
-    localStorage.setItem(RESULTS_KEY, JSON.stringify(results))
-  } catch {
-    /* ignore */
-  }
-}
-
-const saveResult = (body) => {
-  const payload =
-    typeof body === 'string' ? JSON.parse(body || '{}') : body || {}
-  const quiz = DEMO_QUIZZES.find((q) => q.id === Number(payload.quiz_id))
-  const maxScore = payload.max_score || 0
-  const record = {
-    id: Date.now(),
-    quiz_id: Number(payload.quiz_id),
-    quiz_title: quiz?.title || 'Квиз',
-    score: payload.score || 0,
-    max_score: maxScore,
-    percent: maxScore ? Math.round(((payload.score || 0) / maxScore) * 100) : 0,
-    duration_seconds: payload.duration_seconds || 0,
-    created_at: new Date().toISOString(),
-  }
-  const results = readResults()
-  results.unshift(record)
-  writeResults(results)
-  return record
-}
-
-// --- сборка производных данных из фикстур ---
-const stripQuestions = (quiz) => {
-  const copy = { ...quiz }
-  delete copy.questions
-  return copy
-}
-const quizList = () => DEMO_QUIZZES.map(stripQuestions)
-const quizById = (id) => {
-  const quiz = DEMO_QUIZZES.find((q) => q.id === Number(id))
-  return quiz ? stripQuestions(quiz) : null
-}
-const quizFull = (id) => DEMO_QUIZZES.find((q) => q.id === Number(id)) || null
-const quizQuestions = (id) => {
-  const quiz = DEMO_QUIZZES.find((q) => q.id === Number(id))
-  return quiz ? quiz.questions : []
 }
 
 // --- таблица маршрутов: [метод, regExp, handler(matches, options)] ---
 const routes = [
   // Квизы
-  ['GET', /^\/quizzes$/, () => quizList()],
+  ['GET', /^\/quizzes$/, () => demoDb.listQuizzes()],
   ['GET', /^\/quizzes\/categories$/, () => DEMO_CATEGORIES],
   ['GET', /^\/categories$/, () => DEMO_CATEGORIES],
-  ['GET', /^\/quizzes\/(\d+)\/full$/, (m) => quizFull(m[1])],
-  ['GET', /^\/quizzes\/(\d+)\/questions$/, (m) => quizQuestions(m[1])],
-  ['GET', /^\/quizzes\/(\d+)\/leaderboard$/, () => DEMO_LEADERBOARD],
-  ['GET', /^\/quizzes\/(\d+)\/edit$/, (m) => quizFull(m[1])],
-  ['GET', /^\/quizzes\/(\d+)$/, (m) => quizById(m[1])],
-  // Создание/сохранение квиза в демо — просто эхо
-  ['POST', /^\/quizzes\/bulk$/, (m, o) => parseBody(o)],
-  ['POST', /^\/quizzes\/(\d+)\/bulk$/, (m, o) => parseBody(o)],
+  ['GET', /^\/quizzes\/(\d+)\/full$/, (m) => demoDb.getQuizFull(m[1])],
+  [
+    'GET',
+    /^\/quizzes\/(\d+)\/questions$/,
+    (m) => demoDb.getQuizQuestions(m[1]),
+  ],
+  [
+    'GET',
+    /^\/quizzes\/(\d+)\/leaderboard$/,
+    (m) => demoDb.leaderboardForQuiz(m[1]),
+  ],
+  ['GET', /^\/quizzes\/(\d+)\/edit$/, (m) => demoDb.getQuizFull(m[1])],
+  ['GET', /^\/quizzes\/(\d+)$/, (m) => demoDb.getQuiz(m[1])],
+  // Создание / редактирование квиза — сохраняется в localStorage
+  ['POST', /^\/quizzes\/bulk$/, (m, o) => demoDb.saveBulk(o.body)],
+  ['POST', /^\/quizzes\/(\d+)\/bulk$/, (m, o) => demoDb.saveBulk(o.body, m[1])],
+  ['PUT', /^\/quizzes\/(\d+)\/bulk$/, (m, o) => demoDb.saveBulk(o.body, m[1])],
   ['POST', /^\/quizzes$/, (m, o) => ({ id: Date.now(), ...parseBody(o) })],
   [
     'PUT',
@@ -96,9 +56,9 @@ const routes = [
   ['DELETE', /^\/quizzes\/(\d+)$/, () => ({ success: true })],
 
   // Пользователь
-  ['GET', /^\/users\/me\/statistics$/, () => DEMO_STATISTICS],
-  ['GET', /^\/users\/me\/quizzes$/, () => quizList().slice(0, 2)],
-  ['DELETE', /^\/users\/me\/quizzes\/(\d+)$/, () => ({ success: true })],
+  ['GET', /^\/users\/me\/statistics$/, () => demoDb.statistics()],
+  ['GET', /^\/users\/me\/quizzes$/, () => demoDb.myQuizzes()],
+  ['DELETE', /^\/users\/me\/quizzes\/(\d+)$/, (m) => demoDb.deleteQuiz(m[1])],
   ['GET', /^\/users\/me$/, () => DEMO_USER],
   ['PUT', /^\/users\/me$/, (m, o) => ({ ...DEMO_USER, ...parseBody(o) })],
   ['POST', /^\/users\/me\/change-password$/, () => ({ success: true })],
@@ -107,18 +67,22 @@ const routes = [
   ['GET', /^\/users\/(\d+)$/, () => DEMO_USER],
 
   // Результаты
-  ['GET', /^\/quiz-results\/me\/history$/, () => readResults()],
-  ['GET', /^\/quiz-results\/me$/, () => readResults()],
+  ['GET', /^\/quiz-results\/me\/history$/, () => demoDb.history()],
+  ['GET', /^\/quiz-results\/me$/, () => demoDb.results()],
   [
     'POST',
     /^\/quiz-results\/save$/,
     (m, o) => {
-      saveResult(o.body)
+      demoDb.addResult(o.body)
       return { newly_unlocked: [] }
     },
   ],
-  ['POST', /^\/quiz-results$/, (m, o) => saveResult(o.body)],
-  ['GET', /^\/quiz-results\/quiz\/(\d+)\/leaderboard$/, () => DEMO_LEADERBOARD],
+  ['POST', /^\/quiz-results$/, (m, o) => demoDb.addResult(o.body)],
+  [
+    'GET',
+    /^\/quiz-results\/quiz\/(\d+)\/leaderboard$/,
+    (m) => demoDb.leaderboardForQuiz(m[1]),
+  ],
   [
     'POST',
     /^\/quiz-results\/(\d+)\/complete$/,
@@ -133,7 +97,7 @@ const routes = [
 
   // Админка (демо-пользователь — admin)
   ['GET', /^\/admin\/pending$/, () => []],
-  ['GET', /^\/admin\/quizzes$/, () => quizList()],
+  ['GET', /^\/admin\/quizzes$/, () => demoDb.listQuizzes()],
   ['GET', /^\/admin\/rejected$/, () => []],
   ['POST', /^\/admin\/quizzes\/(\d+)\/approve$/, () => ({ success: true })],
   ['POST', /^\/admin\/quizzes\/(\d+)\/reject$/, () => ({ success: true })],
@@ -160,16 +124,6 @@ const routes = [
   ['GET', /^\/auth\/sessions$/, () => []],
   ['GET', /^\/auth\/history$/, () => []],
 ]
-
-const parseBody = (options) => {
-  try {
-    return typeof options?.body === 'string'
-      ? JSON.parse(options.body || '{}')
-      : options?.body || {}
-  } catch {
-    return {}
-  }
-}
 
 export const mockRouter = async (endpoint, options = {}) => {
   const method = (options.method || 'GET').toUpperCase()

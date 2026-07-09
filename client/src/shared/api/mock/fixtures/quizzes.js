@@ -5,6 +5,15 @@
 // Каждый квиз содержит вложенный questions[] с answers[] — из этого
 // mockRouter собирает ответы для /quizzes, /quizzes/:id, /quizzes/:id/full,
 // /quizzes/:id/questions.
+//
+// Обложки — локальные SVG (импортируются через Vite, base-путь и хеш он
+// проставляет сам, поэтому они корректно работают под /The-Quiz-Platform/).
+
+import artCover from '../../../../assets/demo/art.svg'
+import geographyCover from '../../../../assets/demo/geography.svg'
+import natureCover from '../../../../assets/demo/nature.svg'
+import programmingCover from '../../../../assets/demo/programming.svg'
+import spaceCover from '../../../../assets/demo/space.svg'
 
 export const DEMO_QUIZZES = [
   {
@@ -12,7 +21,7 @@ export const DEMO_QUIZZES = [
     title: 'Космос и астрономия',
     description:
       'Проверьте, насколько хорошо вы знаете Солнечную систему, звёзды и загадки Вселенной.',
-    cover_url: null,
+    cover_url: spaceCover,
     category_obj: { category_type: 'Наука' },
     difficulty: 'easy',
     quiz_mode: 'single',
@@ -111,7 +120,7 @@ export const DEMO_QUIZZES = [
     title: 'Мировая география',
     description:
       'Столицы, реки, горы и континенты — узнайте, насколько хорошо вы знаете нашу планету.',
-    cover_url: null,
+    cover_url: geographyCover,
     category_obj: { category_type: 'География' },
     difficulty: 'medium',
     quiz_mode: 'single',
@@ -203,7 +212,7 @@ export const DEMO_QUIZZES = [
     title: 'Основы программирования',
     description:
       'Базовые понятия: переменные, циклы, алгоритмы и структуры данных. Для начинающих.',
-    cover_url: null,
+    cover_url: programmingCover,
     category_obj: { category_type: 'Технологии' },
     difficulty: 'medium',
     quiz_mode: 'single',
@@ -283,7 +292,7 @@ export const DEMO_QUIZZES = [
     title: 'История искусства',
     description:
       'От эпохи Возрождения до современности: художники, стили и знаменитые произведения.',
-    cover_url: null,
+    cover_url: artCover,
     category_obj: { category_type: 'Искусство' },
     difficulty: 'hard',
     quiz_mode: 'single',
@@ -360,7 +369,7 @@ export const DEMO_QUIZZES = [
     title: 'Природа и животные',
     description:
       'Удивительный мир живой природы: млекопитающие, птицы, насекомые и рекорды животного царства.',
-    cover_url: null,
+    cover_url: natureCover,
     category_obj: { category_type: 'Наука' },
     difficulty: 'easy',
     quiz_mode: 'single',
