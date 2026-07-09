@@ -1,16 +1,24 @@
-import { authService } from '@shared'
+import { authService, IS_DEMO } from '@shared'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+
+// В демо-режиме пользователь «залогинен» сразу как демо-админ.
+const DEMO_USER = {
+  id: 1,
+  nickname: 'Демо-пользователь',
+  role: 'admin',
+  photo_profile: null,
+}
 
 export const useAuthStore = create(
   persist(
     (set) => ({
-      token: null,
+      token: IS_DEMO ? 'demo-token' : null,
       refreshToken: null,
-      user: null,
+      user: IS_DEMO ? DEMO_USER : null,
       isLoading: false,
       error: null,
-      isAuthenticated: false,
+      isAuthenticated: IS_DEMO,
 
       login: async (email, password) => {
         set({ isLoading: true, error: null })

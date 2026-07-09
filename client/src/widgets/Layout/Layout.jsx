@@ -1,5 +1,6 @@
 import { Suspense, useLayoutEffect } from 'react'
 
+import { DemoBanner } from '@shared'
 import { Outlet, useLocation } from 'react-router-dom'
 
 import { Footer } from '../Footer/Footer'
@@ -20,6 +21,7 @@ export function Layout() {
 
   return (
     <div className={styles.layout}>
+      <DemoBanner />
       <Header></Header>
 
       <main className={styles.main}>

@@ -1,4 +1,5 @@
 import { API_URL } from '../config/env'
+import { IS_DEMO } from '../config/isDemo'
 
 const getToken = () => {
   const s = localStorage.getItem('auth-storage')
@@ -60,6 +61,12 @@ const doRefresh = async () => {
 }
 
 export const client = async (endpoint, options = {}, _retry = false) => {
+  // В демо-режиме все запросы обслуживаются локальным mock-роутером (без сети).
+  if (IS_DEMO) {
+    const { mockRouter } = await import('./mock/mockRouter')
+    return mockRouter(endpoint, options)
+  }
+
   const token = getToken()
 
   const isFormData = options.body instanceof FormData
